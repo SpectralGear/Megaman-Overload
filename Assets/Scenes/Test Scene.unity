@@ -3471,6 +3471,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player v2
       objectReference: {fileID: 0}
+    - target: {fileID: 4463283917587819827, guid: 13e15e96a6096c546a5fc441e28e38dd, type: 3}
+      propertyPath: m_Quality
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4463283917587819827, guid: 13e15e96a6096c546a5fc441e28e38dd, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4463283917587819827, guid: 13e15e96a6096c546a5fc441e28e38dd, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4463283917587819827, guid: 13e15e96a6096c546a5fc441e28e38dd, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 8c566302977e7354e9bf1f4f9a628e62, type: 2}
     - target: {fileID: 9123795334845212389, guid: 13e15e96a6096c546a5fc441e28e38dd, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.5

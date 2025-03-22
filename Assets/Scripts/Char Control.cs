@@ -51,10 +51,7 @@ public class CharControl : MonoBehaviour
     }
     private void OnMoveStarted(InputAction.CallbackContext context)
     {
-        if (moveInputX!=0&&!anim.GetBool("Hit")&&groundContact())
-        {
-            currentMotion = 0.1f;
-        }
+        anim.SetBool("Running",true);
     }
     private void OnMove()
     {
@@ -69,6 +66,7 @@ public class CharControl : MonoBehaviour
         }
         if (facingRight){transform.localScale=new Vector3(1,1,1);}
         else {transform.localScale=new Vector3(-1,1,1);}
+        anim.SetFloat("Run Speed",currentMotion);
     }
     private void OnMoveCanceled(InputAction.CallbackContext context)
     {
