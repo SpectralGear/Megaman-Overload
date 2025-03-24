@@ -66,7 +66,7 @@ public class CharControl : MonoBehaviour
         }
         if (facingRight){transform.localScale=new Vector3(1,1,1);}
         else {transform.localScale=new Vector3(-1,1,1);}
-        anim.SetFloat("Run Speed",currentMotion);
+        anim.SetFloat("Run Speed",currentMotion/2);
     }
     private void OnMoveCanceled(InputAction.CallbackContext context)
     {
