@@ -10,9 +10,9 @@ public class CharControl : MonoBehaviour
     [SerializeField] public bool DashInputInsteadOfSlideInput,Armor,ShockAbsorber,AutoRecover,SuperRecover,SuperSlide,Sprinter,WallKick,inWater;
     Image healthBar;
     Animator anim;
-    Rigidbody2D rb;
-    private bool isSliding=false,isHit=false,slideJumping=false,slidingToTheRight;
-    public bool dead,facingRight=true;
+    public Rigidbody2D rb;
+    private bool isHit=false,slideJumping=false,slidingToTheRight;
+    public bool dead,facingRight=true,isSliding=false;
     private float slideTimer,VelocityY,VelocityX,healthPoints=28,timeSinceJump,invincibiltyTimer,currentMotion,moveInputX=0,moveInputY=0;
     private DefaultControls playerInputActions;
     private void Awake()
@@ -131,7 +131,7 @@ public class CharControl : MonoBehaviour
     {
         rb.velocity = new Vector2(VelocityX,VelocityY);
     }
-    bool groundContact()
+    public bool groundContact()
     {
         float groundCheckDistance = 0.2f;
         RaycastHit2D hitCenter = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y+0.1f), Vector2.down, groundCheckDistance, LayerMask.GetMask("Terrain"));

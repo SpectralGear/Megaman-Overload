@@ -37,7 +37,6 @@ public class Buster : MonoBehaviour
         ChargeableWeapons.Add(Weapon.MegaBuster);
         ChargeableWeapons.Add(Weapon.SlagShot);
         ChargeableWeapons.Add(Weapon.IfritBurst);
-        OwnedWeapons.Add(Weapon.MegaBuster);
     }
     private void OnEnable()
     {
