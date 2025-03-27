@@ -123,7 +123,7 @@ public class CharControl : MonoBehaviour
         fall(!groundContact());
         slide();
         motion();
-        if (AutoRecover&&healthPoints>0&&healthPoints<28){HealthChange((float)1/(60*3));}
+        if (AutoRecover&&healthPoints>=0&&healthPoints<28){HealthChange(Time.deltaTime/3);}
         if (isHit&&invincibiltyTimer<1){invincibiltyTimer+=Time.deltaTime;}
         else {isHit=false;invincibiltyTimer=0;}
     }
@@ -234,13 +234,24 @@ public class CharControl : MonoBehaviour
     }
     public void HealthChange(float amountChanged)
     {
-        isHit=amountChanged<0;
-        anim.SetBool("Hit",isHit&&!ShockAbsorber&&invincibiltyTimer<0.5&&!(isSliding&&ceilingAbove()));
-        if (Armor&&amountChanged<0&&!isHit){healthPoints+=amountChanged/2;}
-        else if (SuperRecover&&amountChanged>0){healthPoints+=amountChanged*2;}
-        else if (amountChanged<0&&!isHit){healthPoints+=amountChanged;}
-        healthPoints=Mathf.Clamp(healthPoints,0,28);
-        dead=healthPoints==0;
-        healthBar.fillAmount=healthPoints/28f;
+        if (amountChanged == 0) return;
+        isHit = amountChanged < 0;
+        bool isValidHit = isHit && !ShockAbsorber && invincibiltyTimer < 0.5f && !(isSliding && ceilingAbove());
+        anim.SetBool("Hit", isValidHit);
+        var safetyBall = GetComponentInChildren<SafetyBallScript>();
+        if (safetyBall && safetyBall.isActiveAndEnabled)
+        {
+            safetyBall.HealthChange(amountChanged);
+            amountChanged = 0;
+        }
+        else
+        {
+            if (Armor && isHit) amountChanged += amountChanged / 2;
+            if (SuperRecover && amountChanged > 0) amountChanged *= 2;
+        }
+        healthPoints += (healthPoints >= 5 && amountChanged < 0) ? -healthPoints : amountChanged;
+        healthPoints = Mathf.Clamp(healthPoints, -1, 28);
+        dead = healthPoints < 0;
+        healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f);
     }
 }

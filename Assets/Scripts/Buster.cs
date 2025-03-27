@@ -24,6 +24,7 @@ public class Buster : MonoBehaviour
     private List<Weapon> ChargeableWeapons = new List<Weapon>();
     public List<Weapon> OwnedWeapons = new List<Weapon>();
     [SerializeField] Weapon EquippedWeapon;
+    [SerializeField] Texture2D Ball, BallAttack;
     private void Awake()
     {
         playerInputActions = new DefaultControls();
@@ -206,6 +207,7 @@ public class Buster : MonoBehaviour
         if (FireTimer>0){FireTimer-=Time.deltaTime; FireTimer=Mathf.Clamp(FireTimer,0,FireTimer);}
         if (pointBuster>0){pointBuster-=Time.deltaTime;pointBuster=Mathf.Clamp(pointBuster,0,pointBuster);}
         SetLayerWeight("Shoot",pointBuster>0.2f ? 1 : pointBuster/0.2f);
+        if (!anim.GetBool("Jumping")){attackPrefabs[(int)Projectile.SafetyBall].gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex",Ball);}
     }
     void ShootEquippedWeapon()
     {
@@ -282,7 +284,7 @@ public class Buster : MonoBehaviour
                 attackPrefabs[(int)Projectile.SafetyBall].SetActive(true);
                 break;
             case Projectile.BallBounce:
-                attackPrefabs[(int)Projectile.BallBounce].SetActive(true);
+                attackPrefabs[(int)Projectile.SafetyBall].gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex",BallAttack);
                 break;
             case Projectile.SlagShot:
                 if (FireTimer==0)
