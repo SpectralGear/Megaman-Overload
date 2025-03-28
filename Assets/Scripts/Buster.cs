@@ -25,6 +25,7 @@ public class Buster : MonoBehaviour
     public List<Weapon> OwnedWeapons = new List<Weapon>();
     [SerializeField] Weapon EquippedWeapon;
     [SerializeField] Texture2D Ball, BallAttack;
+    [SerializeField] Material charMat;
     private void Awake()
     {
         playerInputActions = new DefaultControls();
@@ -187,10 +188,11 @@ public class Buster : MonoBehaviour
         {
             ChargingWeapon=false;
             BusterCharge=0;
-            ChargingEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
-            FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
-            OverChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
         }
+        ChargingEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+        FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+        OverChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+        charMat.SetColor("_OtlColor",new Color32(0,0,0,255));
     }
     void Update()
     {
@@ -200,9 +202,9 @@ public class Buster : MonoBehaviour
         {
             ChargeSpeed = QuickerCharge ? 2 : 1;
             if (BusterCharge<OverCharge){BusterCharge+=Time.deltaTime*ChargeSpeed;BusterCharge=Mathf.Clamp(BusterCharge,0,OverCharge);}
-            if (BusterCharge>=OverCharge&&ExtraCharge){FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);OverChargeEffect.Play();}
-            else if (BusterCharge>=FullCharge){ChargingEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);FullChargeEffect.Play();}
-            else if (BusterCharge>=HalfCharge){ChargingEffect.Play();}
+            if (BusterCharge>=OverCharge&&ExtraCharge){charMat.SetColor("_OtlColor",new Color32(255,52,55,255));FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);OverChargeEffect.Play();}
+            else if (BusterCharge>=FullCharge){charMat.SetColor("_OtlColor",new Color32(151,255,255,255));ChargingEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);FullChargeEffect.Play();}
+            else if (BusterCharge>=HalfCharge){charMat.SetColor("_OtlColor",new Color32(247,255,146,255));ChargingEffect.Play();}
         }
         if (FireTimer>0){FireTimer-=Time.deltaTime; FireTimer=Mathf.Clamp(FireTimer,0,FireTimer);}
         if (pointBuster>0){pointBuster-=Time.deltaTime;pointBuster=Mathf.Clamp(pointBuster,0,pointBuster);}

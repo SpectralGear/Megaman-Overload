@@ -286,6 +286,7 @@ MonoBehaviour:
   EquippedWeapon: 0
   Ball: {fileID: 2800000, guid: 3e8f396ab9bd7c94cb83dd9ebb23992e, type: 3}
   BallAttack: {fileID: 2800000, guid: 33fabc6eb722ac84ba09b638428bab9a, type: 3}
+  charMat: {fileID: 2100000, guid: d6703972b843265439af1f6af6280d1f, type: 2}
 --- !u!95 &8755804243570578987
 Animator:
   serializedVersion: 5
@@ -567,6 +568,10 @@ PrefabInstance:
     - target: {fileID: 5535740567911579881, guid: 9db8aafc5f3376f40817f26affb52eae, type: 3}
       propertyPath: ShapeModule.radiusThickness
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5535740567911579881, guid: 9db8aafc5f3376f40817f26affb52eae, type: 3}
+      propertyPath: TrailModule.generateLightingData
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5535740567911579881, guid: 9db8aafc5f3376f40817f26affb52eae, type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar
@@ -3212,6 +3217,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxShieldHealth: 12
+  material: {fileID: 0}
+  rotationSpeed: 1
 --- !u!60 &1018776014658381444
 PolygonCollider2D:
   m_ObjectHideFlags: 0
