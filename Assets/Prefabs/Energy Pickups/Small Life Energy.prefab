@@ -169,7 +169,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a37e1b8e28cbb9747ab36e37e4d89c8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  energyAmountGiven: 2
+  lifeEnergyGiven: 2
+  weaponEnergyGiven: 0
 --- !u!1 &8755365500785783088
 GameObject:
   m_ObjectHideFlags: 0
@@ -338,4 +339,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a37e1b8e28cbb9747ab36e37e4d89c8f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  energyAmountGiven: 0
+  lifeEnergyGiven: 0
+  weaponEnergyGiven: 0

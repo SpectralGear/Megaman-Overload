@@ -1,15 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 public class LifeEnergyScript : MonoBehaviour
 {
-    [SerializeField] float energyAmountGiven;
+    [SerializeField] float lifeEnergyGiven;
+    [SerializeField] float weaponEnergyGiven;
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.GetComponent<CharControl>().HealthChange(energyAmountGiven);
+            if (collision.GetComponent<CharControl>()!=null&&lifeEnergyGiven!=0){collision.GetComponent<CharControl>().HealthChange(lifeEnergyGiven);}
+            if (collision.GetComponent<Buster>()!=null&&weaponEnergyGiven!=0){collision.GetComponent<CharControl>().HealthChange(weaponEnergyGiven);}
             Destroy(gameObject);
         }
     }

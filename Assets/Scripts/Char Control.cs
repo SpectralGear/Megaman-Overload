@@ -124,7 +124,7 @@ public class CharControl : MonoBehaviour
         slide();
         motion();
         if (AutoRecover&&healthPoints>=0&&healthPoints<28){HealthChange(Time.deltaTime/3);}
-        if (isHit&&invincibiltyTimer<1){invincibiltyTimer+=Time.deltaTime;}
+        if (isHit&&invincibiltyTimer<1){invincibiltyTimer+=Time.deltaTime; if (invincibiltyTimer > 0.5f){anim.SetBool("Hit",false);}}
         else {isHit=false;invincibiltyTimer=0;}
     }
     private void FixedUpdate()
@@ -234,10 +234,9 @@ public class CharControl : MonoBehaviour
     }
     public void HealthChange(float amountChanged)
     {
-        if (amountChanged == 0) return;
+        if (amountChanged == 0 || (amountChanged > 0 && isHit)) return;
         isHit = amountChanged < 0;
-        bool isValidHit = isHit && !ShockAbsorber && invincibiltyTimer < 0.5f && !(isSliding && ceilingAbove());
-        anim.SetBool("Hit", isValidHit);
+        anim.SetBool("Hit", isHit && !ShockAbsorber && invincibiltyTimer <= 0.5f && !(isSliding && ceilingAbove()));
         var safetyBall = GetComponentInChildren<SafetyBallScript>();
         if (safetyBall && safetyBall.isActiveAndEnabled)
         {
@@ -249,9 +248,10 @@ public class CharControl : MonoBehaviour
             if (Armor && isHit) amountChanged += amountChanged / 2;
             if (SuperRecover && amountChanged > 0) amountChanged *= 2;
         }
-        healthPoints += (healthPoints >= 5 && amountChanged < 0) ? -healthPoints : amountChanged;
+        healthPoints += (healthPoints >= 5 && -amountChanged > healthPoints) ? -healthPoints : amountChanged;
         healthPoints = Mathf.Clamp(healthPoints, -1, 28);
         dead = healthPoints < 0;
         healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f);
+        if (dead){GetComponent<Buster>().enabled=false;enabled=false;rb.velocity=Vector2.zero;}
     }
 }
