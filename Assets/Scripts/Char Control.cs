@@ -11,10 +11,12 @@ public class CharControl : MonoBehaviour
     Image healthBar;
     Animator anim;
     public Rigidbody2D rb;
-    private bool isHit=false,slideJumping=false,slidingToTheRight;
+    private bool isHit=false,slideJumping=false,slidingToTheRight,grounded;
     public bool dead,facingRight=true,isSliding=false;
     private float slideTimer,VelocityY,VelocityX,healthPoints=28,timeSinceJump,invincibiltyTimer,currentMotion,moveInputX=0,moveInputY=0;
     private DefaultControls playerInputActions;
+    [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip jumpSFX, slideSFX, landSfX, hurtSfX, dieSFX, healSfX;
     private void Awake()
     {
         playerInputActions = new DefaultControls();
@@ -80,10 +82,12 @@ public class CharControl : MonoBehaviour
             slideJumping = true;
             timeSinceJump = 0f;
             VelocityY = jumpForce;
+            audioSource.PlayOneShot(jumpSFX);
         }
-        else if ((DashInputInsteadOfSlideInput||moveInputY>=0)&&groundContact())
+        else if ((DashInputInsteadOfSlideInput||moveInputY>=0)&&grounded)
         {
             VelocityY = jumpForce;
+            audioSource.PlayOneShot(jumpSFX);
         }
         else if (WallKick && (rightWallContact(false) || leftWallContact(false)))
         {
@@ -96,6 +100,7 @@ public class CharControl : MonoBehaviour
             {
                 currentMotion = 10;
             }
+            audioSource.PlayOneShot(jumpSFX);
         }
     }
     private void OnJumpCanceled(InputAction.CallbackContext context)
@@ -108,9 +113,10 @@ public class CharControl : MonoBehaviour
     }
     private void OnSlide(InputAction.CallbackContext context)
     {
-        if (groundContact()&&!isSliding)
+        if (grounded&&!isSliding)
         {
             isSliding = true;
+            audioSource.PlayOneShot(slideSFX);
             slideTimer=0;
             slidingToTheRight = facingRight;
         }
@@ -119,8 +125,9 @@ public class CharControl : MonoBehaviour
     {
         moveInputX = playerInputActions.Controls.MoveHorizontal.ReadValue<float>();
         moveInputY = playerInputActions.Controls.MoveVertical.ReadValue<float>();
+        grounded=groundContact();
         OnMove();
-        fall(!groundContact());
+        fall(!grounded);
         slide();
         motion();
         if (AutoRecover&&healthPoints>=0&&healthPoints<28){HealthChange(Time.deltaTime/3);}
@@ -184,6 +191,7 @@ public class CharControl : MonoBehaviour
     }
     private void fall(bool airborne)
     {
+        if (anim.GetBool("Jumping")==true&&!airborne){audioSource.PlayOneShot(landSfX);}
         anim.SetBool("Jumping", airborne);
         if (!airborne) {return;}
         float accelerationY = inWater ? gravityInWater : gravity;
@@ -193,12 +201,12 @@ public class CharControl : MonoBehaviour
     }
     private void slide()
     {
-        if (isSliding&&(slideTimer >= slideTime||slidingToTheRight!=facingRight||(leftWallContact(true)&&!slidingToTheRight)||(rightWallContact(true)&&slidingToTheRight)||!groundContact())&&!ceilingAbove())
+        if (isSliding&&(slideTimer >= slideTime||slidingToTheRight!=facingRight||(leftWallContact(true)&&!slidingToTheRight)||(rightWallContact(true)&&slidingToTheRight)||!grounded)&&!ceilingAbove())
         {
             isSliding=false;
             currentMotion=0;
         }
-        else if (isSliding&&!groundContact()&&ceilingAbove())
+        else if (isSliding&&!grounded&&ceilingAbove())
         {
             isSliding=false;
             currentMotion=0;
@@ -214,7 +222,7 @@ public class CharControl : MonoBehaviour
     }
     private void motion()
     {
-        if (!groundContact()) 
+        if (!grounded) 
         {
             timeSinceJump += Time.deltaTime;
         }
@@ -246,12 +254,13 @@ public class CharControl : MonoBehaviour
         else
         {
             if (Armor && isHit) amountChanged += amountChanged / 2;
-            if (SuperRecover && amountChanged > 0) amountChanged *= 2;
+            else if (SuperRecover && amountChanged > 0) amountChanged *= 2;
         }
+        audioSource.PlayOneShot(amountChanged>0?healSfX:hurtSfX);
         healthPoints += (healthPoints >= 5 && -amountChanged > healthPoints) ? -healthPoints : amountChanged;
         healthPoints = Mathf.Clamp(healthPoints, -1, 28);
         dead = healthPoints < 0;
         healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f);
-        if (dead){GetComponent<Buster>().enabled=false;enabled=false;rb.velocity=Vector2.zero;}
+        if (dead){GetComponent<Buster>().enabled=false;enabled=false;rb.velocity=Vector2.zero;audioSource.PlayOneShot(dieSFX);}
     }
 }

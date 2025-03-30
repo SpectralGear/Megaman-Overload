@@ -9,13 +9,12 @@ public class SafetyBallScript : MonoBehaviour
     Vector3 velocityPosition = Vector3.zero;
     [SerializeField] float maxShieldHealth;
     float shieldHealth = 0;
-
     public Material material;   // Material where the texture will be applied
     public float rotationSpeed = 1f;  // Speed of texture rotation (in seconds)
     private Texture2D originalTexture;  // Store the original texture
     private Texture2D rotatedTexture;   // Store the rotated texture temporarily
     private float timeSinceLastChange = 0f;  // Timer for rotation timing
-
+    AudioSource audioSource;
     void Start()
     {
         cc = GetComponentInParent<CharControl>();
@@ -25,10 +24,12 @@ public class SafetyBallScript : MonoBehaviour
             // Store the original texture from the material
             originalTexture = material.GetTexture("_MainTex") as Texture2D;
         }
+        audioSource = GetComponent<AudioSource>();
     }
     void OnEnable()
     {
         shieldHealth = maxShieldHealth;
+        audioSource.Play();
     }
     public void HealthChange(float amountChanged)
     {

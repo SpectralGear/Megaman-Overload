@@ -26,6 +26,7 @@ public class Buster : MonoBehaviour
     [SerializeField] Weapon EquippedWeapon;
     [SerializeField] Texture2D Ball, BallAttack;
     [SerializeField] Material charMat;
+    [SerializeField] AudioSource chargingAudioSource;
     private void Awake()
     {
         playerInputActions = new DefaultControls();
@@ -175,6 +176,7 @@ public class Buster : MonoBehaviour
     private void OnShootStarted(InputAction.CallbackContext context)
     {
         ChargingWeapon = ChargeableWeapons.Contains(EquippedWeapon);
+        if (ChargingWeapon){chargingAudioSource.Play();}
         if (!anim.GetBool("Sliding"))
         {
             pointBuster=0.5f;
@@ -184,15 +186,11 @@ public class Buster : MonoBehaviour
     private void OnShootCanceled(InputAction.CallbackContext context)
     {
         if (BusterCharge>=HalfCharge&&ChargeableWeapons.Contains(EquippedWeapon)&&!anim.GetBool("Sliding")){pointBuster=0.5f;ShootEquippedWeapon();}
-        else if (!BeamBuster)
+        if (!BeamBuster)
         {
             ChargingWeapon=false;
             BusterCharge=0;
         }
-        ChargingEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
-        FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
-        OverChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
-        charMat.SetColor("_OtlColor",new Color32(0,0,0,255));
     }
     void Update()
     {
@@ -205,11 +203,22 @@ public class Buster : MonoBehaviour
             if (BusterCharge>=OverCharge&&ExtraCharge){charMat.SetColor("_OtlColor",new Color32(255,52,55,255));FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);OverChargeEffect.Play();}
             else if (BusterCharge>=FullCharge){charMat.SetColor("_OtlColor",new Color32(151,255,255,255));ChargingEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);FullChargeEffect.Play();}
             else if (BusterCharge>=HalfCharge){charMat.SetColor("_OtlColor",new Color32(247,255,146,255));ChargingEffect.Play();}
+            if (chargingAudioSource.isPlaying&&chargingAudioSource.time>2.5f){chargingAudioSource.volume=Mathf.Clamp((float)((chargingAudioSource.clip.length-chargingAudioSource.time)/(chargingAudioSource.clip.length-2.5f)),0,0.5f);}
+            else {chargingAudioSource.volume=0.5f;}
         }
+        else{StopLooping();}
         if (FireTimer>0){FireTimer-=Time.deltaTime; FireTimer=Mathf.Clamp(FireTimer,0,FireTimer);}
         if (pointBuster>0){pointBuster-=Time.deltaTime;pointBuster=Mathf.Clamp(pointBuster,0,pointBuster);}
         SetLayerWeight("Shoot",pointBuster>0.2f ? 1 : pointBuster/0.2f);
         if (!anim.GetBool("Jumping")){attackPrefabs[(int)Projectile.SafetyBall].gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex",Ball);}
+    }
+    void StopLooping()
+    {
+        chargingAudioSource.Stop();
+        ChargingEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+        FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+        OverChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
+        charMat.SetColor("_OtlColor",new Color32(0,0,0,255));
     }
     void ShootEquippedWeapon()
     {
