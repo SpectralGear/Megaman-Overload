@@ -392,17 +392,17 @@ MonoBehaviour:
   Sprinter: 0
   WallKick: 0
   inWater: 0
-  rb: {fileID: 0}
+  rb: {fileID: 2994034328710830027}
   dead: 0
   facingRight: 1
   isSliding: 0
   audioSource: {fileID: 1674875788884213021}
-  jumpSFX: {fileID: 8300000, guid: f6cd8481f3dc3f440b61d9a46725fc65, type: 3}
-  slideSFX: {fileID: 8300000, guid: 3475b8a4e5e4ddf4f994341d0a757082, type: 3}
-  landSfX: {fileID: 8300000, guid: a664aeceaf5ab0445bee5d506840f37a, type: 3}
-  hurtSfX: {fileID: 8300000, guid: 39e8c901c33a0684b8ed6ee245683bbf, type: 3}
-  dieSFX: {fileID: 8300000, guid: 92f660f613a857541870bcd71f26aebb, type: 3}
-  healSfX: {fileID: 8300000, guid: 64ab6e642ca6ff441956389d236a48ef, type: 3}
+  jumpSFX: {fileID: 8300000, guid: f4b1e68a0bb3b1f4bb45b491d59cf925, type: 3}
+  slideSFX: {fileID: 8300000, guid: 0d5d586ceda220948a598fffdcb5ab03, type: 3}
+  landSFX: {fileID: 8300000, guid: 1b8aee5964d45ae478eda417c6025ca4, type: 3}
+  hurtSFX: {fileID: 8300000, guid: 152cb5d0dd1feac4c9613138410f779f, type: 3}
+  dieSFX: {fileID: 8300000, guid: 94e7fcaa8c131644aa503bcb0e2ead3f, type: 3}
+  healSFX: {fileID: 8300000, guid: c214cb3b60efee949863d4ede621980c, type: 3}
 --- !u!114 &8531277952053418549
 MonoBehaviour:
   m_ObjectHideFlags: 0

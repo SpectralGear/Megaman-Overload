@@ -16,7 +16,7 @@ public class CharControl : MonoBehaviour
     private float slideTimer,VelocityY,VelocityX,healthPoints=28,timeSinceJump,invincibiltyTimer,currentMotion,moveInputX=0,moveInputY=0;
     private DefaultControls playerInputActions;
     [SerializeField] AudioSource audioSource;
-    [SerializeField] AudioClip jumpSFX, slideSFX, landSfX, hurtSfX, dieSFX, healSfX;
+    [SerializeField] AudioClip jumpSFX, slideSFX, landSFX, hurtSFX, dieSFX, healSFX;
     private void Awake()
     {
         playerInputActions = new DefaultControls();
@@ -130,7 +130,7 @@ public class CharControl : MonoBehaviour
         fall(!grounded);
         slide();
         motion();
-        if (AutoRecover&&healthPoints>=0&&healthPoints<28){HealthChange(Time.deltaTime/3);}
+        if (AutoRecover&&healthPoints>=0&&healthPoints<28){HealthChange(Time.deltaTime/5);}
         if (isHit&&invincibiltyTimer<1){invincibiltyTimer+=Time.deltaTime; if (invincibiltyTimer > 0.5f){anim.SetBool("Hit",false);}}
         else {isHit=false;invincibiltyTimer=0;}
     }
@@ -191,7 +191,7 @@ public class CharControl : MonoBehaviour
     }
     private void fall(bool airborne)
     {
-        if (anim.GetBool("Jumping")==true&&!airborne){audioSource.PlayOneShot(landSfX);}
+        if (anim.GetBool("Jumping")==true&&!airborne){audioSource.PlayOneShot(landSFX);}
         anim.SetBool("Jumping", airborne);
         if (!airborne) {return;}
         float accelerationY = inWater ? gravityInWater : gravity;
@@ -256,7 +256,7 @@ public class CharControl : MonoBehaviour
             if (Armor && isHit) amountChanged += amountChanged / 2;
             else if (SuperRecover && amountChanged > 0) amountChanged *= 2;
         }
-        audioSource.PlayOneShot(amountChanged>0?healSfX:hurtSfX);
+        if (amountChanged>1||amountChanged<-1){audioSource.PlayOneShot(amountChanged>0?healSFX:hurtSFX);}
         healthPoints += (healthPoints >= 5 && -amountChanged > healthPoints) ? -healthPoints : amountChanged;
         healthPoints = Mathf.Clamp(healthPoints, -1, 28);
         dead = healthPoints < 0;
