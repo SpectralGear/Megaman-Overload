@@ -2,7 +2,8 @@ using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Animator))]
 public class CharControl : MonoBehaviour
 {
     [SerializeField] float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
@@ -242,7 +243,7 @@ public class CharControl : MonoBehaviour
     }
     public void HealthChange(float amountChanged)
     {
-        if (amountChanged == 0 || (amountChanged > 0 && isHit)) return;
+        if (amountChanged == 0 || (amountChanged < 0 && isHit)){healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f); return;}
         isHit = amountChanged < 0;
         anim.SetBool("Hit", isHit && !ShockAbsorber && invincibiltyTimer <= 0.5f && !(isSliding && ceilingAbove()));
         var safetyBall = GetComponentInChildren<SafetyBallScript>();

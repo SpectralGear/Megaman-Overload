@@ -4,8 +4,9 @@ using UnityEngine;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem;
+using System.Runtime.CompilerServices;
 
-
+[RequireComponent(typeof(CharControl))]
 public class Buster : MonoBehaviour
 {
     [SerializeField] float FullCharge,ShotTiming;
@@ -40,6 +41,7 @@ public class Buster : MonoBehaviour
         ChargeableWeapons.Add(Weapon.MegaBuster);
         ChargeableWeapons.Add(Weapon.SlagShot);
         ChargeableWeapons.Add(Weapon.IfritBurst);
+        UpdateInventory();
     }
     private void OnEnable()
     {
@@ -452,6 +454,21 @@ public class Buster : MonoBehaviour
         if (layerIndex != -1) // Ensure the layer exists
         {
             anim.SetLayerWeight(layerIndex, weight);
+        }
+    }
+    void UpdateInventory()
+    {
+        for (int i = 1; i <= 9; i++)
+        {
+            GetComponent<CharControl>().HealthChange(0);
+            if (PlayerPrefs.HasKey(((Weapon)i).ToString())&&!OwnedWeapons.Contains((Weapon)i))
+            {
+                OwnedWeapons.Insert(i,(Weapon)i);
+            }
+            else if (!PlayerPrefs.HasKey(((Weapon)i).ToString())&&OwnedWeapons.Contains((Weapon)i))
+            {
+                OwnedWeapons.Remove((Weapon)i);
+            }
         }
     }
     private void LateUpdate()
