@@ -41,7 +41,7 @@ public class Buster : MonoBehaviour
         ChargeableWeapons.Add(Weapon.MegaBuster);
         ChargeableWeapons.Add(Weapon.SlagShot);
         ChargeableWeapons.Add(Weapon.IfritBurst);
-        UpdateInventory();
+        //UpdateInventory();
     }
     private void OnEnable()
     {
@@ -177,8 +177,7 @@ public class Buster : MonoBehaviour
     }
     private void OnShootStarted(InputAction.CallbackContext context)
     {
-        ChargingWeapon = ChargeableWeapons.Contains(EquippedWeapon);
-        if (ChargingWeapon){chargingAudioSource.Play();}
+        if (ChargeableWeapons.Contains(EquippedWeapon)){ChargingWeapon=true;chargingAudioSource.Play();}
         if (!anim.GetBool("Sliding"))
         {
             pointBuster=0.5f;
@@ -188,11 +187,7 @@ public class Buster : MonoBehaviour
     private void OnShootCanceled(InputAction.CallbackContext context)
     {
         if (BusterCharge>=HalfCharge&&ChargeableWeapons.Contains(EquippedWeapon)&&!anim.GetBool("Sliding")){pointBuster=0.5f;ShootEquippedWeapon();}
-        if (!BeamBuster)
-        {
-            ChargingWeapon=false;
-            BusterCharge=0;
-        }
+        StopCharge();
     }
     void Update()
     {
@@ -208,15 +203,17 @@ public class Buster : MonoBehaviour
             if (chargingAudioSource.isPlaying&&chargingAudioSource.time>2.5f){chargingAudioSource.volume=Mathf.Clamp((float)((chargingAudioSource.clip.length-chargingAudioSource.time)/(chargingAudioSource.clip.length-2.5f)),0,0.5f);}
             else {chargingAudioSource.volume=0.5f;}
         }
-        else{StopLooping();}
+        else{StopCharge();}
         if (FireTimer>0){FireTimer-=Time.deltaTime; FireTimer=Mathf.Clamp(FireTimer,0,FireTimer);}
         if (pointBuster>0){pointBuster-=Time.deltaTime;pointBuster=Mathf.Clamp(pointBuster,0,pointBuster);}
         SetLayerWeight("Shoot",pointBuster>0.2f ? 1 : pointBuster/0.2f);
-        if (!anim.GetBool("Jumping")){attackPrefabs[(int)Projectile.SafetyBall].gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex",Ball);}
+        if (!anim.GetBool("Jumping")&&attackPrefabs[(int)Projectile.SafetyBall].activeInHierarchy){Shoot(Projectile.SafetyBall);}
     }
-    void StopLooping()
+    void StopCharge()
     {
         chargingAudioSource.Stop();
+        ChargingWeapon=false;
+        BusterCharge=0;
         ChargingEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
         FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
         OverChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);
@@ -294,10 +291,13 @@ public class Buster : MonoBehaviour
                 }
                 break;
             case Projectile.SafetyBall:
+                attackPrefabs[(int)Projectile.BallBounce].gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex",Ball);
+                attackPrefabs[(int)Projectile.SafetyBall].GetComponent<SafetyBallScript>().Attack=false;
                 attackPrefabs[(int)Projectile.SafetyBall].SetActive(true);
                 break;
             case Projectile.BallBounce:
-                attackPrefabs[(int)Projectile.SafetyBall].gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex",BallAttack);
+                attackPrefabs[(int)Projectile.BallBounce].gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex",BallAttack);
+                attackPrefabs[(int)Projectile.SafetyBall].GetComponent<SafetyBallScript>().Attack=true;
                 break;
             case Projectile.SlagShot:
                 if (FireTimer==0)

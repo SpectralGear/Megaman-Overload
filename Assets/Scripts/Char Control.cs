@@ -8,7 +8,7 @@ public class CharControl : MonoBehaviour
 {
     [SerializeField] float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
     [SerializeField] GameObject StandingCollision,SlidingCollision;
-    [SerializeField] public bool DashInputInsteadOfSlideInput,Armor,ShockAbsorber,AutoRecover,SuperRecover,SuperSlide,Sprinter,WallKick,inWater;
+    [SerializeField] public bool DashComboInput,SlideComboInput,Armor,ShockAbsorber,AutoRecover,SuperRecover,SuperSlide,Sprinter,WallKick,inWater;
     Image healthBar;
     Animator anim;
     public Rigidbody2D rb;
@@ -32,21 +32,27 @@ public class CharControl : MonoBehaviour
     private void OnEnable()
     {
         playerInputActions.Controls.MoveHorizontal.started += OnMoveStarted;  // Subscribe to the Move action
-        playerInputActions.Controls.MoveHorizontal.canceled += OnMoveCanceled;
+        playerInputActions.Controls.MoveHorizontal.performed += OnHorizontalPerformed;
+        playerInputActions.Controls.MoveVertical.performed += OnVerticalPerformed;
+        playerInputActions.Controls.MoveHorizontal.canceled += OnHorizontalCanceled;
+        playerInputActions.Controls.MoveVertical.canceled += OnVerticalCanceled;
         playerInputActions.Controls.Jump.started += OnJumpStarted;
         playerInputActions.Controls.Jump.canceled += OnJumpCanceled;
-        if (DashInputInsteadOfSlideInput){playerInputActions.Controls.Dash.started += OnSlide;}
-        else {playerInputActions.Controls.Slide.started += OnSlide;}
+        if (DashComboInput){playerInputActions.Controls.Dash.started += OnSlide;}
+        playerInputActions.Controls.Slide.started += OnSlide;
     }
     private void OnDisable()
     {
         // Unsubscribe to avoid memory leaks
         playerInputActions.Controls.MoveHorizontal.started -= OnMoveStarted;
-        playerInputActions.Controls.MoveHorizontal.canceled -= OnMoveCanceled;
+        playerInputActions.Controls.MoveHorizontal.performed -= OnHorizontalPerformed;
+        playerInputActions.Controls.MoveVertical.performed -= OnVerticalPerformed;
+        playerInputActions.Controls.MoveHorizontal.canceled -= OnHorizontalCanceled;
+        playerInputActions.Controls.MoveVertical.canceled -= OnVerticalCanceled;
         playerInputActions.Controls.Jump.started -= OnJumpStarted;
         playerInputActions.Controls.Jump.canceled -= OnJumpCanceled;
-        playerInputActions.Controls.Slide.performed -= OnSlide;
         playerInputActions.Controls.Dash.started -= OnSlide;
+        playerInputActions.Controls.Slide.started -= OnSlide;
     }
     private void OnDestroy()
     {
@@ -55,6 +61,14 @@ public class CharControl : MonoBehaviour
     private void OnMoveStarted(InputAction.CallbackContext context)
     {
         anim.SetBool("Running",true);
+    }
+    private void OnHorizontalPerformed(InputAction.CallbackContext context)
+    {
+        moveInputX = context.ReadValue<float>();
+    }
+    private void OnVerticalPerformed(InputAction.CallbackContext context)
+    {
+        moveInputY = context.ReadValue<float>();
     }
     private void OnMove()
     {
@@ -71,10 +85,15 @@ public class CharControl : MonoBehaviour
         else {transform.localScale=new Vector3(-1,1,1);}
         anim.SetFloat("Run Speed",currentMotion/2);
     }
-    private void OnMoveCanceled(InputAction.CallbackContext context)
+    private void OnHorizontalCanceled(InputAction.CallbackContext context)
     {
         if (!anim.GetBool("Hit")&&!isSliding){currentMotion=0;}
         anim.SetBool("Running",false);
+        moveInputX=0;
+    }
+    private void OnVerticalCanceled(InputAction.CallbackContext context)
+    {
+        moveInputY=0;
     }
     private void OnJumpStarted(InputAction.CallbackContext context)
     {
@@ -85,7 +104,14 @@ public class CharControl : MonoBehaviour
             VelocityY = jumpForce;
             audioSource.PlayOneShot(jumpSFX);
         }
-        else if ((DashInputInsteadOfSlideInput||moveInputY>=0)&&grounded)
+        else if (SlideComboInput&&moveInputY<0&&grounded&&!isSliding)
+        {
+            isSliding = true;
+            audioSource.PlayOneShot(slideSFX);
+            slideTimer=0;
+            slidingToTheRight = facingRight;
+        }
+        else if ((!SlideComboInput||moveInputY>=0)&&grounded)
         {
             VelocityY = jumpForce;
             audioSource.PlayOneShot(jumpSFX);
@@ -124,8 +150,6 @@ public class CharControl : MonoBehaviour
     }
     private void Update()
     {
-        moveInputX = playerInputActions.Controls.MoveHorizontal.ReadValue<float>();
-        moveInputY = playerInputActions.Controls.MoveVertical.ReadValue<float>();
         grounded=groundContact();
         OnMove();
         fall(!grounded);
@@ -243,7 +267,7 @@ public class CharControl : MonoBehaviour
     }
     public void HealthChange(float amountChanged)
     {
-        if (amountChanged == 0 || (amountChanged < 0 && isHit)){healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f); return;}
+        if (amountChanged == 0 || (amountChanged < 0 && isHit)){if (healthBar!=null){healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f);} return;}
         isHit = amountChanged < 0;
         anim.SetBool("Hit", isHit && !ShockAbsorber && invincibiltyTimer <= 0.5f && !(isSliding && ceilingAbove()));
         var safetyBall = GetComponentInChildren<SafetyBallScript>();
@@ -261,7 +285,7 @@ public class CharControl : MonoBehaviour
         healthPoints += (healthPoints >= 5 && -amountChanged > healthPoints) ? -healthPoints : amountChanged;
         healthPoints = Mathf.Clamp(healthPoints, -1, 28);
         dead = healthPoints < 0;
-        healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f);
+        if (healthBar!=null){healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f);}
         if (dead){GetComponent<Buster>().enabled=false;enabled=false;rb.velocity=Vector2.zero;audioSource.PlayOneShot(dieSFX);}
     }
 }
