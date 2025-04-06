@@ -1,6 +1,7 @@
 using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
@@ -9,7 +10,12 @@ public class CharControl : MonoBehaviour
 {
     [SerializeField] public float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
     [SerializeField] GameObject StandingCollision,SlidingCollision;
-    [SerializeField] public bool DashComboInput,SlideComboInput,Armor,ShockAbsorber,AutoRecover,SuperRecover,SuperSlide,Sprinter,WallKick,inWater;
+    [SerializeField] public bool DashComboInput,SlideComboInput,SuperSlide,Sprinter,WallKick,inWater;
+    public enum upgrades {Armor,ShockAbsorber,AutoRecover, EnergySaver,SuperRecover,PickupFinder, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
+    [SerializeField] public List<upgrades> OwnedUpgrades = new List<upgrades>(12);
+    [SerializeField] public List<bool> EquippedUpgrades = new List<bool>(12);
+    public enum Character {Megaman, Protoman, Bass, Roll}
+    [SerializeField] public Character CurrentCharacter;
     Image healthBar;
     Animator anim;
     public Rigidbody2D rb;
@@ -30,6 +36,8 @@ public class CharControl : MonoBehaviour
         healthBar = GameObject.Find("HP").GetComponent<Image>();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        OwnedUpgrades = new List<upgrades>(12);
+        EquippedUpgrades = new List<bool>(12);
     }
     private void OnEnable()
     {
@@ -157,7 +165,7 @@ public class CharControl : MonoBehaviour
         fall(!grounded);
         slide();
         motion();
-        if (AutoRecover&&healthPoints>=0&&healthPoints<28){HealthChange(Time.deltaTime/5);}
+        if (CurrentCharacter!=Character.Protoman&&EquippedUpgrades[(int)upgrades.AutoRecover]&&healthPoints>=0&&healthPoints<28){HealthChange(Time.deltaTime/5);}
         if (isHit&&invincibiltyTimer<1){invincibiltyTimer+=Time.deltaTime; if (invincibiltyTimer > 0.5f){anim.SetBool("Hit",false);}}
         else {isHit=false;invincibiltyTimer=0;}
     }
@@ -271,7 +279,7 @@ public class CharControl : MonoBehaviour
     {
         if (amountChanged == 0 || (amountChanged < 0 && isHit)){if (healthBar!=null){healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f);} return;}
         isHit = amountChanged < 0;
-        anim.SetBool("Hit", isHit && !ShockAbsorber && invincibiltyTimer <= 0.5f && !(isSliding && ceilingAbove()));
+        anim.SetBool("Hit", isHit && !EquippedUpgrades[(int)upgrades.ShockAbsorber] && invincibiltyTimer <= 0.5f && !(isSliding && ceilingAbove()));
         var safetyBall = GetComponentInChildren<SafetyBallScript>();
         if (safetyBall && safetyBall.isActiveAndEnabled)
         {
@@ -280,8 +288,8 @@ public class CharControl : MonoBehaviour
         }
         else
         {
-            if (Armor && isHit) amountChanged += amountChanged / 2;
-            else if (SuperRecover && amountChanged > 0) amountChanged *= 2;
+            if (EquippedUpgrades[(int)upgrades.Armor] && isHit) amountChanged += amountChanged / 2;
+            else if (EquippedUpgrades[(int)upgrades.SuperRecover] && amountChanged > 0) amountChanged *= 2;
         }
         if (amountChanged>1||amountChanged<-1){audioSource.PlayOneShot(amountChanged>0?healSFX:hurtSFX);}
         healthPoints += (healthPoints >= 5 && -amountChanged > healthPoints) ? -healthPoints : amountChanged;

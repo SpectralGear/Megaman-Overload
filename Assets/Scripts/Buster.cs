@@ -1,11 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine.InputSystem;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 [RequireComponent(typeof(CharControl))]
 public class Buster : MonoBehaviour
@@ -14,10 +10,11 @@ public class Buster : MonoBehaviour
     [SerializeField] GameObject projectileSpawn,leftBuster;
     [SerializeField] List<GameObject> attackPrefabs = new List<GameObject>();
     [SerializeField] ParticleSystem ChargingEffect,FullChargeEffect,OverChargeEffect;
-    [SerializeField] bool EnergySaver,ExtraCharge,QuickerCharge,BeamBuster;
     Animator anim;
+    public enum upgrades {Armor,ShockAbsorber,AutoRecover, EnergySaver,SuperRecover,PickupFinder, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
+    public enum Character {Megaman, Protoman, Bass, Roll}
     private DefaultControls playerInputActions;
-    private bool facingRight=true,ChargingWeapon,SuperRecover;
+    private bool facingRight=true,ChargingWeapon;
     float BusterCharge,HalfCharge,OverCharge,FireTimer,pointBuster=0,ChargeSpeed;
     int maxBullets=3;
     private List<GameObject> projectilesAndAttacks = new List<GameObject>();
@@ -25,6 +22,7 @@ public class Buster : MonoBehaviour
     public enum Weapon {MegaBuster,SickleChain,SafetyBall,SlagShot,MegawattSurge,Brickfall,IfritBurst,WaterHose,CycloneStrike,AnimalFriend};
     private List<Weapon> ChargeableWeapons = new List<Weapon>();
     public List<Weapon> OwnedWeapons = new List<Weapon>();
+    CharControl cc;
     [SerializeField] Weapon EquippedWeapon;
     [SerializeField] Texture2D Ball, BallAttack;
     [SerializeField] Material charMat;
@@ -42,6 +40,7 @@ public class Buster : MonoBehaviour
         ChargeableWeapons.Add(Weapon.MegaBuster);
         ChargeableWeapons.Add(Weapon.SlagShot);
         ChargeableWeapons.Add(Weapon.IfritBurst);
+        cc = GetComponent<CharControl>();
         //UpdateInventory();
     }
     private void OnEnable()
@@ -193,13 +192,12 @@ public class Buster : MonoBehaviour
     }
     void Update()
     {
-        facingRight = GetComponent<CharControl>().facingRight;
-        SuperRecover = GetComponent<CharControl>().SuperRecover;
+        facingRight = cc.facingRight;
         if (ChargingWeapon)
         {
-            ChargeSpeed = QuickerCharge ? 2 : 1;
+            ChargeSpeed = cc.EquippedUpgrades[(int)upgrades.QuickerCharge] ? 2 : 1;
             if (BusterCharge<OverCharge){BusterCharge+=Time.deltaTime*ChargeSpeed;BusterCharge=Mathf.Clamp(BusterCharge,0,OverCharge);}
-            if (BusterCharge>=OverCharge&&ExtraCharge){charMat.SetColor("_OtlColor",new Color32(255,52,55,255));FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);OverChargeEffect.Play();}
+            if (BusterCharge>=OverCharge&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge]){charMat.SetColor("_OtlColor",new Color32(255,52,55,255));FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);OverChargeEffect.Play();}
             else if (BusterCharge>=FullCharge){charMat.SetColor("_OtlColor",new Color32(151,255,255,255));ChargingEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);FullChargeEffect.Play();}
             else if (BusterCharge>=HalfCharge){charMat.SetColor("_OtlColor",new Color32(247,255,146,255));ChargingEffect.Play();}
             if (chargingAudioSource.isPlaying&&chargingAudioSource.time>2.5f){chargingAudioSource.volume=Mathf.Clamp((float)((chargingAudioSource.clip.length-chargingAudioSource.time)/(chargingAudioSource.clip.length-2.5f)),0,0.5f);}
@@ -223,7 +221,7 @@ public class Buster : MonoBehaviour
     }
     void ShootEquippedWeapon()
     {
-        if (QuickerCharge){ChargeSpeed=2;}
+        if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]){ChargeSpeed=2;}
         else {ChargeSpeed=1;}
         switch (EquippedWeapon)
         {
@@ -259,7 +257,7 @@ public class Buster : MonoBehaviour
                 Shoot(Projectile.CycloneStrike);
                 break;
             default:
-                if (BusterCharge>=OverCharge&&ExtraCharge){Shoot(Projectile.OverCharge);BusterCharge=0;}
+                if (BusterCharge>=OverCharge&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge]){Shoot(Projectile.OverCharge);BusterCharge=0;}
                 else if (BusterCharge>=FullCharge){Shoot(Projectile.FullCharge);BusterCharge=0;}
                 else if (BusterCharge>=HalfCharge){Shoot(Projectile.HalfCharge);BusterCharge=0;}
                 else {Shoot(Projectile.NoCharge);BusterCharge=0;}

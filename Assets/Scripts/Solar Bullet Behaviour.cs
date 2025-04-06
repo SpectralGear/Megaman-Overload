@@ -24,9 +24,10 @@ public class SolarBulletBehaviour : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Boss") || collision.gameObject.CompareTag("Enemy") || (collision.gameObject.CompareTag("Enemy Shield") && ShieldBreaker))
+        if ((collision.CompareTag("Boss") || collision.CompareTag("Enemy") || (collision.CompareTag("Enemy Shield") && ShieldBreaker))&&collision.GetComponent<EnemyHealth>())
         {
-            EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();enemy.TakeDamage(damage,(int)damageType);
+            EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
+            enemy.TakeDamage(damage,(int)damageType);
             if (!Pierces || (PiercesOnKill && !enemy.dead)){Destroy(gameObject);}
         }
         else if (collision.gameObject.CompareTag("Enemy Shield")){Destroy(gameObject);}
