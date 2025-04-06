@@ -204,6 +204,8 @@ MonoBehaviour:
   maxShieldHealth: 12
   audioSource: {fileID: 4075676547495356670}
   ball: {fileID: 9056236432797844965}
+  AttackFallMagnitude: 10
+  Attack: 0
 --- !u!60 &1948074604561757286
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -595,7 +597,8 @@ MonoBehaviour:
   maxVerticalVelocity: 10
   StandingCollision: {fileID: 9083886059217191213}
   SlidingCollision: {fileID: 7604965200786383289}
-  DashInputInsteadOfSlideInput: 0
+  DashComboInput: 0
+  SlideComboInput: 0
   Armor: 0
   ShockAbsorber: 0
   AutoRecover: 0
@@ -608,6 +611,9 @@ MonoBehaviour:
   dead: 0
   facingRight: 1
   isSliding: 0
+  grounded: 0
+  moveInputX: 0
+  moveInputY: 0
   audioSource: {fileID: 1674875788884213021}
   jumpSFX: {fileID: 8300000, guid: f4b1e68a0bb3b1f4bb45b491d59cf925, type: 3}
   slideSFX: {fileID: 8300000, guid: 0d5d586ceda220948a598fffdcb5ab03, type: 3}

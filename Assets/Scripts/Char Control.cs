@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Buster))]
 public class CharControl : MonoBehaviour
 {
     [SerializeField] float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
@@ -12,9 +13,10 @@ public class CharControl : MonoBehaviour
     Image healthBar;
     Animator anim;
     public Rigidbody2D rb;
-    private bool isHit=false,slideJumping=false,slidingToTheRight,grounded;
-    public bool dead,facingRight=true,isSliding=false;
-    private float slideTimer,VelocityY,VelocityX,healthPoints=28,timeSinceJump,invincibiltyTimer,currentMotion,moveInputX=0,moveInputY=0;
+    private bool isHit=false,slideJumping=false,slidingToTheRight;
+    public bool dead,facingRight=true,isSliding=false,grounded,velocityOverride;
+    private float slideTimer,VelocityY,VelocityX,healthPoints=28,timeSinceJump,invincibiltyTimer,currentMotion;
+    public float moveInputX=0,moveInputY=0;
     private DefaultControls playerInputActions;
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip jumpSFX, slideSFX, landSFX, hurtSFX, dieSFX, healSFX;
@@ -161,7 +163,7 @@ public class CharControl : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        rb.velocity = new Vector2(VelocityX,VelocityY);
+        if (!velocityOverride){rb.velocity = new Vector2(VelocityX,VelocityY);}
     }
     public bool groundContact()
     {

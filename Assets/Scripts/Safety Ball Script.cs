@@ -11,7 +11,9 @@ public class SafetyBallScript : MonoBehaviour
     float shieldHealth = 0;
     [SerializeField] AudioSource audioSource;
     [SerializeField] GameObject ball;
+    [SerializeField] float AttackFallMagnitude;
     public bool Attack;
+    int direction;
     void Start()
     {
         cc = GetComponentInParent<CharControl>();
@@ -27,6 +29,24 @@ public class SafetyBallScript : MonoBehaviour
         shieldHealth+=amountChanged;
         shieldHealth=Mathf.Clamp(shieldHealth,0,maxShieldHealth);
         gameObject.SetActive(shieldHealth<=0?false:true);
+    }
+    void Update()
+    {
+        if (!Attack)
+        {
+            switch (cc.moveInputX)
+            {
+                case >0:
+                direction=1;
+                return;
+                case <0:
+                direction=-1;
+                return;
+                default:
+                direction=0;
+                return;
+            }
+        }
     }
     void FixedUpdate()
     {
@@ -52,7 +72,17 @@ public class SafetyBallScript : MonoBehaviour
             transform.localPosition = Vector3.SmoothDamp(transform.localPosition, newPosition, ref velocityPosition, smoothTime);
 
             // Spin the ball
-            if (ball!=null&&cc.rb.velocity.x!=0){ball.transform.Rotate(new Vector3(0,0,Attack?-20:-1*cc.rb.velocity.magnitude));}
+            if (ball!=null){ball.transform.Rotate(new Vector3(0,0,Attack?-20:(cc.rb.velocity.x==0&&cc.grounded?0:(-1*cc.rb.velocity.magnitude))));}
+
+            if (Attack)
+            {
+                cc.velocityOverride=true;
+                cc.rb.velocity = direction==0?Vector2.down*AttackFallMagnitude:new Vector2(direction,-2).normalized*AttackFallMagnitude;
+            }
+            else
+            {
+                cc.velocityOverride=false;
+            }
         }
     }
 }
