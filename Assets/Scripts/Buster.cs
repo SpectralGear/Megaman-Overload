@@ -5,6 +5,7 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine.InputSystem;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 [RequireComponent(typeof(CharControl))]
 public class Buster : MonoBehaviour
@@ -144,6 +145,7 @@ public class Buster : MonoBehaviour
     }
     private void EquipWeapon(int index)
     {
+        attackPrefabs[(int)Projectile.SafetyBall].SetActive(false);
         if (OwnedWeapons == null || OwnedWeapons.Count == 0)
         {
             Debug.LogWarning("No owned weapons to equip.");

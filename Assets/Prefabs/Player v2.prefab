@@ -203,8 +203,11 @@ MonoBehaviour:
   smoothTime: 0.1
   maxShieldHealth: 12
   audioSource: {fileID: 4075676547495356670}
+  popSFX: {fileID: 8300000, guid: 5e29d94ca87748243bb1efb15c803fad, type: 3}
+  bounceSFX: {fileID: 8300000, guid: 7a4271eef249a2340a69f76c62b538c5, type: 3}
   ball: {fileID: 9056236432797844965}
   AttackFallMagnitude: 10
+  DamageDealt: 1
   Attack: 0
 --- !u!60 &1948074604561757286
 PolygonCollider2D:
@@ -612,6 +615,9 @@ MonoBehaviour:
   facingRight: 1
   isSliding: 0
   grounded: 0
+  velocityOverride: 0
+  VelocityY: 0
+  VelocityX: 0
   moveInputX: 0
   moveInputY: 0
   audioSource: {fileID: 1674875788884213021}

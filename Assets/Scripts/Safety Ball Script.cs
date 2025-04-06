@@ -10,9 +10,11 @@ public class SafetyBallScript : MonoBehaviour
     [SerializeField] float maxShieldHealth;
     float shieldHealth = 0;
     [SerializeField] AudioSource audioSource;
+    [SerializeField] AudioClip popSFX,bounceSFX;
     [SerializeField] GameObject ball;
-    [SerializeField] float AttackFallMagnitude;
+    [SerializeField] float AttackFallMagnitude, DamageDealt;
     public bool Attack;
+    bool wasAttacking;
     int direction;
     void Start()
     {
@@ -24,11 +26,31 @@ public class SafetyBallScript : MonoBehaviour
         shieldHealth = maxShieldHealth;
         audioSource.Play();
     }
+    void OnDisable()
+    {
+        PlaySoundAtPosition(popSFX,transform.position);
+        Attack=false;
+        wasAttacking=false;
+        cc.velocityOverride=false;
+    }
+    void PlaySoundAtPosition(AudioClip clip, Vector3 position)
+    {
+        GameObject tempGO = new GameObject("TempAudio");
+        tempGO.transform.position = position;
+        AudioSource aSource = tempGO.AddComponent<AudioSource>();
+        aSource.clip = clip;
+        aSource.Play();
+        Destroy(tempGO, clip.length);
+    }
     public void HealthChange(float amountChanged)
     {
         shieldHealth+=amountChanged;
         shieldHealth=Mathf.Clamp(shieldHealth,0,maxShieldHealth);
         gameObject.SetActive(shieldHealth<=0?false:true);
+    }
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (Attack&&(collision.CompareTag("Enemy")||collision.CompareTag("Boss"))&&collision.GetComponent<EnemyHealth>()){collision.GetComponent<EnemyHealth>().TakeDamage(DamageDealt,7);Attack=false;}
     }
     void Update()
     {
@@ -56,7 +78,7 @@ public class SafetyBallScript : MonoBehaviour
             Vector3 newScale = Vector3.one;
             Vector3 newPosition = new Vector3(0, defaultPosY, 0);
 
-            if (!cc.groundContact())
+            if (!cc.grounded)
             {
                 newScale = new Vector3(0.9f, 1.2f, 0.9f);
                 newPosition = new Vector3(0, defaultPosY * 0.8f, 0);
@@ -77,11 +99,14 @@ public class SafetyBallScript : MonoBehaviour
             if (Attack)
             {
                 cc.velocityOverride=true;
+                if ((cc.leftWallContact(false)&&direction<0)||(cc.rightWallContact(false)&&direction>0)){direction*=-1;audioSource.PlayOneShot(bounceSFX);}
                 cc.rb.velocity = direction==0?Vector2.down*AttackFallMagnitude:new Vector2(direction,-2).normalized*AttackFallMagnitude;
+                wasAttacking=true;
             }
             else
             {
                 cc.velocityOverride=false;
+                if (wasAttacking){cc.VelocityY=cc.jumpForce*1.3f;wasAttacking=false;audioSource.PlayOneShot(bounceSFX);}
             }
         }
     }

@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Buster))]
 public class CharControl : MonoBehaviour
 {
-    [SerializeField] float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
+    [SerializeField] public float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
     [SerializeField] GameObject StandingCollision,SlidingCollision;
     [SerializeField] public bool DashComboInput,SlideComboInput,Armor,ShockAbsorber,AutoRecover,SuperRecover,SuperSlide,Sprinter,WallKick,inWater;
     Image healthBar;
@@ -15,8 +15,8 @@ public class CharControl : MonoBehaviour
     public Rigidbody2D rb;
     private bool isHit=false,slideJumping=false,slidingToTheRight;
     public bool dead,facingRight=true,isSliding=false,grounded,velocityOverride;
-    private float slideTimer,VelocityY,VelocityX,healthPoints=28,timeSinceJump,invincibiltyTimer,currentMotion;
-    public float moveInputX=0,moveInputY=0;
+    private float slideTimer,healthPoints=28,timeSinceJump,invincibiltyTimer,currentMotion;
+    public float VelocityY,VelocityX,moveInputX=0,moveInputY=0;
     private DefaultControls playerInputActions;
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip jumpSFX, slideSFX, landSFX, hurtSFX, dieSFX, healSFX;
@@ -165,7 +165,7 @@ public class CharControl : MonoBehaviour
     {
         if (!velocityOverride){rb.velocity = new Vector2(VelocityX,VelocityY);}
     }
-    public bool groundContact()
+    bool groundContact()
     {
         float groundCheckDistance = 0.2f;
         RaycastHit2D hitCenter = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y+0.1f), Vector2.down, groundCheckDistance, LayerMask.GetMask("Terrain"));
@@ -175,7 +175,7 @@ public class CharControl : MonoBehaviour
         {return true;}
         else {return false;}
     }
-    bool leftWallContact(bool sliding)
+    public bool leftWallContact(bool sliding)
     {
         float wallCheckDistance = 0.2f;
         float wallCheckHeight;
@@ -187,7 +187,7 @@ public class CharControl : MonoBehaviour
         {return true;}
         else {return false;}
     }
-    bool rightWallContact(bool sliding)
+    public bool rightWallContact(bool sliding)
     {
         float wallCheckDistance = 0.2f;
         float wallCheckHeight;
@@ -218,7 +218,7 @@ public class CharControl : MonoBehaviour
     }
     private void fall(bool airborne)
     {
-        if (anim.GetBool("Jumping")==true&&!airborne){audioSource.PlayOneShot(landSFX);}
+        if (anim.GetBool("Jumping")==true&&!airborne&&!GetComponentInChildren<SafetyBallScript>()){audioSource.PlayOneShot(landSFX);}
         anim.SetBool("Jumping", airborne);
         if (!airborne) {return;}
         float accelerationY = inWater ? gravityInWater : gravity;
