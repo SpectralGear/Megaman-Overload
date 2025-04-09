@@ -9,14 +9,13 @@ public class Buster : MonoBehaviour
     [SerializeField] float FullCharge,ShotTiming;
     [SerializeField] GameObject projectileSpawn,leftBuster;
     [SerializeField] List<GameObject> attackPrefabs = new List<GameObject>();
+    [SerializeField] List<GameObject> BassBulletVariants = new List<GameObject>();
     [SerializeField] ParticleSystem ChargingEffect,FullChargeEffect,OverChargeEffect;
     Animator anim;
     public enum upgrades {Armor,ShockAbsorber,AutoRecover, EnergySaver,SuperRecover,PickupFinder, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
-    public enum Character {Megaman, Protoman, Bass, Roll}
     private DefaultControls playerInputActions;
     private bool facingRight=true,ChargingWeapon;
     float BusterCharge,HalfCharge,OverCharge,FireTimer,pointBuster=0,ChargeSpeed;
-    int maxBullets=3;
     private List<GameObject> projectilesAndAttacks = new List<GameObject>();
     enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, SlagShot, SlagHammer, MegawattSurge, Brickfall, IfritBurstSmall, IfritBurstHuge, WaterHose, CycloneStrike, AnimalFriend}
     public enum Weapon {MegaBuster,SickleChain,SafetyBall,SlagShot,MegawattSurge,Brickfall,IfritBurst,WaterHose,CycloneStrike,AnimalFriend};
@@ -394,47 +393,70 @@ public class Buster : MonoBehaviour
                 }
                 break;
             case Projectile.FullCharge:
-                if (facingRight)
-                {
-                    GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.FullCharge],projectileSpawn.transform.position,Quaternion.identity);
-                    projectilesAndAttacks.Add(bullet);
-                }
-                else 
-                {
-                    GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.FullCharge],projectileSpawn.transform.position,Quaternion.identity);
-                    bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);
-                    projectilesAndAttacks.Add(bullet);
-                }
-                break;
-            case Projectile.HalfCharge:
-                if (facingRight)
-                {
-                    GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.HalfCharge],projectileSpawn.transform.position,Quaternion.identity);
-                    projectilesAndAttacks.Add(bullet);
-                }
+                {GameObject bullet = (cc.CurrentCharacter==CharControl.Character.Bass&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge])?Instantiate(BassBulletVariants[3],projectileSpawn.transform.position,Quaternion.identity):Instantiate(attackPrefabs[(int)Projectile.HalfCharge],projectileSpawn.transform.position,Quaternion.identity);
+                if (!facingRight&&cc.CurrentCharacter!=CharControl.Character.Bass){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
                 else
                 {
-                    GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.HalfCharge],projectileSpawn.transform.position,Quaternion.identity);
-                    bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);
-                    projectilesAndAttacks.Add(bullet);
+                    if (cc.moveInputY>0)
+                    {
+                        bullet.transform.rotation = new Quaternion(0,0,cc.moveInputX!=0?(facingRight?45:135):90,0);
+                    }
+                    else if (cc.moveInputY<0)
+                    {
+                        bullet.transform.rotation = new Quaternion(0,0,facingRight?-45:-135,0);
+                    }
+                    else if (!facingRight)
+                    {
+                        bullet.transform.rotation = new Quaternion(0,0,180,0);
+                    }
                 }
+                projectilesAndAttacks.Add(bullet);
+                FireTimer=ShotTiming;}
+                break;
+            case Projectile.HalfCharge:
+                {GameObject bullet = (cc.CurrentCharacter==CharControl.Character.Bass&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge])?Instantiate(BassBulletVariants[2],projectileSpawn.transform.position,Quaternion.identity):Instantiate(attackPrefabs[(int)Projectile.HalfCharge],projectileSpawn.transform.position,Quaternion.identity);
+                if (!facingRight&&cc.CurrentCharacter!=CharControl.Character.Bass){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
+                else
+                {
+                    if (cc.moveInputY>0)
+                    {
+                        bullet.transform.rotation = new Quaternion(0,0,cc.moveInputX!=0?(facingRight?45:135):90,0);
+                    }
+                    else if (cc.moveInputY<0)
+                    {
+                        bullet.transform.rotation = new Quaternion(0,0,facingRight?-45:-135,0);
+                    }
+                    else if (!facingRight)
+                    {
+                        bullet.transform.rotation = new Quaternion(0,0,180,0);
+                    }
+                }
+                projectilesAndAttacks.Add(bullet);
+                FireTimer=ShotTiming;}
                 break;
             case Projectile.NoCharge:
                 if (FireTimer==0)
                 {
-                    if (projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.NoCharge].name))<maxBullets)
-                    {
-                        if (facingRight)
-                        {
-                            GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.NoCharge],projectileSpawn.transform.position,Quaternion.identity);
-                            projectilesAndAttacks.Add(bullet);
-                        }
+                    if (projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.NoCharge].name))<(cc.CurrentCharacter==CharControl.Character.Bass?(cc.EquippedUpgrades[(int)upgrades.ExtraCharge]?2:5):3))
+                    {   
+                        GameObject bullet = (cc.CurrentCharacter==CharControl.Character.Bass)?(cc.EquippedUpgrades[(int)upgrades.ExtraCharge]?Instantiate(BassBulletVariants[1],projectileSpawn.transform.position,Quaternion.identity):Instantiate(BassBulletVariants[0],projectileSpawn.transform.position,Quaternion.identity)):Instantiate(attackPrefabs[(int)Projectile.NoCharge],projectileSpawn.transform.position,Quaternion.identity);
+                        if (!facingRight&&cc.CurrentCharacter!=CharControl.Character.Bass){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
                         else
                         {
-                            GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.NoCharge],projectileSpawn.transform.position,Quaternion.identity);
-                            bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);
-                            projectilesAndAttacks.Add(bullet);
+                            if (cc.moveInputY>0)
+                            {
+                                bullet.transform.rotation = new Quaternion(0,0,cc.moveInputX!=0?(facingRight?45:135):90,0);
+                            }
+                            else if (cc.moveInputY<0)
+                            {
+                                bullet.transform.rotation = new Quaternion(0,0,facingRight?-45:-135,0);
+                            }
+                            else if (!facingRight)
+                            {
+                                bullet.transform.rotation = new Quaternion(0,0,180,0);
+                            }
                         }
+                        projectilesAndAttacks.Add(bullet);
                         FireTimer=ShotTiming;
                     }
                 }

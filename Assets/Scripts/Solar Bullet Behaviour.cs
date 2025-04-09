@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class SolarBulletBehaviour : MonoBehaviour
 {
-    [SerializeField] protected float speed,damage;
+    [SerializeField] protected float speed=12,damage;
     [SerializeField] bool Pierces, PiercesOnKill, ShieldBreaker;
-    protected Vector2 vector2;
     protected Rigidbody2D rb;
     enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, SlagShot, SlagHammer, MegawattSurge, Brickfall, IfritBurstSmall, IfritBurstHuge, WaterHose, CycloneStrike, AnimalFriend}
     [SerializeField] Projectile damageType;
@@ -34,9 +33,8 @@ public class SolarBulletBehaviour : MonoBehaviour
     }
     protected virtual void Move()
     {
-        if (transform.localScale.x>0){vector2 = new Vector2(rb.position.x+speed,rb.position.y);}
-        else {vector2 = new Vector2(rb.position.x-speed,rb.position.y);}
-        rb.transform.position = vector2;
+        Vector2 moveDirection = (transform.localScale.x > 0) ? Vector2.right : Vector2.left;
+        rb.velocity = moveDirection.normalized * speed;
     }
     void OnBecameInvisible() {Destroy(gameObject);}
 }

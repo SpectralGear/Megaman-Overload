@@ -12,8 +12,8 @@ public class CharControl : MonoBehaviour
     [SerializeField] GameObject StandingCollision,SlidingCollision;
     [SerializeField] public bool DashComboInput,SlideComboInput,SuperSlide,Sprinter,WallKick,inWater;
     public enum upgrades {Armor,ShockAbsorber,AutoRecover, EnergySaver,SuperRecover,PickupFinder, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
-    [SerializeField] public List<upgrades> OwnedUpgrades = new List<upgrades>(12);
-    [SerializeField] public List<bool> EquippedUpgrades = new List<bool>(12);
+    [SerializeField] public List<upgrades> OwnedUpgrades = new List<upgrades>();
+    [SerializeField] public List<bool> EquippedUpgrades = new List<bool>();
     public enum Character {Megaman, Protoman, Bass, Roll}
     [SerializeField] public Character CurrentCharacter;
     Image healthBar;
@@ -36,8 +36,6 @@ public class CharControl : MonoBehaviour
         healthBar = GameObject.Find("HP").GetComponent<Image>();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        OwnedUpgrades = new List<upgrades>(12);
-        EquippedUpgrades = new List<bool>(12);
     }
     private void OnEnable()
     {

@@ -602,14 +602,13 @@ MonoBehaviour:
   SlidingCollision: {fileID: 7604965200786383289}
   DashComboInput: 0
   SlideComboInput: 0
-  Armor: 0
-  ShockAbsorber: 0
-  AutoRecover: 0
-  SuperRecover: 0
   SuperSlide: 0
   Sprinter: 0
   WallKick: 0
   inWater: 0
+  OwnedUpgrades: 
+  EquippedUpgrades: 000000000000000000000000
+  CurrentCharacter: 0
   rb: {fileID: 2994034328710830027}
   dead: 0
   facingRight: 1
@@ -660,13 +659,14 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  BassBulletVariants:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 5471393673207917065, guid: 72e647fa59c1a2140a17cbf58e1f0213, type: 3}
   ChargingEffect: {fileID: 6961425297492066115}
   FullChargeEffect: {fileID: 5482947812929680798}
   OverChargeEffect: {fileID: 3908674869723241337}
-  EnergySaver: 0
-  ExtraCharge: 0
-  QuickerCharge: 0
-  BeamBuster: 0
   OwnedWeapons: 0000000002000000
   EquippedWeapon: 0
   Ball: {fileID: 2800000, guid: 3e8f396ab9bd7c94cb83dd9ebb23992e, type: 3}
