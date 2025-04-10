@@ -7,7 +7,7 @@ using UnityEngine.InputSystem;
 public class Buster : MonoBehaviour
 {
     [SerializeField] float FullCharge,ShotTiming;
-    [SerializeField] GameObject projectileSpawn,leftBuster;
+    [SerializeField] GameObject projectileSpawn, projectileSpawnRotate,leftBuster;
     [SerializeField] List<GameObject> attackPrefabs = new List<GameObject>();
     [SerializeField] List<GameObject> BassBulletVariants = new List<GameObject>();
     [SerializeField] ParticleSystem ChargingEffect,FullChargeEffect,OverChargeEffect;
@@ -178,6 +178,7 @@ public class Buster : MonoBehaviour
     private void OnShootStarted(InputAction.CallbackContext context)
     {
         if (ChargeableWeapons.Contains(EquippedWeapon)&&(cc.CurrentCharacter!=CharControl.Character.Bass||cc.EquippedUpgrades[(int)upgrades.ExtraCharge])){ChargingWeapon=true;chargingAudioSource.Play();}
+        else if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster){Invoke("rapidFire",FireTimer);}
         if (!anim.GetBool("Sliding"))
         {
             pointBuster=0.5f;
@@ -188,9 +189,28 @@ public class Buster : MonoBehaviour
     {
         if (BusterCharge>=HalfCharge&&ChargeableWeapons.Contains(EquippedWeapon)&&!anim.GetBool("Sliding")){pointBuster=0.5f;ShootEquippedWeapon();}
         StopCharge();
+        CancelInvoke("rapidFire");
+    }
+    void rapidFire()
+    {
+        ShootEquippedWeapon();
+        pointBuster=0.5f;
+        Invoke("rapidFire",FireTimer);
     }
     void Update()
     {
+        if (cc.CurrentCharacter==CharControl.Character.Bass&&EquippedWeapon==Weapon.MegaBuster&&pointBuster>0)
+        {
+            if (cc.moveInputY>0)
+            {
+                projectileSpawnRotate.transform.localRotation = Quaternion.Euler(0,0,cc.moveInputX!=0?45:90);
+            }
+            else if (cc.moveInputY<0)
+            {
+                projectileSpawnRotate.transform.localRotation = Quaternion.Euler(0,0,-45);
+            }
+            else {projectileSpawnRotate.transform.localRotation = Quaternion.Euler(0,0,0);}
+        }
         facingRight = cc.facingRight;
         if (ChargingWeapon)
         {
@@ -207,6 +227,15 @@ public class Buster : MonoBehaviour
         if (pointBuster>0){pointBuster-=Time.deltaTime;pointBuster=Mathf.Clamp(pointBuster,0,pointBuster);}
         SetLayerWeight("Shoot",pointBuster>0.2f ? 1 : pointBuster/0.2f);
         if (!anim.GetBool("Jumping")&&attackPrefabs[(int)Projectile.SafetyBall].activeInHierarchy){Shoot(Projectile.SafetyBall);}
+    }
+    private void LateUpdate()
+    {
+        if (pointBuster>0.2f)
+        {
+            leftBuster.transform.LookAt(projectileSpawn.transform.position, Vector3.Cross(transform.right, projectileSpawn.transform.position - transform.position));
+            leftBuster.transform.rotation *= Quaternion.Euler(90, 0, 0);
+        }
+        if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster&&FireTimer>0&&cc.grounded){cc.VelocityX=0;anim.SetBool("Running",false);}
     }
     void StopCharge()
     {
@@ -494,14 +523,6 @@ public class Buster : MonoBehaviour
             {
                 OwnedWeapons.Remove((Weapon)i);
             }
-        }
-    }
-    private void LateUpdate()
-    {
-        if (pointBuster>0.2f)
-        {
-            leftBuster.transform.LookAt(projectileSpawn.transform.position, Vector3.Cross(transform.right, projectileSpawn.transform.position - transform.position));
-            leftBuster.transform.rotation *= Quaternion.Euler(90, 0, 0);
         }
     }
 }
