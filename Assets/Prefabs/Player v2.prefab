@@ -422,6 +422,7 @@ MonoBehaviour:
   Pierces: 0
   PiercesOnKill: 0
   ShieldBreaker: 0
+  BreakFromObstacle: 0
   damageType: 0
   spawnSound: {fileID: 0}
   spinSpeed: 3
@@ -593,7 +594,7 @@ MonoBehaviour:
   runSpeed: 4
   slideSpeed: 8
   slideTime: 0.4
-  jumpForce: 9.4
+  jumpForce: 9.5
   gravity: 15.5
   gravityInWater: 7
   jumpArcStart: 1.5

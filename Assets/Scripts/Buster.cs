@@ -177,7 +177,7 @@ public class Buster : MonoBehaviour
     }
     private void OnShootStarted(InputAction.CallbackContext context)
     {
-        if (ChargeableWeapons.Contains(EquippedWeapon)){ChargingWeapon=true;chargingAudioSource.Play();}
+        if (ChargeableWeapons.Contains(EquippedWeapon)&&(cc.CurrentCharacter!=CharControl.Character.Bass||cc.EquippedUpgrades[(int)upgrades.ExtraCharge])){ChargingWeapon=true;chargingAudioSource.Play();}
         if (!anim.GetBool("Sliding"))
         {
             pointBuster=0.5f;
@@ -195,8 +195,8 @@ public class Buster : MonoBehaviour
         if (ChargingWeapon)
         {
             ChargeSpeed = cc.EquippedUpgrades[(int)upgrades.QuickerCharge] ? 2 : 1;
-            if (BusterCharge<OverCharge){BusterCharge+=Time.deltaTime*ChargeSpeed;BusterCharge=Mathf.Clamp(BusterCharge,0,OverCharge);}
-            if (BusterCharge>=OverCharge&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge]){charMat.SetColor("_OtlColor",new Color32(255,52,55,255));FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);OverChargeEffect.Play();}
+            if (BusterCharge<OverCharge){BusterCharge+=Time.deltaTime*ChargeSpeed;BusterCharge=Mathf.Clamp(BusterCharge,0,cc.CurrentCharacter!=CharControl.Character.Bass?OverCharge:FullCharge);}
+            if (BusterCharge>=OverCharge&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge]&&cc.CurrentCharacter!=CharControl.Character.Bass){charMat.SetColor("_OtlColor",new Color32(255,52,55,255));FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);OverChargeEffect.Play();}
             else if (BusterCharge>=FullCharge){charMat.SetColor("_OtlColor",new Color32(151,255,255,255));ChargingEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);FullChargeEffect.Play();}
             else if (BusterCharge>=HalfCharge){charMat.SetColor("_OtlColor",new Color32(247,255,146,255));ChargingEffect.Play();}
             if (chargingAudioSource.isPlaying&&chargingAudioSource.time>2.5f){chargingAudioSource.volume=Mathf.Clamp((float)((chargingAudioSource.clip.length-chargingAudioSource.time)/(chargingAudioSource.clip.length-2.5f)),0,0.5f);}
@@ -393,22 +393,23 @@ public class Buster : MonoBehaviour
                 }
                 break;
             case Projectile.FullCharge:
-                {GameObject bullet = (cc.CurrentCharacter==CharControl.Character.Bass&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge])?Instantiate(BassBulletVariants[3],projectileSpawn.transform.position,Quaternion.identity):Instantiate(attackPrefabs[(int)Projectile.HalfCharge],projectileSpawn.transform.position,Quaternion.identity);
+                {GameObject bullet = (cc.CurrentCharacter==CharControl.Character.Bass&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge])?Instantiate(BassBulletVariants[3],projectileSpawn.transform.position,Quaternion.identity):Instantiate(attackPrefabs[(int)Projectile.FullCharge],projectileSpawn.transform.position,Quaternion.identity);
                 if (!facingRight&&cc.CurrentCharacter!=CharControl.Character.Bass){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
                 else
                 {
                     if (cc.moveInputY>0)
                     {
-                        bullet.transform.rotation = new Quaternion(0,0,cc.moveInputX!=0?(facingRight?45:135):90,0);
+                        bullet.transform.rotation = Quaternion.Euler(0,0,cc.moveInputX!=0?(facingRight?45:135):90);
                     }
                     else if (cc.moveInputY<0)
                     {
-                        bullet.transform.rotation = new Quaternion(0,0,facingRight?-45:-135,0);
+                        bullet.transform.rotation = Quaternion.Euler(0,0,facingRight?-45:-135);
                     }
                     else if (!facingRight)
                     {
-                        bullet.transform.rotation = new Quaternion(0,0,180,0);
+                        bullet.transform.rotation = Quaternion.Euler(0,0,180);
                     }
+                    bullet.GetComponent<SolarBulletBehaviour>().BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
                 }
                 projectilesAndAttacks.Add(bullet);
                 FireTimer=ShotTiming;}
@@ -420,16 +421,17 @@ public class Buster : MonoBehaviour
                 {
                     if (cc.moveInputY>0)
                     {
-                        bullet.transform.rotation = new Quaternion(0,0,cc.moveInputX!=0?(facingRight?45:135):90,0);
+                        bullet.transform.rotation = Quaternion.Euler(0,0,cc.moveInputX!=0?(facingRight?45:135):90);
                     }
                     else if (cc.moveInputY<0)
                     {
-                        bullet.transform.rotation = new Quaternion(0,0,facingRight?-45:-135,0);
+                        bullet.transform.rotation = Quaternion.Euler(0,0,facingRight?-45:-135);
                     }
                     else if (!facingRight)
                     {
-                        bullet.transform.rotation = new Quaternion(0,0,180,0);
+                        bullet.transform.rotation = Quaternion.Euler(0,0,180);
                     }
+                    bullet.GetComponent<SolarBulletBehaviour>().BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
                 }
                 projectilesAndAttacks.Add(bullet);
                 FireTimer=ShotTiming;}
@@ -445,16 +447,17 @@ public class Buster : MonoBehaviour
                         {
                             if (cc.moveInputY>0)
                             {
-                                bullet.transform.rotation = new Quaternion(0,0,cc.moveInputX!=0?(facingRight?45:135):90,0);
+                                bullet.transform.rotation = Quaternion.Euler(0,0,cc.moveInputX!=0?(facingRight?45:135):90);
                             }
                             else if (cc.moveInputY<0)
                             {
-                                bullet.transform.rotation = new Quaternion(0,0,facingRight?-45:-135,0);
+                                bullet.transform.rotation = Quaternion.Euler(0,0,facingRight?-45:-135);
                             }
                             else if (!facingRight)
                             {
-                                bullet.transform.rotation = new Quaternion(0,0,180,0);
+                                bullet.transform.rotation = Quaternion.Euler(0,0,180);
                             }
+                            bullet.GetComponent<SolarBulletBehaviour>().BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
                         }
                         projectilesAndAttacks.Add(bullet);
                         FireTimer=ShotTiming;

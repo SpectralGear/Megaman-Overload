@@ -215,7 +215,7 @@ public partial class @DefaultControls: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""02548fc3-1e5c-483a-9f09-784759a70c13"",
                     ""path"": ""<Gamepad>/rightTrigger"",
-                    ""interactions"": """",
+                    ""interactions"": ""Press(behavior=2)"",
                     ""processors"": """",
                     ""groups"": ""PC Control Scheme"",
                     ""action"": ""Shoot"",

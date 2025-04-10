@@ -6,6 +6,7 @@ public class SolarBulletBehaviour : MonoBehaviour
 {
     [SerializeField] protected float speed=12,damage;
     [SerializeField] bool Pierces, PiercesOnKill, ShieldBreaker;
+    [SerializeField] public bool BreakFromObstacle;
     protected Rigidbody2D rb;
     enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, SlagShot, SlagHammer, MegawattSurge, Brickfall, IfritBurstSmall, IfritBurstHuge, WaterHose, CycloneStrike, AnimalFriend}
     [SerializeField] Projectile damageType;
@@ -29,7 +30,7 @@ public class SolarBulletBehaviour : MonoBehaviour
             enemy.TakeDamage(damage,(int)damageType);
             if (!Pierces || (PiercesOnKill && !enemy.dead)){Destroy(gameObject);}
         }
-        else if (collision.gameObject.CompareTag("Enemy Shield")){Destroy(gameObject);}
+        else if (collision.CompareTag("Enemy Shield")||(BreakFromObstacle&&collision.gameObject.layer==LayerMask.NameToLayer("Terrain"))){Destroy(gameObject);}
     }
     protected virtual void Move()
     {
