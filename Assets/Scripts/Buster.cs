@@ -424,7 +424,7 @@ public class Buster : MonoBehaviour
             case Projectile.FullCharge:
                 {GameObject bullet = (cc.CurrentCharacter==CharControl.Character.Bass&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge])?Instantiate(BassBulletVariants[3],projectileSpawn.transform.position,Quaternion.identity):Instantiate(attackPrefabs[(int)Projectile.FullCharge],projectileSpawn.transform.position,Quaternion.identity);
                 if (!facingRight&&cc.CurrentCharacter!=CharControl.Character.Bass){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
-                else
+                else if (cc.CurrentCharacter==CharControl.Character.Bass)
                 {
                     if (cc.moveInputY>0)
                     {
@@ -446,7 +446,7 @@ public class Buster : MonoBehaviour
             case Projectile.HalfCharge:
                 {GameObject bullet = (cc.CurrentCharacter==CharControl.Character.Bass&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge])?Instantiate(BassBulletVariants[2],projectileSpawn.transform.position,Quaternion.identity):Instantiate(attackPrefabs[(int)Projectile.HalfCharge],projectileSpawn.transform.position,Quaternion.identity);
                 if (!facingRight&&cc.CurrentCharacter!=CharControl.Character.Bass){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
-                else
+                else if (cc.CurrentCharacter==CharControl.Character.Bass)
                 {
                     if (cc.moveInputY>0)
                     {
@@ -472,7 +472,7 @@ public class Buster : MonoBehaviour
                     {   
                         GameObject bullet = (cc.CurrentCharacter==CharControl.Character.Bass)?(cc.EquippedUpgrades[(int)upgrades.ExtraCharge]?Instantiate(BassBulletVariants[1],projectileSpawn.transform.position,Quaternion.identity):Instantiate(BassBulletVariants[0],projectileSpawn.transform.position,Quaternion.identity)):Instantiate(attackPrefabs[(int)Projectile.NoCharge],projectileSpawn.transform.position,Quaternion.identity);
                         if (!facingRight&&cc.CurrentCharacter!=CharControl.Character.Bass){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
-                        else
+                        else if (cc.CurrentCharacter==CharControl.Character.Bass)
                         {
                             if (cc.moveInputY>0)
                             {

@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 3317229685494650583}
   - component: {fileID: 8999471324630449461}
   - component: {fileID: 8817192936523356819}
-  - component: {fileID: 1366750223164596177}
+  - component: {fileID: 7333058326334239744}
   m_Layer: 0
-  m_Name: Bass Bullet
+  m_Name: Bass Bullet HCharge
   m_TagString: Friendly Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,8 +31,8 @@ Transform:
   m_GameObject: {fileID: 2066408503673428713}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.25, y: 0, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.1, z: 0.25}
+  m_LocalPosition: {x: 0.3, y: 0, z: 0}
+  m_LocalScale: {x: 0.6, y: 0.25, z: 0.25}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3376273645345943074}
@@ -246,7 +246,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1366750223164596177
+--- !u!114 &7333058326334239744
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -264,7 +264,7 @@ MonoBehaviour:
   PiercesOnKill: 0
   ShieldBreaker: 0
   BreakFromObstacle: 0
-  damageType: 0
+  damageType: 1
   spawnSound: {fileID: 8300000, guid: b706c2133b1eb504f84866075b591fa2, type: 3}
 --- !u!1 &4487808928613786441
 GameObject:

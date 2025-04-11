@@ -695,8 +695,8 @@ MonoBehaviour:
   - {fileID: 0}
   BassBulletVariants:
   - {fileID: 2066408503673428713, guid: 9bfaaeeb6058d0b4790ac8e4d24818b8, type: 3}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 2066408503673428713, guid: 0ffd67782fe149a4b9fe89258e98ef4e, type: 3}
+  - {fileID: 2066408503673428713, guid: fad2e8b2d4f635643945dbe37840f846, type: 3}
   - {fileID: 5471393673207917065, guid: 72e647fa59c1a2140a17cbf58e1f0213, type: 3}
   ChargingEffect: {fileID: 6961425297492066115}
   FullChargeEffect: {fileID: 5482947812929680798}
