@@ -635,9 +635,6 @@ MonoBehaviour:
   SlidingCollision: {fileID: 7604965200786383289}
   DashComboInput: 0
   SlideComboInput: 0
-  SuperSlide: 0
-  Sprinter: 0
-  WallKick: 0
   inWater: 0
   OwnedUpgrades: 
   EquippedUpgrades: 000000000000000000000000

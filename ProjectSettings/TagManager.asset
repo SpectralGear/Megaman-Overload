@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - Enemy Shield
   - Boss
+  - Player Projectile
   layers:
   - Default
   - TransparentFX
@@ -16,7 +17,7 @@ TagManager:
   - Terrain
   - Water
   - UI
-  - 
+  - Render Priority
   - 
   - 
   - 

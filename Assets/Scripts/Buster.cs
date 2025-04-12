@@ -420,12 +420,12 @@ public class Buster : MonoBehaviour
                     bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);
                     projectilesAndAttacks.Add(bullet);
                 }
+                FireTimer=ShotTiming;
                 break;
             case Projectile.FullCharge:
-                {GameObject bullet = (cc.CurrentCharacter==CharControl.Character.Bass&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge])?Instantiate(BassBulletVariants[3],projectileSpawn.transform.position,Quaternion.identity):Instantiate(attackPrefabs[(int)Projectile.FullCharge],projectileSpawn.transform.position,Quaternion.identity);
-                if (!facingRight&&cc.CurrentCharacter!=CharControl.Character.Bass){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
-                else if (cc.CurrentCharacter==CharControl.Character.Bass)
+                if (cc.CurrentCharacter==CharControl.Character.Bass)
                 {
+                    GameObject bullet = Instantiate(BassBulletVariants[3],projectileSpawn.transform.position,Quaternion.identity);
                     if (cc.moveInputY>0)
                     {
                         bullet.transform.rotation = Quaternion.Euler(0,0,cc.moveInputX!=0?(facingRight?45:135):90);
@@ -438,16 +438,29 @@ public class Buster : MonoBehaviour
                     {
                         bullet.transform.rotation = Quaternion.Euler(0,0,180);
                     }
-                    bullet.GetComponent<SolarBulletBehaviour>().BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
+                    var behaviour = bullet.GetComponent<DirectionalBulletBehaviour>();
+                    behaviour.BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
+                    behaviour.Pierces=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
+                    if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]) {behaviour.damage += 1f;}
+                    projectilesAndAttacks.Add(bullet);
+                    FireTimer=ShotTiming;
                 }
-                projectilesAndAttacks.Add(bullet);
-                FireTimer=ShotTiming;}
+                else if (cc.CurrentCharacter==CharControl.Character.Roll)
+                {
+                    FireTimer=ShotTiming;
+                }
+                else
+                {
+                    GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.FullCharge],projectileSpawn.transform.position,Quaternion.identity);
+                    if (!facingRight){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
+                    projectilesAndAttacks.Add(bullet);
+                    FireTimer=ShotTiming;
+                }
                 break;
             case Projectile.HalfCharge:
-                {GameObject bullet = (cc.CurrentCharacter==CharControl.Character.Bass&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge])?Instantiate(BassBulletVariants[2],projectileSpawn.transform.position,Quaternion.identity):Instantiate(attackPrefabs[(int)Projectile.HalfCharge],projectileSpawn.transform.position,Quaternion.identity);
-                if (!facingRight&&cc.CurrentCharacter!=CharControl.Character.Bass){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
-                else if (cc.CurrentCharacter==CharControl.Character.Bass)
+                if (cc.CurrentCharacter==CharControl.Character.Bass)
                 {
+                    GameObject bullet = Instantiate(BassBulletVariants[2],projectileSpawn.transform.position,Quaternion.identity);
                     if (cc.moveInputY>0)
                     {
                         bullet.transform.rotation = Quaternion.Euler(0,0,cc.moveInputX!=0?(facingRight?45:135):90);
@@ -460,20 +473,28 @@ public class Buster : MonoBehaviour
                     {
                         bullet.transform.rotation = Quaternion.Euler(0,0,180);
                     }
-                    bullet.GetComponent<SolarBulletBehaviour>().BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
+                    var behaviour = bullet.GetComponent<DirectionalBulletBehaviour>();
+                    behaviour.BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
+                    behaviour.Pierces=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
+                    if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]) {behaviour.damage += 1f;}
+                    projectilesAndAttacks.Add(bullet);
+                    FireTimer=ShotTiming;
                 }
-                projectilesAndAttacks.Add(bullet);
-                FireTimer=ShotTiming;}
+                else if (cc.CurrentCharacter!=CharControl.Character.Roll)
+                {
+                    GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.HalfCharge],projectileSpawn.transform.position,Quaternion.identity);
+                    if (!facingRight){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
+                    projectilesAndAttacks.Add(bullet);
+                }
                 break;
             case Projectile.NoCharge:
                 if (FireTimer==0)
                 {
-                    if (projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.NoCharge].name))<(cc.CurrentCharacter==CharControl.Character.Bass?(cc.EquippedUpgrades[(int)upgrades.ExtraCharge]?2:5):3))
-                    {   
-                        GameObject bullet = (cc.CurrentCharacter==CharControl.Character.Bass)?(cc.EquippedUpgrades[(int)upgrades.ExtraCharge]?Instantiate(BassBulletVariants[1],projectileSpawn.transform.position,Quaternion.identity):Instantiate(BassBulletVariants[0],projectileSpawn.transform.position,Quaternion.identity)):Instantiate(attackPrefabs[(int)Projectile.NoCharge],projectileSpawn.transform.position,Quaternion.identity);
-                        if (!facingRight&&cc.CurrentCharacter!=CharControl.Character.Bass){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
-                        else if (cc.CurrentCharacter==CharControl.Character.Bass)
-                        {
+                    if (cc.CurrentCharacter==CharControl.Character.Bass)
+                    {
+                        if (projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(BassBulletVariants[cc.EquippedUpgrades[(int)upgrades.ExtraCharge]?1:0].name))<(cc.EquippedUpgrades[(int)upgrades.ExtraCharge]?2:5))
+                        {   
+                            GameObject bullet = cc.EquippedUpgrades[(int)upgrades.ExtraCharge]?Instantiate(BassBulletVariants[1],projectileSpawn.transform.position,Quaternion.identity):Instantiate(BassBulletVariants[0],projectileSpawn.transform.position,Quaternion.identity);
                             if (cc.moveInputY>0)
                             {
                                 bullet.transform.rotation = Quaternion.Euler(0,0,cc.moveInputX!=0?(facingRight?45:135):90);
@@ -486,10 +507,27 @@ public class Buster : MonoBehaviour
                             {
                                 bullet.transform.rotation = Quaternion.Euler(0,0,180);
                             }
-                            bullet.GetComponent<SolarBulletBehaviour>().BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
+                            var behaviour = bullet.GetComponent<DirectionalBulletBehaviour>();
+                            behaviour.BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
+                            behaviour.Pierces=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
+                            if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]) {behaviour.damage += 0.5f;}
+                            projectilesAndAttacks.Add(bullet);
+                            FireTimer=ShotTiming;
                         }
-                        projectilesAndAttacks.Add(bullet);
+                    }
+                    else if (cc.CurrentCharacter==CharControl.Character.Roll)
+                    {
                         FireTimer=ShotTiming;
+                    }
+                    else
+                    {
+                        if (projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.NoCharge].name))<3)
+                        {   
+                            GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.NoCharge],projectileSpawn.transform.position,Quaternion.identity);
+                            if (!facingRight){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
+                            projectilesAndAttacks.Add(bullet);
+                            FireTimer=ShotTiming;
+                        }
                     }
                 }
                 break;

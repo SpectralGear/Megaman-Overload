@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class SolarBulletBehaviour : MonoBehaviour
 {
-    [SerializeField] protected float speed=12,damage;
-    [SerializeField] bool Pierces, PiercesOnKill, ShieldBreaker;
+    [SerializeField] public float speed=12,damage;
+    [SerializeField] public bool Pierces, PiercesOnKill, ShieldBreaker;
     [SerializeField] public bool BreakFromObstacle;
     protected Rigidbody2D rb;
     enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, SlagShot, SlagHammer, MegawattSurge, Brickfall, IfritBurstSmall, IfritBurstHuge, WaterHose, CycloneStrike, AnimalFriend}

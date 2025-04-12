@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 8999471324630449461}
   - component: {fileID: 8817192936523356819}
   - component: {fileID: 7333058326334239744}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Bass Bullet HCharge
   m_TagString: Friendly Projectile
   m_Icon: {fileID: 0}
@@ -145,7 +145,7 @@ Rigidbody2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 62
+    m_Bits: 54
   m_Interpolate: 1
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -277,7 +277,7 @@ GameObject:
   - component: {fileID: 3376273645345943074}
   - component: {fileID: 9092393634398199025}
   - component: {fileID: 4109392825577110716}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sphere
   m_TagString: Friendly Projectile
   m_Icon: {fileID: 0}

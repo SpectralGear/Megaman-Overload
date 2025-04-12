@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 897536797364665524}
   - component: {fileID: 3894394028125546796}
   - component: {fileID: 1870954988965845218}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: MB Full Charge
   m_TagString: Friendly Projectile
   m_Icon: {fileID: 0}
@@ -278,7 +278,7 @@ GameObject:
   - component: {fileID: 1184661359989634195}
   - component: {fileID: 9090167209309797089}
   - component: {fileID: 6174163175302191672}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -361,7 +361,7 @@ GameObject:
   - component: {fileID: 6413894391771991566}
   - component: {fileID: 1105359688764694989}
   - component: {fileID: 126927085805900107}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -378,8 +378,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -0.09, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7488220138721090220}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}

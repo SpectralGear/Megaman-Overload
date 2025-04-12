@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7812041607243498065}
   - component: {fileID: 8999471324630449461}
   - component: {fileID: 8817192936523356819}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: MB Bullet
   m_TagString: Friendly Projectile
   m_Icon: {fileID: 0}
@@ -278,7 +278,7 @@ GameObject:
   - component: {fileID: 2977313932000126515}
   - component: {fileID: 3539027260903768772}
   - component: {fileID: 3871613102254310112}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5109,7 +5109,7 @@ GameObject:
   - component: {fileID: 3376273645345943074}
   - component: {fileID: 9092393634398199025}
   - component: {fileID: 4109392825577110716}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sphere
   m_TagString: Friendly Projectile
   m_Icon: {fileID: 0}

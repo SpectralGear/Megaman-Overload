@@ -2,6 +2,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
@@ -10,7 +11,7 @@ public class CharControl : MonoBehaviour
 {
     [SerializeField] public float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
     [SerializeField] GameObject StandingCollision,SlidingCollision;
-    [SerializeField] public bool DashComboInput,SlideComboInput,SuperSlide,Sprinter,WallKick,inWater;
+    [SerializeField] public bool DashComboInput,SlideComboInput,inWater;
     public enum upgrades {Armor,ShockAbsorber,AutoRecover, EnergySaver,SuperRecover,PickupFinder, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
     [SerializeField] public List<upgrades> OwnedUpgrades = new List<upgrades>();
     [SerializeField] public List<bool> EquippedUpgrades = new List<bool>();
@@ -83,11 +84,11 @@ public class CharControl : MonoBehaviour
         if (moveInputX!=0&&!anim.GetBool("Hit"))
         {
             facingRight=moveInputX>0;
-            if (slideJumping && SuperSlide) 
+            if (slideJumping && (EquippedUpgrades[(int)upgrades.SuperSlide]||CurrentCharacter==Character.Bass)) 
             {
-                currentMotion = slideSpeed + 1;
+                currentMotion = slideSpeed + (EquippedUpgrades[(int)upgrades.SuperSlide]&&CurrentCharacter==Character.Bass?3:1);
             }
-            else {currentMotion = Sprinter ? runSpeed + 2 : runSpeed;}
+            else {currentMotion = EquippedUpgrades[(int)upgrades.Sprinter] ? runSpeed + 2 : runSpeed;}
         }
         if (facingRight){transform.localScale=new Vector3(1,1,1);}
         else {transform.localScale=new Vector3(-1,1,1);}
@@ -124,7 +125,7 @@ public class CharControl : MonoBehaviour
             VelocityY = jumpForce;
             audioSource.PlayOneShot(jumpSFX);
         }
-        else if (WallKick && (rightWallContact(false) || leftWallContact(false)))
+        else if (CurrentCharacter==Character.Megaman && EquippedUpgrades[(int)upgrades.WallKick] && (rightWallContact(false) || leftWallContact(false)))
         {
             VelocityY = jumpForce/5*3; 
             if (rightWallContact(false)) 
@@ -269,7 +270,7 @@ public class CharControl : MonoBehaviour
         }
         else if (isSliding)
         {
-            currentMotion = SuperSlide ? slideSpeed + 1 : slideSpeed;
+            currentMotion = EquippedUpgrades[(int)upgrades.SuperSlide]?slideSpeed + (CurrentCharacter==Character.Bass?3:1):slideSpeed;
         }
         VelocityX = facingRight ? currentMotion : -currentMotion;
     }

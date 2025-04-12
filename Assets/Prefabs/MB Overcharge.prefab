@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4916176720014502716}
   - component: {fileID: 7399146237191290349}
   - component: {fileID: -8720521906067809516}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: MB Overcharge
   m_TagString: Player Projectile
   m_Icon: {fileID: 0}
@@ -278,7 +278,7 @@ GameObject:
   - component: {fileID: 3294817512002268383}
   - component: {fileID: 5590034463974471622}
   - component: {fileID: 3054360442070876772}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -295,8 +295,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -0.1, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 2, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7488220138721090220}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
@@ -5110,7 +5110,7 @@ GameObject:
   - component: {fileID: 3980925414045726658}
   - component: {fileID: 8423416931484267701}
   - component: {fileID: 2586583675223829692}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
