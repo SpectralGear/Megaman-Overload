@@ -21,7 +21,8 @@ public class CharControl : MonoBehaviour
     Animator anim;
     public Rigidbody2D rb;
     private bool isHit=false,slideJumping=false,slidingToTheRight;
-    public bool dead,facingRight=true,isSliding=false,grounded,velocityOverride;
+    public bool dead,facingRight=true,isSliding=false,groundContact,ceilingContact,velocityOverride;
+    public bool[] wallContact = new bool[2];
     private float slideTimer,healthPoints=28,timeSinceJump,invincibiltyTimer,currentMotion;
     public float VelocityY,VelocityX,moveInputX=0,moveInputY=0;
     private DefaultControls playerInputActions;
@@ -106,33 +107,33 @@ public class CharControl : MonoBehaviour
     }
     private void OnJumpStarted(InputAction.CallbackContext context)
     {
-        if (isSliding&&!ceilingAbove())
+        if (isSliding&&!ceilingContact)
         {
             slideJumping = true;
             timeSinceJump = 0f;
             VelocityY = jumpForce;
             audioSource.PlayOneShot(jumpSFX);
         }
-        else if (SlideComboInput&&moveInputY<0&&grounded&&!isSliding)
+        else if (SlideComboInput&&moveInputY<0&&groundContact&&!isSliding)
         {
             isSliding = true;
             audioSource.PlayOneShot(slideSFX);
             slideTimer=0;
             slidingToTheRight = facingRight;
         }
-        else if ((!SlideComboInput||moveInputY>=0)&&grounded)
+        else if ((!SlideComboInput||moveInputY>=0)&&groundContact)
         {
             VelocityY = jumpForce;
             audioSource.PlayOneShot(jumpSFX);
         }
-        else if (CurrentCharacter==Character.Megaman && EquippedUpgrades[(int)upgrades.WallKick] && (rightWallContact(false) || leftWallContact(false)))
+        else if (CurrentCharacter==Character.Megaman && EquippedUpgrades[(int)upgrades.WallKick] && (wallContact[1] || wallContact[0]))
         {
             VelocityY = jumpForce/5*3; 
-            if (rightWallContact(false)) 
+            if (wallContact[1]) 
             {
                 currentMotion = -10;
             }
-            else if (leftWallContact(false)) 
+            else if (wallContact[0])
             {
                 currentMotion = 10;
             }
@@ -149,7 +150,7 @@ public class CharControl : MonoBehaviour
     }
     private void OnSlide(InputAction.CallbackContext context)
     {
-        if (grounded&&!isSliding)
+        if (groundContact&&!isSliding)
         {
             isSliding = true;
             audioSource.PlayOneShot(slideSFX);
@@ -159,9 +160,8 @@ public class CharControl : MonoBehaviour
     }
     private void Update()
     {
-        grounded=groundContact();
         OnMove();
-        fall(!grounded);
+        fall(!groundContact);
         slide();
         motion();
         if (CurrentCharacter!=Character.Protoman&&EquippedUpgrades[(int)upgrades.AutoRecover]&&healthPoints>=0&&healthPoints<28){HealthChange(Time.deltaTime/5);}
@@ -170,50 +170,24 @@ public class CharControl : MonoBehaviour
     }
     private void FixedUpdate()
     {
+        bool[] contacts = Contacts(isSliding&&CurrentCharacter!=Character.Roll,facingRight);
+        groundContact = contacts[2];
+        wallContact[0] = contacts[0];
+        wallContact[1] = contacts[1];
+        ceilingContact = contacts[3];
         if (!velocityOverride){rb.velocity = new Vector2(VelocityX,VelocityY);}
     }
-    bool groundContact()
+    public bool[] Contacts(bool sliding, bool lookingRight)
     {
-        float groundCheckDistance = 0.2f;
-        RaycastHit2D hitCenter = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y+0.1f), Vector2.down, groundCheckDistance, LayerMask.GetMask("Terrain"));
-        RaycastHit2D hitLeft = Physics2D.Raycast(new Vector2(transform.position.x - 0.45f, transform.position.y+0.1f), Vector2.down, groundCheckDistance, LayerMask.GetMask("Terrain"));
-        RaycastHit2D hitRight = Physics2D.Raycast(new Vector2(transform.position.x + 0.45f, transform.position.y+0.1f), Vector2.down, groundCheckDistance, LayerMask.GetMask("Terrain"));
-        if (hitCenter.collider != null || hitLeft.collider != null || hitRight.collider != null)
-        {return true;}
-        else {return false;}
-    }
-    public bool leftWallContact(bool sliding)
-    {
-        float wallCheckDistance = 0.2f;
-        float wallCheckHeight;
-        wallCheckHeight = !sliding ? 1.2f : 0.7f;
-        RaycastHit2D hitTop = Physics2D.Raycast(new Vector2(transform.position.x - 0.44f, wallCheckHeight), Vector2.left, wallCheckDistance, LayerMask.GetMask("Terrain"));
-        RaycastHit2D hitCenter = Physics2D.Raycast(new Vector2(transform.position.x - 0.44f, (wallCheckHeight+0.1f)/2), Vector2.left, wallCheckDistance, LayerMask.GetMask("Terrain"));
-        RaycastHit2D hitBottom = Physics2D.Raycast(new Vector2(transform.position.x - 0.44f, transform.position.y+0.1f), Vector2.left, wallCheckDistance, LayerMask.GetMask("Terrain"));
-        if (hitCenter.collider != null || hitTop.collider != null || hitBottom.collider != null)
-        {return true;}
-        else {return false;}
-    }
-    public bool rightWallContact(bool sliding)
-    {
-        float wallCheckDistance = 0.2f;
-        float wallCheckHeight;
-        wallCheckHeight = !sliding ? 1.2f : 0.7f;
-        RaycastHit2D hitTop = Physics2D.Raycast(new Vector2(transform.position.x + 0.44f, wallCheckHeight), Vector2.right, wallCheckDistance, LayerMask.GetMask("Terrain"));
-        RaycastHit2D hitCenter = Physics2D.Raycast(new Vector2(transform.position.x + 0.44f, (wallCheckHeight+0.1f)/2), Vector2.right, wallCheckDistance, LayerMask.GetMask("Terrain"));
-        RaycastHit2D hitBottom = Physics2D.Raycast(new Vector2(transform.position.x + 0.44f, transform.position.y+0.1f), Vector2.right, wallCheckDistance, LayerMask.GetMask("Terrain"));
-        if (hitCenter.collider != null || hitTop.collider != null || hitBottom.collider != null)
-        {return true;}
-        else {return false;}
-    }
-    bool ceilingAbove()
-    {
-        float ceilingCheckDistance = 0.95f;
-        RaycastHit2D hitCenter = Physics2D.Raycast(new Vector2(transform.position.x, transform.position.y+0.7f), Vector2.up, ceilingCheckDistance, LayerMask.GetMask("Terrain"));
-        RaycastHit2D hitLeft = Physics2D.Raycast(new Vector2(transform.position.x - 0.44f, transform.position.y+0.7f), Vector2.up, ceilingCheckDistance-0.25f, LayerMask.GetMask("Terrain"));
-        RaycastHit2D hitRight = Physics2D.Raycast(new Vector2(transform.position.x + 0.44f, transform.position.y+0.7f), Vector2.up, ceilingCheckDistance-0.25f, LayerMask.GetMask("Terrain"));
-        if (hitCenter.collider != null || hitLeft.collider != null || hitRight.collider != null){return true;}
-        else {return false;}
+        RaycastHit2D leftWallCheck = Physics2D.Raycast(new Vector2(transform.position.x - (lookingRight&&sliding?1.3f:0.5f), transform.position.y+0.05f), Vector2.up, sliding?0.7f:1.2f, LayerMask.GetMask("Terrain"));
+        RaycastHit2D rightWallCheck = Physics2D.Raycast(new Vector2(transform.position.x + (!lookingRight&&sliding?1.3f:0.5f), transform.position.y+0.05f), Vector2.up, sliding?0.7f:1.2f, LayerMask.GetMask("Terrain"));
+        RaycastHit2D floorCheck = Physics2D.Raycast(new Vector2(transform.position.x + (lookingRight?0.45f:-0.45f), transform.position.y-0.05f), lookingRight?Vector2.left:Vector2.right, sliding?1.7f:0.9f, LayerMask.GetMask("Terrain"));
+        RaycastHit2D ceilingCheck = Physics2D.Raycast(new Vector2(transform.position.x + 0.33f, transform.position.y+1.7f), Vector2.left, 0.66f, LayerMask.GetMask("Terrain"));
+        if (leftWallCheck){Debug.DrawRay(leftWallCheck.point,Vector2.right/2f,Color.blue,0.5f);}
+        if (rightWallCheck){Debug.DrawRay(rightWallCheck.point,Vector2.left/2f,Color.red,0.5f);}
+        if (floorCheck){Debug.DrawRay(floorCheck.point,Vector2.up/2f,Color.green,0.5f);}
+        if (ceilingCheck){Debug.DrawRay(ceilingCheck.point,Vector2.down/2f,Color.yellow,0.5f);}
+        return new bool[4] {leftWallCheck,rightWallCheck,floorCheck,ceilingCheck};
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -229,18 +203,18 @@ public class CharControl : MonoBehaviour
         anim.SetBool("Jumping", airborne);
         if (!airborne) {return;}
         float accelerationY = inWater ? gravityInWater : gravity;
-        if (ceilingAbove()&&VelocityY>jumpArcStart){VelocityY=jumpArcStart;}
+        if (ceilingContact&&VelocityY>jumpArcStart){VelocityY=jumpArcStart;}
         VelocityY -= Time.deltaTime * accelerationY;
         VelocityY = Mathf.Clamp(VelocityY, -maxVerticalVelocity, maxVerticalVelocity);
     }
     private void slide()
     {
-        if (isSliding&&(slideTimer >= slideTime||slidingToTheRight!=facingRight||(leftWallContact(true)&&!slidingToTheRight)||(rightWallContact(true)&&slidingToTheRight)||!grounded)&&!ceilingAbove())
+        if (isSliding&&(slideTimer >= slideTime||slidingToTheRight!=facingRight||(slideTimer>0.05f&&((wallContact[0]&&!slidingToTheRight)||(wallContact[1]&&slidingToTheRight)))||!groundContact)&&!ceilingContact)
         {
             isSliding=false;
             currentMotion=0;
         }
-        else if (isSliding&&!grounded&&ceilingAbove())
+        else if (isSliding&&!groundContact&&ceilingContact)
         {
             isSliding=false;
             currentMotion=0;
@@ -256,7 +230,7 @@ public class CharControl : MonoBehaviour
     }
     private void motion()
     {
-        if (!grounded) 
+        if (!groundContact) 
         {
             timeSinceJump += Time.deltaTime;
         }
@@ -278,7 +252,7 @@ public class CharControl : MonoBehaviour
     {
         if (amountChanged == 0 || (amountChanged < 0 && isHit)){if (healthBar!=null){healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f);} return;}
         isHit = amountChanged < 0;
-        anim.SetBool("Hit", isHit && !EquippedUpgrades[(int)upgrades.ShockAbsorber] && invincibiltyTimer <= 0.5f && !(isSliding && ceilingAbove()));
+        anim.SetBool("Hit", isHit && !EquippedUpgrades[(int)upgrades.ShockAbsorber] && invincibiltyTimer <= 0.5f && !(isSliding && ceilingContact));
         var safetyBall = GetComponentInChildren<SafetyBallScript>();
         if (safetyBall && safetyBall.isActiveAndEnabled)
         {

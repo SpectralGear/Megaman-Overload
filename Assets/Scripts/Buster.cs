@@ -241,7 +241,7 @@ public class Buster : MonoBehaviour
             leftBuster.transform.LookAt(projectileSpawn.transform.position, Vector3.Cross(transform.right, projectileSpawn.transform.position - transform.position));
             leftBuster.transform.rotation *= Quaternion.Euler(90, 0, 0);
         }
-        if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster&&FireTimer>0&&cc.grounded){cc.VelocityX=0;anim.SetBool("Running",false);}
+        if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster&&FireTimer>0&&cc.groundContact){cc.VelocityX=0;anim.SetBool("Running",false);}
         else if (cc.CurrentCharacter==CharControl.Character.Protoman&&cc.EquippedUpgrades[(int)upgrades.BeamBuster]){BusterCharge=Mathf.Max(FullCharge,BusterCharge);}
     }
     void StopCharge()

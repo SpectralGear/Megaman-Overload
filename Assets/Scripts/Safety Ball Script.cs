@@ -78,7 +78,7 @@ public class SafetyBallScript : MonoBehaviour
             Vector3 newScale = Vector3.one;
             Vector3 newPosition = new Vector3(0, defaultPosY, 0);
 
-            if (!cc.grounded)
+            if (!cc.groundContact)
             {
                 newScale = new Vector3(0.9f, 1.2f, 0.9f);
                 newPosition = new Vector3(0, defaultPosY * 0.8f, 0);
@@ -94,12 +94,12 @@ public class SafetyBallScript : MonoBehaviour
             transform.localPosition = Vector3.SmoothDamp(transform.localPosition, newPosition, ref velocityPosition, smoothTime);
 
             // Spin the ball
-            if (ball!=null){ball.transform.Rotate(new Vector3(0,0,Attack?-20:(cc.rb.velocity.x==0&&cc.grounded?0:(-1*cc.rb.velocity.magnitude))));}
+            if (ball!=null){ball.transform.Rotate(new Vector3(0,0,Attack?-20:(cc.rb.velocity.x==0&&cc.groundContact?0:(-1*cc.rb.velocity.magnitude))));}
 
             if (Attack)
             {
                 cc.velocityOverride=true;
-                if ((cc.leftWallContact(false)&&direction<0)||(cc.rightWallContact(false)&&direction>0)){direction*=-1;audioSource.PlayOneShot(bounceSFX);}
+                if ((cc.wallContact[1]&&direction<0)||(cc.wallContact[0]&&direction>0)){direction*=-1;audioSource.PlayOneShot(bounceSFX);}
                 cc.rb.velocity = direction==0?Vector2.down*AttackFallMagnitude:new Vector2(direction,-2).normalized*AttackFallMagnitude;
                 wasAttacking=true;
             }

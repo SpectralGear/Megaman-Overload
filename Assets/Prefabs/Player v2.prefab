@@ -775,11 +775,9 @@ CompositeCollider2D:
   - m_Collider: {fileID: 1386047959471438011}
     m_ColliderPaths:
     - - X: 3300000
-        Y: 15000000
-      - X: 0
         Y: 16500000
       - X: -3300000
-        Y: 15000000
+        Y: 16500000
       - X: -4500000
         Y: 12000000
       - X: 4500000
@@ -787,11 +785,10 @@ CompositeCollider2D:
   m_CompositePaths:
     m_Paths:
     - - {x: 0.4499707, y: 0}
-      - {x: 0.4499982, y: 1.2000046}
-      - {x: 0.3299905, y: 1.5000043}
-      - {x: -0.0000108, y: 1.6499951}
-      - {x: -0.3300038, y: 1.4999903}
-      - {x: -0.45000002, y: 1.1999953}
+      - {x: 0.4499992, y: 1.2000033}
+      - {x: 0.32997862, y: 1.65}
+      - {x: -0.3300055, y: 1.6499794}
+      - {x: -0.45000002, y: 1.199997}
       - {x: -0.4499707, y: 0}
   m_VertexDistance: 0.0005
   m_OffsetDistance: 0.00005
@@ -1011,7 +1008,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5547212268592211977}
   - component: {fileID: 2412716905805417716}
-  - component: {fileID: 1630654449305495950}
   - component: {fileID: 1386047959471438011}
   m_Layer: 0
   m_Name: Standing Collision
@@ -1080,41 +1076,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.9, y: 1.2}
   m_EdgeRadius: 0
---- !u!58 &1630654449305495950
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9083886059217191213}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 24
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 39
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 24
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 24
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 24
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 24
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 1.2}
-  serializedVersion: 2
-  m_Radius: 0.45
 --- !u!60 &1386047959471438011
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -1161,9 +1122,8 @@ PolygonCollider2D:
     m_Paths:
     - - {x: -0.45, y: 1.2}
       - {x: 0.45, y: 1.2}
-      - {x: 0.33, y: 1.5}
-      - {x: 0, y: 1.65}
-      - {x: -0.33, y: 1.5}
+      - {x: 0.33, y: 1.65}
+      - {x: -0.33, y: 1.65}
   m_UseDelaunayMesh: 0
 --- !u!1001 &55645509863044471
 PrefabInstance:
