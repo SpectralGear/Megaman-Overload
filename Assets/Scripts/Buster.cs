@@ -177,7 +177,13 @@ public class Buster : MonoBehaviour
     }
     private void OnShootStarted(InputAction.CallbackContext context)
     {
-        if (ChargeableWeapons.Contains(EquippedWeapon)&&(cc.CurrentCharacter!=CharControl.Character.Bass||cc.EquippedUpgrades[(int)upgrades.ExtraCharge])){ChargingWeapon=true;chargingAudioSource.Play();}
+        bool isChargeableNonBuster = ChargeableWeapons.Contains(EquippedWeapon) && EquippedWeapon != Weapon.MegaBuster;
+        bool isMegaBuster = EquippedWeapon == Weapon.MegaBuster;
+        bool isMegamanOrRoll = cc.CurrentCharacter == CharControl.Character.Megaman || cc.CurrentCharacter == CharControl.Character.Roll;
+        bool isProtomanWithValidUpgrade = cc.CurrentCharacter == CharControl.Character.Protoman && (cc.EquippedUpgrades[(int)upgrades.ExtraCharge] || !cc.EquippedUpgrades[(int)upgrades.BeamBuster]);
+        bool isBassWithExtraCharge = cc.CurrentCharacter == CharControl.Character.Bass && cc.EquippedUpgrades[(int)upgrades.ExtraCharge];
+        bool canChargeMegaBuster = isMegaBuster && (isMegamanOrRoll || isProtomanWithValidUpgrade || isBassWithExtraCharge);
+        if (isChargeableNonBuster || canChargeMegaBuster){ChargingWeapon = true;chargingAudioSource.Play();}
         else if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster){Invoke("rapidFire",FireTimer);}
         if (!anim.GetBool("Sliding"))
         {
@@ -236,6 +242,7 @@ public class Buster : MonoBehaviour
             leftBuster.transform.rotation *= Quaternion.Euler(90, 0, 0);
         }
         if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster&&FireTimer>0&&cc.grounded){cc.VelocityX=0;anim.SetBool("Running",false);}
+        else if (cc.CurrentCharacter==CharControl.Character.Protoman&&cc.EquippedUpgrades[(int)upgrades.BeamBuster]){BusterCharge=Mathf.Max(FullCharge,BusterCharge);}
     }
     void StopCharge()
     {
@@ -249,8 +256,6 @@ public class Buster : MonoBehaviour
     }
     void ShootEquippedWeapon()
     {
-        if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]){ChargeSpeed=2;}
-        else {ChargeSpeed=1;}
         switch (EquippedWeapon)
         {
             case Weapon.AnimalFriend:
@@ -420,6 +425,7 @@ public class Buster : MonoBehaviour
                     bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);
                     projectilesAndAttacks.Add(bullet);
                 }
+                if (cc.CurrentCharacter==CharControl.Character.Protoman){cc.HealthChange(0);}
                 FireTimer=ShotTiming;
                 break;
             case Projectile.FullCharge:
@@ -451,10 +457,13 @@ public class Buster : MonoBehaviour
                 }
                 else
                 {
-                    GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.FullCharge],projectileSpawn.transform.position,Quaternion.identity);
-                    if (!facingRight){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
-                    projectilesAndAttacks.Add(bullet);
-                    FireTimer=ShotTiming;
+                    if ((FireTimer==0||!(cc.CurrentCharacter==CharControl.Character.Protoman&&cc.EquippedUpgrades[(int)upgrades.BeamBuster]))&&projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.FullCharge].name))<2)
+                    {
+                        GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.FullCharge],projectileSpawn.transform.position,Quaternion.identity);
+                        if (!facingRight){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
+                        projectilesAndAttacks.Add(bullet);
+                        FireTimer=ShotTiming;
+                    }
                 }
                 break;
             case Projectile.HalfCharge:
