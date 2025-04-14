@@ -15148,46 +15148,6 @@ CompositeCollider2D:
         Y: -10000000
       - X: 20000000
         Y: -10000000
-  - m_Collider: {fileID: 1869521944}
-    m_ColliderPaths:
-    - - X: 10000000
-        Y: 0
-      - X: 0
-        Y: 0
-      - X: 0
-        Y: -10000000
-      - X: 10000000
-        Y: -10000000
-  - m_Collider: {fileID: 1019738614}
-    m_ColliderPaths:
-    - - X: 0
-        Y: 0
-      - X: -10000000
-        Y: 0
-      - X: -10000000
-        Y: -10000000
-      - X: 0
-        Y: -10000000
-  - m_Collider: {fileID: 1453299764}
-    m_ColliderPaths:
-    - - X: -10000000
-        Y: 0
-      - X: -20000000
-        Y: 0
-      - X: -20000000
-        Y: -10000000
-      - X: -10000000
-        Y: -10000000
-  - m_Collider: {fileID: 424117322}
-    m_ColliderPaths:
-    - - X: -20000000
-        Y: 0
-      - X: -30000000
-        Y: 0
-      - X: -30000000
-        Y: -10000000
-      - X: -20000000
-        Y: -10000000
   - m_Collider: {fileID: 888987851}
     m_ColliderPaths:
     - - X: 120000000
@@ -15587,16 +15547,6 @@ CompositeCollider2D:
       - X: -50000000
         Y: -10000000
       - X: -40000000
-        Y: -10000000
-  - m_Collider: {fileID: 1491188200}
-    m_ColliderPaths:
-    - - X: -50000000
-        Y: 0
-      - X: -60000000
-        Y: 0
-      - X: -60000000
-        Y: -10000000
-      - X: -50000000
         Y: -10000000
   - m_Collider: {fileID: 1215495692}
     m_ColliderPaths:
@@ -16090,6 +16040,56 @@ CompositeCollider2D:
         Y: 120000000
       - X: 0
         Y: 120000000
+  - m_Collider: {fileID: 1491188200}
+    m_ColliderPaths:
+    - - X: -50000000
+        Y: 0
+      - X: -60000000
+        Y: 0
+      - X: -60000000
+        Y: -10000000
+      - X: -50000000
+        Y: -10000000
+  - m_Collider: {fileID: 1869521944}
+    m_ColliderPaths:
+    - - X: 10000000
+        Y: 0
+      - X: 0
+        Y: 0
+      - X: 0
+        Y: -10000000
+      - X: 10000000
+        Y: -10000000
+  - m_Collider: {fileID: 1019738614}
+    m_ColliderPaths:
+    - - X: 0
+        Y: 0
+      - X: -10000000
+        Y: 0
+      - X: -10000000
+        Y: -10000000
+      - X: 0
+        Y: -10000000
+  - m_Collider: {fileID: 1453299764}
+    m_ColliderPaths:
+    - - X: -10000000
+        Y: 0
+      - X: -20000000
+        Y: 0
+      - X: -20000000
+        Y: -10000000
+      - X: -10000000
+        Y: -10000000
+  - m_Collider: {fileID: 424117322}
+    m_ColliderPaths:
+    - - X: -20000000
+        Y: 0
+      - X: -30000000
+        Y: 0
+      - X: -30000000
+        Y: -10000000
+      - X: -20000000
+        Y: -10000000
   m_CompositePaths:
     m_Paths:
     - - {x: 12.99997, y: 14}

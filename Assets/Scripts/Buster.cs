@@ -65,7 +65,7 @@ public class Buster : MonoBehaviour
     private void OnQuickSwap(InputAction.CallbackContext context)
     {
         int weaponIndex;
-         string controlPath = context.control.path;
+        string controlPath = context.control.path;
         if (context.control.device is Keyboard)
         {
             if (char.IsDigit(controlPath.Last()))
@@ -242,7 +242,6 @@ public class Buster : MonoBehaviour
             leftBuster.transform.rotation *= Quaternion.Euler(90, 0, 0);
         }
         if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster&&FireTimer>0&&cc.groundContact){cc.VelocityX=0;anim.SetBool("Running",false);}
-        else if (cc.CurrentCharacter==CharControl.Character.Protoman&&cc.EquippedUpgrades[(int)upgrades.BeamBuster]){BusterCharge=Mathf.Max(FullCharge,BusterCharge);}
     }
     void StopCharge()
     {
@@ -290,6 +289,7 @@ public class Buster : MonoBehaviour
                 Shoot(Projectile.CycloneStrike);
                 break;
             default:
+                if (cc.CurrentCharacter==CharControl.Character.Protoman&&cc.EquippedUpgrades[(int)upgrades.BeamBuster]){BusterCharge=Mathf.Max(FullCharge,BusterCharge);}
                 if (BusterCharge>=OverCharge&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge]){Shoot(Projectile.OverCharge);BusterCharge=0;}
                 else if (BusterCharge>=FullCharge){Shoot(Projectile.FullCharge);BusterCharge=0;}
                 else if (BusterCharge>=HalfCharge){Shoot(Projectile.HalfCharge);BusterCharge=0;}

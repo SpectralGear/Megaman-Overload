@@ -643,8 +643,10 @@ MonoBehaviour:
   dead: 0
   facingRight: 1
   isSliding: 0
-  grounded: 0
+  groundContact: 0
+  ceilingContact: 0
   velocityOverride: 0
+  wallContact: 0000
   VelocityY: 0
   VelocityX: 0
   moveInputX: 0
@@ -1193,6 +1195,14 @@ PrefabInstance:
       propertyPath: TrailModule.colorOverTrail.maxColor.r
       value: 0.5921569
       objectReference: {fileID: 0}
+    - target: {fileID: 6499646174670230624, guid: 9db8aafc5f3376f40817f26affb52eae, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a7cd76b545ef9024a82e25823600e34b, type: 2}
+    - target: {fileID: 6499646174670230624, guid: 9db8aafc5f3376f40817f26affb52eae, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: a7cd76b545ef9024a82e25823600e34b, type: 2}
     - target: {fileID: 9202060757005452127, guid: 9db8aafc5f3376f40817f26affb52eae, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.2
@@ -1316,6 +1326,14 @@ PrefabInstance:
       propertyPath: ShapeModule.sphericalDirectionAmount
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6499646174670230624, guid: 9db8aafc5f3376f40817f26affb52eae, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a7cd76b545ef9024a82e25823600e34b, type: 2}
+    - target: {fileID: 6499646174670230624, guid: 9db8aafc5f3376f40817f26affb52eae, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: a7cd76b545ef9024a82e25823600e34b, type: 2}
     - target: {fileID: 9202060757005452127, guid: 9db8aafc5f3376f40817f26affb52eae, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.2
@@ -3885,6 +3903,14 @@ PrefabInstance:
       propertyPath: TrailModule.colorOverTrail.maxColor.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6499646174670230624, guid: 9db8aafc5f3376f40817f26affb52eae, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a7cd76b545ef9024a82e25823600e34b, type: 2}
+    - target: {fileID: 6499646174670230624, guid: 9db8aafc5f3376f40817f26affb52eae, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: a7cd76b545ef9024a82e25823600e34b, type: 2}
     - target: {fileID: 9202060757005452127, guid: 9db8aafc5f3376f40817f26affb52eae, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.2
