@@ -447,7 +447,7 @@ public class Buster : MonoBehaviour
                     var behaviour = bullet.GetComponent<DirectionalBulletBehaviour>();
                     behaviour.BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
                     behaviour.Pierces=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
-                    if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]) {behaviour.damage += 1f;}
+                    if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]) {behaviour.damageChange(1f);}
                     projectilesAndAttacks.Add(bullet);
                     FireTimer=ShotTiming;
                 }
@@ -485,7 +485,7 @@ public class Buster : MonoBehaviour
                     var behaviour = bullet.GetComponent<DirectionalBulletBehaviour>();
                     behaviour.BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
                     behaviour.Pierces=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
-                    if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]) {behaviour.damage += 1f;}
+                    if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]) {behaviour.damageChange(0.5f);}
                     projectilesAndAttacks.Add(bullet);
                     FireTimer=ShotTiming;
                 }
@@ -519,7 +519,7 @@ public class Buster : MonoBehaviour
                             var behaviour = bullet.GetComponent<DirectionalBulletBehaviour>();
                             behaviour.BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
                             behaviour.Pierces=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
-                            if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]) {behaviour.damage += 0.5f;}
+                            if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]) {behaviour.damageChange(0.5f);}
                             projectilesAndAttacks.Add(bullet);
                             FireTimer=ShotTiming;
                         }
