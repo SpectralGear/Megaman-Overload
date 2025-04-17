@@ -17,9 +17,9 @@ public class Buster : MonoBehaviour
     private bool facingRight=true,ChargingWeapon;
     float BusterCharge,HalfCharge,OverCharge,FireTimer,pointBuster=0,ChargeSpeed;
     private List<GameObject> projectilesAndAttacks = new List<GameObject>();
-    enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, SlagShot, SlagHammer, MegawattSurge, Brickfall, IfritBurstSmall, IfritBurstHuge, WaterHose, CycloneStrike, AnimalFriend}
+    public enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, SlagShot, SlagHammer, MegawattSurge, Brickfall, IfritBurstSmall, IfritBurstHuge, WaterHose, CycloneStrike, CycloneStrikeSlash, AnimalFriend}
     public enum Weapon {MegaBuster,SickleChain,SafetyBall,SlagShot,MegawattSurge,Brickfall,IfritBurst,WaterHose,CycloneStrike,AnimalFriend};
-    private List<Weapon> ChargeableWeapons = new List<Weapon>();
+    private List<Weapon> ChargeableWeapons = new List<Weapon>(){Weapon.MegaBuster,Weapon.SickleChain,Weapon.SlagShot,Weapon.IfritBurst};
     public List<Weapon> OwnedWeapons = new List<Weapon>();
     CharControl cc;
     [SerializeField] Weapon EquippedWeapon;
@@ -36,11 +36,8 @@ public class Buster : MonoBehaviour
         anim = GetComponent<Animator>();
         HalfCharge=FullCharge/2;
         OverCharge=FullCharge*1.5f;
-        ChargeableWeapons.Add(Weapon.MegaBuster);
-        ChargeableWeapons.Add(Weapon.SlagShot);
-        ChargeableWeapons.Add(Weapon.IfritBurst);
         cc = GetComponent<CharControl>();
-        //UpdateInventory();
+        UpdateInventory();
     }
     private void OnEnable()
     {
@@ -286,7 +283,8 @@ public class Buster : MonoBehaviour
                 Shoot(Projectile.WaterHose);
                 break;
             case Weapon.CycloneStrike:
-                Shoot(Projectile.CycloneStrike);
+                if (attackPrefabs[(int)Projectile.CycloneStrike].activeInHierarchy){Shoot(Projectile.CycloneStrikeSlash);}
+                else {Shoot(Projectile.CycloneStrike);}
                 break;
             default:
                 if (cc.CurrentCharacter==CharControl.Character.Protoman&&cc.EquippedUpgrades[(int)upgrades.BeamBuster]){BusterCharge=Mathf.Max(FullCharge,BusterCharge);}
@@ -412,6 +410,9 @@ public class Buster : MonoBehaviour
                 break;
             case Projectile.CycloneStrike:
                 attackPrefabs[(int)Projectile.CycloneStrike].SetActive(true);
+                break;
+            case Projectile.CycloneStrikeSlash:
+                attackPrefabs[(int)Projectile.CycloneStrike].GetComponent<CycloneStrikeBehaviour>().SlashAttack();
                 break;
             case Projectile.OverCharge:
                 if (facingRight)
@@ -559,17 +560,9 @@ public class Buster : MonoBehaviour
     }
     void UpdateInventory()
     {
-        for (int i = 1; i <= 9; i++)
-        {
-            GetComponent<CharControl>().HealthChange(0);
-            if (PlayerPrefs.HasKey(((Weapon)i).ToString())&&!OwnedWeapons.Contains((Weapon)i))
-            {
-                OwnedWeapons.Insert(i,(Weapon)i);
-            }
-            else if (!PlayerPrefs.HasKey(((Weapon)i).ToString())&&OwnedWeapons.Contains((Weapon)i))
-            {
-                OwnedWeapons.Remove((Weapon)i);
-            }
-        }
+        cc.HealthChange(0);
+        OwnedWeapons.Sort();
+        if (OwnedWeapons.Count<=0){EquippedWeapon=Weapon.MegaBuster;}
+        else if (!OwnedWeapons.Contains(EquippedWeapon)){EquippedWeapon=OwnedWeapons[0];}
     }
 }

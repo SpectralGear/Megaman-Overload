@@ -10,14 +10,14 @@ using System.Runtime.InteropServices;
 public class CharControl : MonoBehaviour
 {
     [SerializeField] public float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
-    [SerializeField] GameObject StandingCollision,SlidingCollision;
+    [SerializeField] GameObject StandingCollision,SlidingCollision,Camera;
     [SerializeField] public bool DashComboInput,SlideComboInput,inWater;
     public enum upgrades {Armor,ShockAbsorber,AutoRecover, EnergySaver,SuperRecover,PickupFinder, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
     [SerializeField] public List<upgrades> OwnedUpgrades = new List<upgrades>();
     [SerializeField] public List<bool> EquippedUpgrades = new List<bool>();
     public enum Character {Megaman, Protoman, Bass, Roll}
     [SerializeField] public Character CurrentCharacter;
-    Image healthBar;
+    [SerializeField] Image healthBar;
     Animator anim;
     public Rigidbody2D rb;
     private bool isHit=false,slideJumping=false,slidingToTheRight;
@@ -35,7 +35,6 @@ public class CharControl : MonoBehaviour
     }
     void Start()
     {
-        healthBar = GameObject.Find("HP").GetComponent<Image>();
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
     }
@@ -150,7 +149,7 @@ public class CharControl : MonoBehaviour
     }
     private void OnSlide(InputAction.CallbackContext context)
     {
-        if (groundContact&&!isSliding)
+        if (groundContact&&!isSliding&&!((Contacts(true,facingRight)[0]&&!facingRight)||(Contacts(true,facingRight)[1]&&facingRight)))
         {
             isSliding = true;
             audioSource.PlayOneShot(slideSFX);
@@ -177,12 +176,16 @@ public class CharControl : MonoBehaviour
         ceilingContact = contacts[3];
         if (!velocityOverride){rb.velocity = new Vector2(VelocityX,VelocityY);}
     }
+    void LateUpdate()
+    {
+        if (Camera.transform.lossyScale.x<0)Camera.transform.localScale=new Vector3(Camera.transform.localScale.x*-1,Camera.transform.localScale.y,Camera.transform.localScale.z);
+    }
     public bool[] Contacts(bool sliding, bool lookingRight)
     {
-        RaycastHit2D leftWallCheck = Physics2D.Raycast(new Vector2(transform.position.x - (lookingRight&&sliding?1.3f:0.5f), transform.position.y+0.05f), Vector2.up, sliding?0.7f:1.2f, LayerMask.GetMask("Terrain"));
-        RaycastHit2D rightWallCheck = Physics2D.Raycast(new Vector2(transform.position.x + (!lookingRight&&sliding?1.3f:0.5f), transform.position.y+0.05f), Vector2.up, sliding?0.7f:1.2f, LayerMask.GetMask("Terrain"));
-        RaycastHit2D floorCheck = Physics2D.Raycast(new Vector2(transform.position.x + (lookingRight?0.45f:-0.45f), transform.position.y-0.05f), lookingRight?Vector2.left:Vector2.right, sliding?1.7f:0.9f, LayerMask.GetMask("Terrain"));
-        RaycastHit2D ceilingCheck = Physics2D.Raycast(new Vector2(transform.position.x + 0.33f, transform.position.y+1.7f), Vector2.left, 0.66f, LayerMask.GetMask("Terrain"));
+        RaycastHit2D leftWallCheck = Physics2D.Raycast(new Vector2(transform.position.x - (lookingRight&&sliding&&CurrentCharacter!=Character.Roll?1.3f:0.5f), transform.position.y+0.05f), Vector2.up, sliding?0.7f:1.2f, LayerMask.GetMask("Terrain"));
+        RaycastHit2D rightWallCheck = Physics2D.Raycast(new Vector2(transform.position.x + (!lookingRight&&sliding&&CurrentCharacter!=Character.Roll?1.3f:0.5f), transform.position.y+0.05f), Vector2.up, sliding?0.7f:1.2f, LayerMask.GetMask("Terrain"));
+        RaycastHit2D floorCheck = Physics2D.Raycast(new Vector2(transform.position.x + (lookingRight?0.45f:-0.45f), transform.position.y-0.05f), lookingRight?Vector2.left:Vector2.right, sliding&&CurrentCharacter!=Character.Roll?1.7f:0.9f, LayerMask.GetMask("Terrain"));
+        RaycastHit2D ceilingCheck = Physics2D.Raycast(new Vector2(transform.position.x + (lookingRight?0.33f:-0.33f), transform.position.y+1.7f), lookingRight?Vector2.left:Vector2.right, sliding&&CurrentCharacter!=Character.Roll?1f:0.66f, LayerMask.GetMask("Terrain"));
         if (leftWallCheck){Debug.DrawRay(leftWallCheck.point,Vector2.right/2f,Color.blue,0.5f);}
         if (rightWallCheck){Debug.DrawRay(rightWallCheck.point,Vector2.left/2f,Color.red,0.5f);}
         if (floorCheck){Debug.DrawRay(floorCheck.point,Vector2.up/2f,Color.green,0.5f);}
@@ -209,7 +212,7 @@ public class CharControl : MonoBehaviour
     }
     private void slide()
     {
-        if (isSliding&&(slideTimer >= slideTime||slidingToTheRight!=facingRight||(slideTimer>0.05f&&((wallContact[0]&&!slidingToTheRight)||(wallContact[1]&&slidingToTheRight)))||!groundContact)&&!ceilingContact)
+        if (isSliding&&(slideTimer >= slideTime||slidingToTheRight!=facingRight||(Contacts(true,facingRight)[0]&&!slidingToTheRight)||(Contacts(true,facingRight)[1]&&slidingToTheRight)||!groundContact)&&!ceilingContact)
         {
             isSliding=false;
             currentMotion=0;
@@ -254,16 +257,14 @@ public class CharControl : MonoBehaviour
         isHit = amountChanged < 0;
         anim.SetBool("Hit", isHit && !EquippedUpgrades[(int)upgrades.ShockAbsorber] && invincibiltyTimer <= 0.5f && !(isSliding && ceilingContact));
         var safetyBall = GetComponentInChildren<SafetyBallScript>();
-        if (safetyBall && safetyBall.isActiveAndEnabled)
+        var cycloneStrike = GetComponentInChildren<CycloneStrikeBehaviour>();
+        if ((safetyBall && safetyBall.isActiveAndEnabled)||(cycloneStrike && cycloneStrike.isActiveAndEnabled))
         {
-            safetyBall.HealthChange(amountChanged);
-            amountChanged = 0;
+            if (safetyBall && safetyBall.isActiveAndEnabled){safetyBall.HealthChange(amountChanged);}
+            amountChanged = Mathf.Max(0,amountChanged);
         }
-        else
-        {
-            if (EquippedUpgrades[(int)upgrades.Armor] && isHit) amountChanged += amountChanged / 2;
-            else if (EquippedUpgrades[(int)upgrades.SuperRecover] && amountChanged > 0) amountChanged *= 2;
-        }
+        if (EquippedUpgrades[(int)upgrades.Armor] && isHit) amountChanged += amountChanged / 2;
+        else if (EquippedUpgrades[(int)upgrades.SuperRecover] && amountChanged > 0) amountChanged *= 2;
         if (amountChanged>1||amountChanged<-1){audioSource.PlayOneShot(amountChanged>0?healSFX:hurtSFX);}
         healthPoints += (healthPoints >= 5 && -amountChanged > healthPoints) ? -healthPoints : amountChanged;
         healthPoints = Mathf.Clamp(healthPoints, -1, 28);

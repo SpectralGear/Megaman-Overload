@@ -4842,10 +4842,10 @@ GameObject:
   - component: {fileID: 7488220138721090220}
   - component: {fileID: 5684123026277715617}
   - component: {fileID: 7760524489570823367}
-  - component: {fileID: 7812041607243498065}
   - component: {fileID: 4916176720014502716}
   - component: {fileID: 7399146237191290349}
   - component: {fileID: -8720521906067809516}
+  - component: {fileID: 2319528571922471251}
   m_Layer: 6
   m_Name: MB Overcharge
   m_TagString: Player Projectile
@@ -4922,26 +4922,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7812041607243498065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2066408503673428713}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8252b3d56915b4f4994faf3eca294b22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 12
-  damage: 5
-  Pierces: 0
-  PiercesOnKill: 1
-  ShieldBreaker: 0
-  BreakFromObstacle: 0
-  damageType: 3
-  spawnSound: {fileID: 8300000, guid: 946ce7dad62b38c48b812442a3a9ab22, type: 3}
 --- !u!58 &4916176720014502716
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -5100,6 +5080,28 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2319528571922471251
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2066408503673428713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90c502caa8a733242ad25e3591743564, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 12
+  damage: 5
+  Pierces: 0
+  PiercesOnKill: 1
+  ShieldBreaker: 1
+  BreakFromObstacle: 0
+  damageChanged: 0
+  damageType: 3
+  spawnSound: {fileID: 8300000, guid: 81efad7362f3a4b4a8702bda1098a04c, type: 3}
+  conditionalVFX: []
 --- !u!1 &4873047231678182108
 GameObject:
   m_ObjectHideFlags: 0

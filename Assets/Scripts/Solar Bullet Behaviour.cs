@@ -11,8 +11,7 @@ public class SolarBulletBehaviour : MonoBehaviour
     [SerializeField] public bool BreakFromObstacle;
     public bool damageChanged=false;
     protected Rigidbody2D rb;
-    enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, SlagShot, SlagHammer, MegawattSurge, Brickfall, IfritBurstSmall, IfritBurstHuge, WaterHose, CycloneStrike, AnimalFriend}
-    [SerializeField] Projectile damageType;
+    [SerializeField] Buster.Projectile damageType;
     [SerializeField] AudioClip spawnSound;
     [SerializeField] List<ConditionLink> conditionalVFX = new List<ConditionLink>();
     AudioSource audioSource;

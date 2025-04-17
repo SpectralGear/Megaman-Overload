@@ -50,7 +50,7 @@ public class SafetyBallScript : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (Attack&&(collision.CompareTag("Enemy")||collision.CompareTag("Boss"))&&collision.GetComponent<EnemyHealth>()){collision.GetComponent<EnemyHealth>().TakeDamage(DamageDealt,7);Attack=false;}
+        if (Attack&&(collision.CompareTag("Enemy")||collision.CompareTag("Boss"))&&collision.GetComponent<EnemyHealth>()){collision.GetComponent<EnemyHealth>().TakeDamage(DamageDealt,(int)Buster.Projectile.BallBounce);Attack=false;}
     }
     void Update()
     {

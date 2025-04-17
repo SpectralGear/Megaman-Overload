@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 5684123026277715617}
   - component: {fileID: 7760524489570823367}
   - component: {fileID: 3317229685494650583}
-  - component: {fileID: 7812041607243498065}
   - component: {fileID: 8999471324630449461}
   - component: {fileID: 8817192936523356819}
+  - component: {fileID: 2924958036683358315}
   m_Layer: 6
   m_Name: MB Bullet
   m_TagString: Friendly Projectile
@@ -124,26 +124,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 1}
   m_Direction: 1
---- !u!114 &7812041607243498065
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2066408503673428713}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8252b3d56915b4f4994faf3eca294b22, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 12
-  damage: 1
-  Pierces: 0
-  PiercesOnKill: 0
-  ShieldBreaker: 0
-  BreakFromObstacle: 0
-  damageType: 0
-  spawnSound: {fileID: 8300000, guid: b706c2133b1eb504f84866075b591fa2, type: 3}
 --- !u!50 &8999471324630449461
 Rigidbody2D:
   serializedVersion: 4
@@ -267,6 +247,28 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2924958036683358315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2066408503673428713}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90c502caa8a733242ad25e3591743564, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 12
+  damage: 1
+  Pierces: 0
+  PiercesOnKill: 0
+  ShieldBreaker: 0
+  BreakFromObstacle: 0
+  damageChanged: 0
+  damageType: 0
+  spawnSound: {fileID: 8300000, guid: 81efad7362f3a4b4a8702bda1098a04c, type: 3}
+  conditionalVFX: []
 --- !u!1 &2852579509186748709
 GameObject:
   m_ObjectHideFlags: 0
