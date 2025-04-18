@@ -38738,16 +38738,6 @@ CompositeCollider2D:
         Y: 110000000
       - X: 40000000
         Y: 110000000
-  - m_Collider: {fileID: 1453299764}
-    m_ColliderPaths:
-    - - X: -10000000
-        Y: 0
-      - X: -20000000
-        Y: 0
-      - X: -20000000
-        Y: -10000000
-      - X: -10000000
-        Y: -10000000
   - m_Collider: {fileID: 541583626}
     m_ColliderPaths:
     - - X: 100000000
@@ -40628,16 +40618,6 @@ CompositeCollider2D:
         Y: 10000000
       - X: 80000000
         Y: 10000000
-  - m_Collider: {fileID: 1019738614}
-    m_ColliderPaths:
-    - - X: 0
-        Y: 0
-      - X: -10000000
-        Y: 0
-      - X: -10000000
-        Y: -10000000
-      - X: 0
-        Y: -10000000
   - m_Collider: {fileID: 708848846}
     m_ColliderPaths:
     - - X: 70000000
@@ -41428,16 +41408,6 @@ CompositeCollider2D:
         Y: 230000000
       - X: 150000000
         Y: 230000000
-  - m_Collider: {fileID: 424117322}
-    m_ColliderPaths:
-    - - X: -20000000
-        Y: 0
-      - X: -30000000
-        Y: 0
-      - X: -30000000
-        Y: -10000000
-      - X: -20000000
-        Y: -10000000
   - m_Collider: {fileID: 218113399}
     m_ColliderPaths:
     - - X: -110000000
@@ -41678,6 +41648,36 @@ CompositeCollider2D:
         Y: 50000000
       - X: 150000000
         Y: 50000000
+  - m_Collider: {fileID: 1019738614}
+    m_ColliderPaths:
+    - - X: 0
+        Y: 0
+      - X: -10000000
+        Y: 0
+      - X: -10000000
+        Y: -10000000
+      - X: 0
+        Y: -10000000
+  - m_Collider: {fileID: 1453299764}
+    m_ColliderPaths:
+    - - X: -10000000
+        Y: 0
+      - X: -20000000
+        Y: 0
+      - X: -20000000
+        Y: -10000000
+      - X: -10000000
+        Y: -10000000
+  - m_Collider: {fileID: 424117322}
+    m_ColliderPaths:
+    - - X: -20000000
+        Y: 0
+      - X: -30000000
+        Y: 0
+      - X: -30000000
+        Y: -10000000
+      - X: -20000000
+        Y: -10000000
   m_CompositePaths:
     m_Paths:
     - - {x: 15.999971, y: -5}

@@ -6,7 +6,7 @@ public class CycloneStrikeBehaviour : MonoBehaviour
 {
     [SerializeField] CharControl cc;
     [SerializeField] Animator anim;
-    [SerializeField] GameObject tornado, slash;
+    [SerializeField] GameObject tornado, slash, slashTrail;
     [SerializeField] float cycloneDamage, slashDamage;
     [SerializeField, Range(0f, 1f)] float slashAnimOffset;
     [SerializeField] Buster.Projectile cycloneDMGType,slashDMGType;
@@ -39,19 +39,19 @@ public class CycloneStrikeBehaviour : MonoBehaviour
     }
     void Update()
     {
-        if (anim.GetLayerWeight(2)<=0||travellingRight!=cc.facingRight){gameObject.SetActive(false);}
         stateInfo = anim.GetCurrentAnimatorStateInfo(2);
-        horizontalVelocity+=Time.deltaTime;
-        if (stateInfo.normalizedTime>=1){anim.SetLayerWeight(2,anim.GetLayerWeight(2)-(Time.deltaTime*2));slash.SetActive(false);}
+        horizontalVelocity+=Time.deltaTime*4;
+        if (anim.GetLayerWeight(2)<=0||travellingRight!=cc.facingRight){gameObject.SetActive(false);}
+        else if (stateInfo.normalizedTime>=1){anim.SetLayerWeight(2,Mathf.Clamp(anim.GetLayerWeight(2)-(Time.deltaTime*2),0,1));slash.SetActive(false);slashTrail.SetActive(false);}
+        else if (stateInfo.normalizedTime>=0.9f){slashTrail.SetActive(true);}
         else if (stateInfo.normalizedTime>=slashAnimOffset)
         {
-            SlashAttack();
+            tornado.SetActive(false);
+            slash.SetActive(true);
         }
     }
     public void SlashAttack()
     {
-        tornado.SetActive(false);
-        slash.SetActive(true);
         if (stateInfo.normalizedTime<slashAnimOffset){anim.Play("Cyclone Strike",2,slashAnimOffset);}
     }
     void LateUpdate()
