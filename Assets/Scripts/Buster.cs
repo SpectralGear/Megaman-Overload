@@ -17,9 +17,9 @@ public class Buster : MonoBehaviour
     private bool facingRight=true,ChargingWeapon;
     float BusterCharge,HalfCharge,OverCharge,FireTimer,pointBuster=0,ChargeSpeed;
     private List<GameObject> projectilesAndAttacks = new List<GameObject>();
-    public enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, SlagShot, SlagHammer, MegawattSurge, Brickfall, IfritBurstSmall, IfritBurstHuge, WaterHose, CycloneStrike, CycloneStrikeSlash, AnimalFriend}
-    public enum Weapon {MegaBuster,SickleChain,SafetyBall,SlagShot,MegawattSurge,Brickfall,IfritBurst,WaterHose,CycloneStrike,AnimalFriend};
-    private List<Weapon> ChargeableWeapons = new List<Weapon>(){Weapon.MegaBuster,Weapon.SickleChain,Weapon.SlagShot,Weapon.IfritBurst};
+    public enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, SlagShot, SlagHammer, MegawattSurge, Brickfall, SparkBomb, SparkBombBarrage, WaterHose, CycloneStrike, CycloneStrikeSlash, AnimalFriend}
+    public enum Weapon {MegaBuster,SickleChain,SafetyBall,SlagShot,MegawattSurge,Brickfall,SparkBomb,WaterHose,CycloneStrike,AnimalFriend};
+    private List<Weapon> ChargeableWeapons = new List<Weapon>(){Weapon.MegaBuster,Weapon.SickleChain,Weapon.SlagShot,Weapon.SparkBomb};
     public List<Weapon> OwnedWeapons = new List<Weapon>();
     CharControl cc;
     [SerializeField] Weapon EquippedWeapon;
@@ -275,9 +275,9 @@ public class Buster : MonoBehaviour
             case Weapon.Brickfall:
                 Shoot(Projectile.Brickfall);
                 break;
-            case Weapon.IfritBurst:
-                if (BusterCharge==FullCharge){Shoot(Projectile.IfritBurstHuge);}
-                else {Shoot(Projectile.IfritBurstSmall);}
+            case Weapon.SparkBomb:
+                if (BusterCharge==FullCharge){Shoot(Projectile.SparkBombBarrage);}
+                else {Shoot(Projectile.SparkBomb);}
                 break;
             case Weapon.WaterHose:
                 Shoot(Projectile.WaterHose);
@@ -382,28 +382,32 @@ public class Buster : MonoBehaviour
                 {
                     if (facingRight)
                     {
-                        GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.Brickfall],projectileSpawn.transform.position,Quaternion.identity);
-                        projectilesAndAttacks.Add(bullet);
+                        GameObject brick = Instantiate(attackPrefabs[(int)Projectile.Brickfall],projectileSpawn.transform.position,Quaternion.identity);
+                        projectilesAndAttacks.Add(brick);
                     }
                     else
                     {
-                        GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.Brickfall],projectileSpawn.transform.position,Quaternion.identity);
-                        bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);
-                        projectilesAndAttacks.Add(bullet);
+                        GameObject brick = Instantiate(attackPrefabs[(int)Projectile.Brickfall],projectileSpawn.transform.position,Quaternion.identity);
+                        brick.transform.localScale=new Vector3(brick.transform.localScale.x*-1,brick.transform.localScale.y,brick.transform.localScale.z);
+                        projectilesAndAttacks.Add(brick);
                     }
                 }
                 FireTimer=ShotTiming;
                 break;
-            case Projectile.IfritBurstSmall:
+            case Projectile.SparkBomb:
                 if (FireTimer==0)
                 {
-                    GameObject bombs = Instantiate(attackPrefabs[(int)Projectile.IfritBurstSmall],projectileSpawn.transform.position,Quaternion.identity);
-                    projectilesAndAttacks.Add(bombs);
+                    GameObject bomb = Instantiate(attackPrefabs[(int)Projectile.SparkBomb],projectileSpawn.transform.position,Quaternion.Euler(0,0,facingRight?0:180));
+                    projectilesAndAttacks.Add(bomb);
                     FireTimer=ShotTiming;
                 }
                 break;
-            case Projectile.IfritBurstHuge:
-                attackPrefabs[(int)Projectile.IfritBurstHuge].SetActive(true);
+            case Projectile.SparkBombBarrage:
+                {
+                    GameObject bomb = Instantiate(attackPrefabs[(int)Projectile.SparkBomb],projectileSpawn.transform.position,Quaternion.Euler(0,0,facingRight?0:180));
+                    projectilesAndAttacks.Add(bomb);
+                    FireTimer=ShotTiming;
+                }
                 break;
             case Projectile.WaterHose:
                 attackPrefabs[(int)Projectile.WaterHose].SetActive(true);
