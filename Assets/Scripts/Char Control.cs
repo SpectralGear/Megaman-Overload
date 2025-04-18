@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 public class CharControl : MonoBehaviour
 {
     [SerializeField] public float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
-    [SerializeField] GameObject StandingCollision,SlidingCollision,Camera;
+    [SerializeField] GameObject StandingCollision,SlidingCollision,Camera,cycloneStrike;
     [SerializeField] public bool DashComboInput,SlideComboInput,inWater;
     public enum upgrades {Armor,ShockAbsorber,AutoRecover, EnergySaver,SuperRecover,PickupFinder, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
     [SerializeField] public List<upgrades> OwnedUpgrades = new List<upgrades>();
@@ -257,8 +257,7 @@ public class CharControl : MonoBehaviour
         isHit = amountChanged < 0;
         anim.SetBool("Hit", isHit && !EquippedUpgrades[(int)upgrades.ShockAbsorber] && invincibiltyTimer <= 0.5f && !(isSliding && ceilingContact));
         var safetyBall = GetComponentInChildren<SafetyBallScript>();
-        var cycloneStrike = GetComponentInChildren<CycloneStrikeBehaviour>();
-        if ((safetyBall && safetyBall.isActiveAndEnabled)||(cycloneStrike && cycloneStrike.isActiveAndEnabled))
+        if ((safetyBall && safetyBall.isActiveAndEnabled)||(cycloneStrike && cycloneStrike.activeInHierarchy))
         {
             if (safetyBall && safetyBall.isActiveAndEnabled){safetyBall.HealthChange(amountChanged);}
             amountChanged = Mathf.Max(0,amountChanged);

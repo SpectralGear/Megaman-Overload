@@ -10768,6 +10768,7 @@ MonoBehaviour:
   StandingCollision: {fileID: 9083886059217191213}
   SlidingCollision: {fileID: 7604965200786383289}
   Camera: {fileID: 7319892854800783878}
+  cycloneStrike: {fileID: 4324179498011365953}
   DashComboInput: 0
   SlideComboInput: 0
   inWater: 0

@@ -10,7 +10,7 @@ public class CycloneStrikeBehaviour : MonoBehaviour
     [SerializeField] float cycloneDamage, slashDamage;
     [SerializeField, Range(0f, 1f)] float slashAnimOffset;
     [SerializeField] Buster.Projectile cycloneDMGType,slashDMGType;
-    float horizontalVelocity;
+    float horizontalVelocity=6;
     bool travellingRight;
     AnimatorStateInfo stateInfo;
     void OnEnable()
@@ -18,7 +18,6 @@ public class CycloneStrikeBehaviour : MonoBehaviour
         travellingRight=cc.facingRight;
         tornado.SetActive(true);
         anim.SetLayerWeight(2,1);
-        horizontalVelocity=0;
         anim.Play("Cyclone Strike",2,0);
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -40,7 +39,6 @@ public class CycloneStrikeBehaviour : MonoBehaviour
     void Update()
     {
         stateInfo = anim.GetCurrentAnimatorStateInfo(2);
-        horizontalVelocity+=Time.deltaTime*4;
         if (anim.GetLayerWeight(2)<=0||travellingRight!=cc.facingRight){gameObject.SetActive(false);}
         else if (stateInfo.normalizedTime>=1){anim.SetLayerWeight(2,Mathf.Clamp(anim.GetLayerWeight(2)-(Time.deltaTime*2),0,1));slash.SetActive(false);slashTrail.SetActive(false);}
         else if (stateInfo.normalizedTime>=0.9f){slashTrail.SetActive(true);}
