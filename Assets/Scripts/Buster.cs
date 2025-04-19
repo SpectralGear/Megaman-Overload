@@ -276,7 +276,7 @@ public class Buster : MonoBehaviour
                 Shoot(Projectile.Brickfall);
                 break;
             case Weapon.SparkBomb:
-                if (BusterCharge==FullCharge){Shoot(Projectile.SparkBombBarrage);}
+                if (BusterCharge>=FullCharge){Shoot(Projectile.SparkBombBarrage);}
                 else {Shoot(Projectile.SparkBomb);}
                 break;
             case Weapon.WaterHose:
@@ -395,17 +395,33 @@ public class Buster : MonoBehaviour
                 FireTimer=ShotTiming;
                 break;
             case Projectile.SparkBomb:
-                if (FireTimer==0)
+                if (FireTimer==0&&projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.SparkBomb].name))<1)
                 {
                     GameObject bomb = Instantiate(attackPrefabs[(int)Projectile.SparkBomb],projectileSpawn.transform.position,Quaternion.Euler(0,0,facingRight?0:180));
                     projectilesAndAttacks.Add(bomb);
                     FireTimer=ShotTiming;
                 }
+                else 
+                {
+                    foreach (GameObject obj in projectilesAndAttacks)
+                    {
+                        SparkBomb bomb = obj.GetComponent<SparkBomb>();
+                        if (bomb != null)
+                        {
+                            bomb.GoBoom();
+                        }
+                    }
+                }
                 break;
             case Projectile.SparkBombBarrage:
                 {
-                    GameObject bomb = Instantiate(attackPrefabs[(int)Projectile.SparkBomb],projectileSpawn.transform.position,Quaternion.Euler(0,0,facingRight?0:180));
-                    projectilesAndAttacks.Add(bomb);
+                    int angle = -90;
+                    for (int i=0; i<7;i++)
+                    {
+                        angle+=45;
+                        GameObject bomb = Instantiate(attackPrefabs[(int)Projectile.SparkBomb],projectileSpawn.transform.position,Quaternion.Euler(0,0,angle));
+                        projectilesAndAttacks.Add(bomb);
+                    }
                     FireTimer=ShotTiming;
                 }
                 break;
