@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
@@ -18,11 +19,15 @@ public class CharControl : MonoBehaviour
     public enum Character {Megaman, Protoman, Bass, Roll}
     [SerializeField] public Character CurrentCharacter;
     [SerializeField] Image healthBar;
+    [SerializeField] List<SurfaceDetectionViaTrigger> 
+    FrontDetection = new List<SurfaceDetectionViaTrigger>(),
+    BackDetection = new List<SurfaceDetectionViaTrigger>(),
+    CeilingDetection = new List<SurfaceDetectionViaTrigger>(),
+    FloorDetection = new List<SurfaceDetectionViaTrigger>();
     Animator anim;
     public Rigidbody2D rb;
     private bool isHit=false,slideJumping=false,slidingToTheRight;
-    public bool dead,facingRight=true,isSliding=false,groundContact,ceilingContact,velocityOverride;
-    public bool[] wallContact = new bool[2];
+    public bool dead,facingRight=true,isSliding=false,groundContact,ceilingContact,frontContact,backContact,velocityOverride;
     private float slideTimer,healthPoints=28,timeSinceJump,invincibiltyTimer,currentMotion;
     public float VelocityY,VelocityX,moveInputX=0,moveInputY=0;
     private DefaultControls playerInputActions;
@@ -115,28 +120,44 @@ public class CharControl : MonoBehaviour
         }
         else if (SlideComboInput&&moveInputY<0&&groundContact&&!isSliding)
         {
-            isSliding = true;
-            audioSource.PlayOneShot(slideSFX);
-            slideTimer=0;
-            slidingToTheRight = facingRight;
+            CollisionDetectionUpdate(CurrentCharacter,true);
+            if (!frontContact)
+            {   
+                isSliding = true;
+                audioSource.PlayOneShot(slideSFX);
+                slideTimer=0;
+                slidingToTheRight = facingRight;
+            }
         }
         else if ((!SlideComboInput||moveInputY>=0)&&groundContact)
         {
             VelocityY = jumpForce;
             audioSource.PlayOneShot(jumpSFX);
         }
-        else if (CurrentCharacter==Character.Megaman && EquippedUpgrades[(int)upgrades.WallKick] && (wallContact[1] || wallContact[0]))
+        else if (EquippedUpgrades[(int)upgrades.WallKick]&&!groundContact)
         {
-            VelocityY = jumpForce/5*3; 
-            if (wallContact[1]) 
+            switch (CurrentCharacter)
             {
-                currentMotion = -10;
+                case Character.Megaman:
+                if (frontContact)
+                {
+                    VelocityY = jumpForce*0.9f;
+                    currentMotion=-10;
+                    audioSource.PlayOneShot(jumpSFX);
+                }
+                return;
+                case Character.Bass:
+                VelocityY = jumpForce;
+                audioSource.PlayOneShot(jumpSFX);
+                return;
+                case Character.Roll:
+                return;
+                case Character.Protoman:
+                VelocityY=0.8f;
+                return;
+                default:
+                return;
             }
-            else if (wallContact[0])
-            {
-                currentMotion = 10;
-            }
-            audioSource.PlayOneShot(jumpSFX);
         }
     }
     private void OnJumpCanceled(InputAction.CallbackContext context)
@@ -149,7 +170,8 @@ public class CharControl : MonoBehaviour
     }
     private void OnSlide(InputAction.CallbackContext context)
     {
-        if (groundContact&&!isSliding&&!((Contacts(true,facingRight)[0]&&!facingRight)||(Contacts(true,facingRight)[1]&&facingRight)))
+        CollisionDetectionUpdate(CurrentCharacter,true);
+        if (groundContact&&!isSliding&&!frontContact)
         {
             isSliding = true;
             audioSource.PlayOneShot(slideSFX);
@@ -169,28 +191,19 @@ public class CharControl : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        bool[] contacts = Contacts(isSliding&&CurrentCharacter!=Character.Roll,facingRight);
-        groundContact = contacts[2];
-        wallContact[0] = contacts[0];
-        wallContact[1] = contacts[1];
-        ceilingContact = contacts[3];
         if (!velocityOverride){rb.velocity = new Vector2(VelocityX,VelocityY);}
+        CollisionDetectionUpdate(CurrentCharacter,isSliding);
+    }
+    void CollisionDetectionUpdate(Character character, bool sliding)
+    {
+        ceilingContact = CeilingDetection[!sliding?0:1].InContact;
+        groundContact = FloorDetection[!sliding?0:1].InContact;
+        frontContact = FrontDetection[!sliding?0:1].InContact;
+        backContact = BackDetection[!sliding?0:1].InContact;
     }
     void LateUpdate()
     {
         if (Camera.transform.lossyScale.x<0)Camera.transform.localScale=new Vector3(Camera.transform.localScale.x*-1,Camera.transform.localScale.y,Camera.transform.localScale.z);
-    }
-    public bool[] Contacts(bool sliding, bool lookingRight)
-    {
-        RaycastHit2D leftWallCheck = Physics2D.Raycast(new Vector2(transform.position.x - (lookingRight&&sliding&&CurrentCharacter!=Character.Roll?1.3f:0.5f), transform.position.y+0.05f), Vector2.up, sliding?0.7f:1.2f, LayerMask.GetMask("Terrain"));
-        RaycastHit2D rightWallCheck = Physics2D.Raycast(new Vector2(transform.position.x + (!lookingRight&&sliding&&CurrentCharacter!=Character.Roll?1.3f:0.5f), transform.position.y+0.05f), Vector2.up, sliding?0.7f:1.2f, LayerMask.GetMask("Terrain"));
-        RaycastHit2D floorCheck = Physics2D.Raycast(new Vector2(transform.position.x + (lookingRight?0.45f:-0.45f), transform.position.y-0.05f), lookingRight?Vector2.left:Vector2.right, sliding&&CurrentCharacter!=Character.Roll?1.7f:0.9f, LayerMask.GetMask("Terrain"));
-        RaycastHit2D ceilingCheck = Physics2D.Raycast(new Vector2(transform.position.x + (lookingRight?0.33f:-0.33f), transform.position.y+1.7f), lookingRight?Vector2.left:Vector2.right, sliding&&CurrentCharacter!=Character.Roll?1f:0.66f, LayerMask.GetMask("Terrain"));
-        if (leftWallCheck){Debug.DrawRay(leftWallCheck.point,Vector2.right/2f,Color.blue,0.5f);}
-        if (rightWallCheck){Debug.DrawRay(rightWallCheck.point,Vector2.left/2f,Color.red,0.5f);}
-        if (floorCheck){Debug.DrawRay(floorCheck.point,Vector2.up/2f,Color.green,0.5f);}
-        if (ceilingCheck){Debug.DrawRay(ceilingCheck.point,Vector2.down/2f,Color.yellow,0.5f);}
-        return new bool[4] {leftWallCheck,rightWallCheck,floorCheck,ceilingCheck};
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -202,7 +215,11 @@ public class CharControl : MonoBehaviour
     }
     private void fall(bool airborne)
     {
-        if (anim.GetBool("Jumping")==true&&!airborne&&!GetComponentInChildren<SafetyBallScript>()){audioSource.PlayOneShot(landSFX);}
+        if (anim.GetBool("Jumping")==true&&!airborne)
+        {
+            if (!GetComponentInChildren<SafetyBallScript>()){audioSource.PlayOneShot(landSFX);}
+            VelocityY=0;
+        }
         anim.SetBool("Jumping", airborne);
         if (!airborne) {return;}
         float accelerationY = inWater ? gravityInWater : gravity;
@@ -212,7 +229,7 @@ public class CharControl : MonoBehaviour
     }
     private void slide()
     {
-        if (isSliding&&(slideTimer >= slideTime||slidingToTheRight!=facingRight||(Contacts(true,facingRight)[0]&&!slidingToTheRight)||(Contacts(true,facingRight)[1]&&slidingToTheRight)||!groundContact)&&!ceilingContact)
+        if (isSliding&&(slideTimer >= slideTime||slidingToTheRight!=facingRight||frontContact||!groundContact)&&!ceilingContact)
         {
             isSliding=false;
             currentMotion=0;

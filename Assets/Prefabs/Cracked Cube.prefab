@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 4613288722091256877}
   - component: {fileID: -2276615420744794416}
   m_Layer: 3
-  m_Name: Cube
-  m_TagString: Untagged
+  m_Name: Cracked Cube
+  m_TagString: Destructable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -62,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5770ad95f83f4874d8ea5a10f3053780, type: 2}
+  - {fileID: 2100000, guid: f366d2d225c8ee14b82d54366baea6f9, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -99,7 +99,7 @@ public class SafetyBallScript : MonoBehaviour
             if (Attack)
             {
                 cc.velocityOverride=true;
-                if ((cc.wallContact[1]&&direction<0)||(cc.wallContact[0]&&direction>0)){direction*=-1;audioSource.PlayOneShot(bounceSFX);}
+                if (((cc.facingRight?cc.frontContact:cc.backContact)&&direction<0)||(!(cc.facingRight?cc.frontContact:cc.backContact)&&direction>0)){direction*=-1;audioSource.PlayOneShot(bounceSFX);}
                 cc.rb.velocity = direction==0?Vector2.down*AttackFallMagnitude:new Vector2(direction,-2).normalized*AttackFallMagnitude;
                 wasAttacking=true;
             }

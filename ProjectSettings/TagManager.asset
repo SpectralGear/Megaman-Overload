@@ -4,12 +4,12 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Friendly Projectile
   - Enemy Projectile
   - Enemy
   - Enemy Shield
   - Boss
   - Player Projectile
+  - Destructable
   layers:
   - Default
   - TransparentFX

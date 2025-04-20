@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2282250849211401839}
   m_Layer: 6
   m_Name: Spark Bomb
-  m_TagString: Player
+  m_TagString: Player Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -80,7 +80,7 @@ MonoBehaviour:
   speed: 10
   damage: 0
   armTime: 0.2
-  fullPowerGracePeriod: 0.3
+  fullPowerGracePeriod: 1
   fizzleOutTimeAfterArming: 1.8
   Explosion: {fileID: 655336022423663355, guid: 34eac4dbf3d9e06418e852f46d0b9200, type: 3}
   damageType: 12

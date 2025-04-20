@@ -420,6 +420,7 @@ public class Buster : MonoBehaviour
                     {
                         angle+=45;
                         GameObject bomb = Instantiate(attackPrefabs[(int)Projectile.SparkBomb],projectileSpawn.transform.position,Quaternion.Euler(0,0,angle));
+                        bomb.GetComponent<AudioSource>().volume*=1/7;
                         projectilesAndAttacks.Add(bomb);
                     }
                     FireTimer=ShotTiming;

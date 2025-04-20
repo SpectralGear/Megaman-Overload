@@ -44,6 +44,7 @@ public class SparkBomb : MonoBehaviour
             GameObject Boom = Instantiate(Explosion,transform.position,Quaternion.identity);
             ExplosionBehavior BoomBehaviour = Boom.GetComponent<ExplosionBehavior>();
             Boom.transform.localScale*=2;
+            BoomBehaviour.volume=GetComponent<AudioSource>().volume;
             BoomBehaviour.damage=damage;
             BoomBehaviour.friendlyFire=false;
             BoomBehaviour.playerOwned=true;
