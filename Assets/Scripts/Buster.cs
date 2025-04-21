@@ -26,6 +26,7 @@ public class Buster : MonoBehaviour
     [SerializeField] Texture2D Ball, BallAttack;
     [SerializeField] Material charMat;
     [SerializeField] AudioSource chargingAudioSource;
+    AnimatorStateInfo stateInfo;
     private void Awake()
     {
         playerInputActions = new DefaultControls();
@@ -202,6 +203,7 @@ public class Buster : MonoBehaviour
     }
     void Update()
     {
+        stateInfo=anim.GetCurrentAnimatorStateInfo(1);
         if (cc.CurrentCharacter==CharControl.Character.Bass&&EquippedWeapon==Weapon.MegaBuster&&pointBuster>0)
         {
             if (cc.moveInputY>0)

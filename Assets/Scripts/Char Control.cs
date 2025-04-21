@@ -11,13 +11,14 @@ using System;
 public class CharControl : MonoBehaviour
 {
     [SerializeField] public float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
-    [SerializeField] GameObject StandingCollision,SlidingCollision,Camera,cycloneStrike;
+    [SerializeField] GameObject StandingCollision,SlidingCollision,DashingCollision,RollingCollision,Camera,cycloneStrike;
     [SerializeField] public bool DashComboInput,SlideComboInput,inWater;
     public enum upgrades {Armor,ShockAbsorber,AutoRecover, EnergySaver,SuperRecover,PickupFinder, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
     [SerializeField] public List<upgrades> OwnedUpgrades = new List<upgrades>();
     [SerializeField] public List<bool> EquippedUpgrades = new List<bool>();
     public enum Character {Megaman, Protoman, Bass, Roll}
     [SerializeField] public Character CurrentCharacter;
+    private Character SwappedFromCharacter;
     [SerializeField] Image healthBar;
     [SerializeField] List<SurfaceDetectionViaTrigger> 
     FrontDetection = new List<SurfaceDetectionViaTrigger>(),
@@ -25,6 +26,8 @@ public class CharControl : MonoBehaviour
     CeilingDetection = new List<SurfaceDetectionViaTrigger>(),
     FloorDetection = new List<SurfaceDetectionViaTrigger>();
     Animator anim;
+    [SerializeField] AnimationClip Sliding,Rolling,Dashing;
+    private AnimatorOverrideController overrideController;
     public Rigidbody2D rb;
     private bool isHit=false,slideJumping=false,slidingToTheRight;
     public bool dead,facingRight=true,isSliding=false,groundContact,ceilingContact,frontContact,backContact,velocityOverride;
@@ -42,6 +45,34 @@ public class CharControl : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        SwappedFromCharacter=CurrentCharacter;
+    }
+    public void SetMovesetAnimation(AnimationClip newClip, HashSet<AnimationClip> validClips)
+    {
+        // First-time setup of the override controller
+        if (overrideController == null)
+        {
+            overrideController = new AnimatorOverrideController(anim.runtimeAnimatorController);
+            anim.runtimeAnimatorController = overrideController;
+        }
+
+        // Get currently active clips and transitions
+        AnimatorClipInfo[] currentClips = anim.GetCurrentAnimatorClipInfo(0);
+        AnimatorClipInfo[] nextClips = anim.GetNextAnimatorClipInfo(0);
+
+        // Collect all clips currently in use (playing or transitioning)
+        HashSet<AnimationClip> clipsInUse = new HashSet<AnimationClip>();
+        foreach (var clip in currentClips) clipsInUse.Add(clip.clip);
+        foreach (var clip in nextClips) clipsInUse.Add(clip.clip);
+
+        // Only override if the current override target is in the valid list AND not playing or transitioning
+        foreach (var originalClip in validClips)
+        {
+            if (!clipsInUse.Contains(originalClip))
+            {
+                overrideController[originalClip] = newClip;
+            }
+        }
     }
     private void OnEnable()
     {
@@ -196,14 +227,21 @@ public class CharControl : MonoBehaviour
     }
     void CollisionDetectionUpdate(Character character, bool sliding)
     {
-        ceilingContact = CeilingDetection[!sliding?0:1].InContact;
-        groundContact = FloorDetection[!sliding?0:1].InContact;
-        frontContact = FrontDetection[!sliding?0:1].InContact;
-        backContact = BackDetection[!sliding?0:1].InContact;
+        ceilingContact = CeilingDetection[!sliding?0:(character==Character.Roll?2:1)].InContact;
+        groundContact = FloorDetection[!sliding||character==Character.Roll?0:1].InContact;
+        frontContact = FrontDetection[!sliding?0:(character==Character.Bass?2:1)].InContact;
+        backContact = BackDetection[!sliding?0:(character==Character.Roll?2:1)].InContact;
     }
     void LateUpdate()
     {
         if (Camera.transform.lossyScale.x<0)Camera.transform.localScale=new Vector3(Camera.transform.localScale.x*-1,Camera.transform.localScale.y,Camera.transform.localScale.z);
+        if (SwappedFromCharacter!=CurrentCharacter)
+        {
+            if (CurrentCharacter==Character.Roll){SetMovesetAnimation(Rolling,new HashSet<AnimationClip> {Dashing,Sliding});}
+            else if (CurrentCharacter==Character.Bass){SetMovesetAnimation(Dashing,new HashSet<AnimationClip> {Rolling,Sliding});}
+            else {SetMovesetAnimation(Sliding,new HashSet<AnimationClip> {Dashing,Rolling});}
+            SwappedFromCharacter=CurrentCharacter;
+        }
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
@@ -229,6 +267,7 @@ public class CharControl : MonoBehaviour
     }
     private void slide()
     {
+        if (isSliding&&ceilingContact&&(slideTimer >= slideTime-0.1f)){slideTimer=Mathf.Min(slideTimer,slideTime-0.1f);}
         if (isSliding&&(slideTimer >= slideTime||slidingToTheRight!=facingRight||frontContact||!groundContact)&&!ceilingContact)
         {
             isSliding=false;
@@ -245,7 +284,9 @@ public class CharControl : MonoBehaviour
             slideTimer+=Time.deltaTime;
         }
         anim.SetBool("Sliding",isSliding);
-        SlidingCollision.SetActive(isSliding);
+        if (CurrentCharacter==Character.Roll){SlidingCollision.SetActive(false);DashingCollision.SetActive(false);RollingCollision.SetActive(isSliding);}
+        else if (CurrentCharacter==Character.Bass){SlidingCollision.SetActive(false);RollingCollision.SetActive(false);DashingCollision.SetActive(isSliding);}
+        else {DashingCollision.SetActive(false);RollingCollision.SetActive(false);SlidingCollision.SetActive(isSliding);}
         StandingCollision.SetActive(!isSliding);
     }
     private void motion()
