@@ -11,7 +11,7 @@ using System;
 public class CharControl : MonoBehaviour
 {
     [SerializeField] public float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
-    [SerializeField] GameObject StandingCollision,SlidingCollision,DashingCollision,RollingCollision,Camera,cycloneStrike;
+    [SerializeField] GameObject StandingCollision,SlidingCollision,DashingCollision,RollingCollision,Camera,cycloneStrike,FootJetL,FootJetR;
     [SerializeField] public bool DashComboInput,SlideComboInput,inWater;
     public enum upgrades {Armor,ShockAbsorber,AutoRecover, EnergySaver,SuperRecover,PickupFinder, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
     [SerializeField] public List<upgrades> OwnedUpgrades = new List<upgrades>();
@@ -29,7 +29,7 @@ public class CharControl : MonoBehaviour
     [SerializeField] AnimationClip Sliding,Rolling,Dashing;
     private AnimatorOverrideController overrideController;
     public Rigidbody2D rb;
-    private bool isHit=false,slideJumping=false,slidingToTheRight;
+    private bool isHit=false,slideJumping=false,slidingToTheRight,floating=false;
     public bool dead,facingRight=true,isSliding=false,groundContact,ceilingContact,frontContact,backContact,velocityOverride;
     private float slideTimer,healthPoints=28,timeSinceJump,invincibiltyTimer,currentMotion;
     public float VelocityY,VelocityX,moveInputX=0,moveInputY=0;
@@ -162,6 +162,7 @@ public class CharControl : MonoBehaviour
         }
         else if ((!SlideComboInput||moveInputY>=0)&&groundContact)
         {
+            timeSinceJump = 0f;
             VelocityY = jumpForce;
             audioSource.PlayOneShot(jumpSFX);
         }
@@ -172,31 +173,33 @@ public class CharControl : MonoBehaviour
                 case Character.Megaman:
                 if (frontContact)
                 {
+                    timeSinceJump = 0f;
                     VelocityY = jumpForce*0.9f;
                     currentMotion=-10;
                     audioSource.PlayOneShot(jumpSFX);
                 }
                 return;
                 case Character.Bass:
+                timeSinceJump = 0f;
                 VelocityY = jumpForce;
                 audioSource.PlayOneShot(jumpSFX);
                 return;
                 case Character.Roll:
                 return;
                 case Character.Protoman:
-                VelocityY=0.8f;
+                floating=!floating;
                 return;
                 default:
                 return;
             }
         }
+        else {floating=false;}
     }
     private void OnJumpCanceled(InputAction.CallbackContext context)
     {
         if (VelocityY > jumpArcStart)
         {
-            VelocityY = jumpArcStart;
-            Debug.Log("Jump Stopped");
+            ceilingContact=true;
         }
     }
     private void OnSlide(InputAction.CallbackContext context)
@@ -213,8 +216,6 @@ public class CharControl : MonoBehaviour
     private void Update()
     {
         OnMove();
-        fall(!groundContact);
-        slide();
         motion();
         if (CurrentCharacter!=Character.Protoman&&EquippedUpgrades[(int)upgrades.AutoRecover]&&healthPoints>=0&&healthPoints<28){HealthChange(Time.deltaTime/5);}
         if (isHit&&invincibiltyTimer<1){invincibiltyTimer+=Time.deltaTime; if (invincibiltyTimer > 0.5f){anim.SetBool("Hit",false);}}
@@ -227,13 +228,15 @@ public class CharControl : MonoBehaviour
     }
     void CollisionDetectionUpdate(Character character, bool sliding)
     {
-        ceilingContact = CeilingDetection[!sliding?0:(character==Character.Roll?2:1)].InContact;
+        ceilingContact = CeilingDetection[!sliding?0:(character==Character.Roll||character==Character.Bass?1:2)].InContact;
         groundContact = FloorDetection[!sliding||character==Character.Roll?0:1].InContact;
         frontContact = FrontDetection[!sliding?0:(character==Character.Bass?2:1)].InContact;
         backContact = BackDetection[!sliding?0:(character==Character.Roll?2:1)].InContact;
     }
     void LateUpdate()
     {
+        fall(!groundContact);
+        slide();
         if (Camera.transform.lossyScale.x<0)Camera.transform.localScale=new Vector3(Camera.transform.localScale.x*-1,Camera.transform.localScale.y,Camera.transform.localScale.z);
         if (SwappedFromCharacter!=CurrentCharacter)
         {
@@ -245,25 +248,28 @@ public class CharControl : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        inWater=collision.gameObject.layer == LayerMask.NameToLayer("Water");
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Water")){inWater=true;}
     }
     void OnTriggerExit2D(Collider2D collision)
     {
-        inWater=collision.gameObject.layer != LayerMask.NameToLayer("Water")&&inWater;
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Water")){inWater=false;}
     }
     private void fall(bool airborne)
     {
+        float accelerationY = inWater ? gravityInWater : gravity;
+        VelocityY -= Time.deltaTime * accelerationY;
+        if (ceilingContact&&VelocityY>jumpArcStart){VelocityY=jumpArcStart;}
         if (anim.GetBool("Jumping")==true&&!airborne)
         {
             if (!GetComponentInChildren<SafetyBallScript>()){audioSource.PlayOneShot(landSFX);}
-            VelocityY=0;
+            VelocityY=-20;
         }
-        anim.SetBool("Jumping", airborne);
-        if (!airborne) {return;}
-        float accelerationY = inWater ? gravityInWater : gravity;
-        if (ceilingContact&&VelocityY>jumpArcStart){VelocityY=jumpArcStart;}
-        VelocityY -= Time.deltaTime * accelerationY;
+        else if (anim.GetBool("Jumping")==false&&airborne&&VelocityY<0){VelocityY=0;}
+        else if (floating&&GetComponent<Buster>()._equippedWeapon!=Buster.Weapon.AnimalFriend){VelocityY=-1;floating=!groundContact;}
+        FootJetL.SetActive(floating);
+        FootJetR.SetActive(floating);
         VelocityY = Mathf.Clamp(VelocityY, -maxVerticalVelocity, maxVerticalVelocity);
+        anim.SetBool("Jumping", airborne);
     }
     private void slide()
     {

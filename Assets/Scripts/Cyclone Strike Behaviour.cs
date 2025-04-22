@@ -17,8 +17,8 @@ public class CycloneStrikeBehaviour : MonoBehaviour
     {
         travellingRight=cc.facingRight;
         tornado.SetActive(true);
-        anim.Play("Cyclone Strike",1,0);
-        anim.SetLayerWeight(1,1);
+        anim.Play("Cyclone Strike",2,0);
+        anim.SetLayerWeight(2,1);
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -39,7 +39,7 @@ public class CycloneStrikeBehaviour : MonoBehaviour
     void Update()
     {
         stateInfo = anim.GetCurrentAnimatorStateInfo(2);
-        if (anim.GetLayerWeight(1)<=0||travellingRight!=cc.facingRight){gameObject.SetActive(false);}
+        if (anim.GetLayerWeight(2)<=0||travellingRight!=cc.facingRight){gameObject.SetActive(false);}
         else if (stateInfo.normalizedTime>=1){anim.SetLayerWeight(2,Mathf.Clamp(anim.GetLayerWeight(2)-(Time.deltaTime*2),0,1));slash.SetActive(false);slashTrail.SetActive(false);}
         else if (stateInfo.normalizedTime>=0.9f){slashTrail.SetActive(true);}
         else if (stateInfo.normalizedTime>=slashAnimOffset)
@@ -50,7 +50,7 @@ public class CycloneStrikeBehaviour : MonoBehaviour
     }
     public void SlashAttack()
     {
-        if (stateInfo.normalizedTime<slashAnimOffset){anim.Play("Cyclone Strike",1,slashAnimOffset);}
+        if (stateInfo.normalizedTime<slashAnimOffset){anim.Play("Cyclone Strike",2,slashAnimOffset);}
     }
     void LateUpdate()
     {
@@ -62,7 +62,7 @@ public class CycloneStrikeBehaviour : MonoBehaviour
     }
     void OnDisable()
     {
-        anim.SetLayerWeight(1,0);
+        anim.SetLayerWeight(2,0);
         tornado.SetActive(false);
         slash.SetActive(false);
     }
