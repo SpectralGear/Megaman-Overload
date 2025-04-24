@@ -18,9 +18,9 @@ public class Buster : MonoBehaviour
     private bool facingRight=true,ChargingWeapon;
     float BusterCharge,HalfCharge,OverCharge,FireTimer,pointBuster=0,ChargeSpeed;
     private List<GameObject> projectilesAndAttacks = new List<GameObject>();
-    public enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, SlagShot, SlagHammer, MegawattSurge, Brickfall, SparkBomb, SparkBombBarrage, WaterHose, CycloneStrike, CycloneStrikeSlash, AnimalFriend}
-    public enum Weapon {MegaBuster,SickleChain,SafetyBall,SlagShot,MegawattSurge,Brickfall,SparkBomb,WaterHose,CycloneStrike,AnimalFriend};
-    private List<Weapon> ChargeableWeapons = new List<Weapon>(){Weapon.MegaBuster,Weapon.SickleChain,Weapon.SlagShot,Weapon.SparkBomb};
+    public enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, SlagShot, SlagHammer, MegawattSurge, Brickfall, Firecracker, FirecrackerBarrage, WaterCannon, CycloneStrike, CycloneStrikeSlash, AnimalFriend}
+    public enum Weapon {MegaBuster,SickleChain,SafetyBall,SlagShot,MegawattSurge,Brickfall,Firecracker,WaterCannon,CycloneStrike,AnimalFriend};
+    private List<Weapon> ChargeableWeapons = new List<Weapon>(){Weapon.MegaBuster,Weapon.SickleChain,Weapon.SlagShot,Weapon.Firecracker};
     public List<Weapon> OwnedWeapons = new List<Weapon>();
     CharControl cc;
     [SerializeField] Weapon EquippedWeapon;
@@ -277,12 +277,12 @@ public class Buster : MonoBehaviour
             case Weapon.Brickfall:
                 Shoot(Projectile.Brickfall);
                 break;
-            case Weapon.SparkBomb:
-                if (BusterCharge>=FullCharge){Shoot(Projectile.SparkBombBarrage);}
-                else {Shoot(Projectile.SparkBomb);}
+            case Weapon.Firecracker:
+                if (BusterCharge>=FullCharge){Shoot(Projectile.FirecrackerBarrage);}
+                else {Shoot(Projectile.Firecracker);}
                 break;
-            case Weapon.WaterHose:
-                Shoot(Projectile.WaterHose);
+            case Weapon.WaterCannon:
+                Shoot(Projectile.WaterCannon);
                 break;
             case Weapon.CycloneStrike:
                 if (attackPrefabs[(int)Projectile.CycloneStrike].activeInHierarchy){Shoot(Projectile.CycloneStrikeSlash);}
@@ -396,40 +396,34 @@ public class Buster : MonoBehaviour
                 }
                 FireTimer=ShotTiming;
                 break;
-            case Projectile.SparkBomb:
-                if (FireTimer==0&&projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.SparkBomb].name))<1)
+            case Projectile.Firecracker:
+                if (projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.Firecracker].name))<1)
                 {
-                    GameObject bomb = Instantiate(attackPrefabs[(int)Projectile.SparkBomb],projectileSpawn.transform.position,Quaternion.Euler(0,0,facingRight?0:180));
+                    GameObject bomb = Instantiate(attackPrefabs[(int)Projectile.Firecracker],projectileSpawn.transform.position,Quaternion.Euler(0,0,facingRight?0:180));
                     projectilesAndAttacks.Add(bomb);
                     FireTimer=ShotTiming;
                 }
-                else 
-                {
-                    foreach (GameObject obj in projectilesAndAttacks)
-                    {
-                        SparkBomb bomb = obj.GetComponent<SparkBomb>();
-                        if (bomb != null)
-                        {
-                            bomb.GoBoom();
-                        }
-                    }
-                }
                 break;
-            case Projectile.SparkBombBarrage:
+            case Projectile.FirecrackerBarrage:
                 {
                     int angle = -90;
                     for (int i=0; i<7;i++)
                     {
                         angle+=45;
-                        GameObject bomb = Instantiate(attackPrefabs[(int)Projectile.SparkBomb],projectileSpawn.transform.position,Quaternion.Euler(0,0,angle));
-                        bomb.GetComponent<AudioSource>().volume*=1/7;
+                        GameObject bomb = Instantiate(attackPrefabs[(int)Projectile.Firecracker],projectileSpawn.transform.position,Quaternion.Euler(0,0,angle));
+                        bomb.GetComponent<AudioSource>().volume*=1f/7f;
                         projectilesAndAttacks.Add(bomb);
                     }
                     FireTimer=ShotTiming;
                 }
                 break;
-            case Projectile.WaterHose:
-                attackPrefabs[(int)Projectile.WaterHose].SetActive(true);
+            case Projectile.WaterCannon:
+                if (FireTimer<=0)
+                {
+                    GameObject WaterBurst = Instantiate(attackPrefabs[(int)Projectile.WaterCannon],projectileSpawn.transform.position,Quaternion.Euler(0,0,facingRight?0:180));
+                    projectilesAndAttacks.Add(WaterBurst);
+                    FireTimer=0.5f;
+                }
                 break;
             case Projectile.CycloneStrike:
                 attackPrefabs[(int)Projectile.CycloneStrike].SetActive(true);

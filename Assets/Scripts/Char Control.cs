@@ -29,7 +29,7 @@ public class CharControl : MonoBehaviour
     [SerializeField] AnimationClip Sliding,Rolling,Dashing;
     private AnimatorOverrideController overrideController;
     public Rigidbody2D rb;
-    private bool isHit=false,slideJumping=false,slidingToTheRight,floating=false;
+    private bool isHit=false,slideJumping=false,slidingToTheRight,floating=false,doubleJumpAvaiable=false;
     public bool dead,facingRight=true,isSliding=false,groundContact,ceilingContact,frontContact,backContact,velocityOverride;
     private float slideTimer,healthPoints=28,timeSinceJump,invincibiltyTimer,currentMotion;
     public float VelocityY,VelocityX,moveInputX=0,moveInputY=0;
@@ -142,6 +142,7 @@ public class CharControl : MonoBehaviour
     }
     private void OnJumpStarted(InputAction.CallbackContext context)
     {
+        if (groundContact){doubleJumpAvaiable=true;}
         if (isSliding&&!ceilingContact)
         {
             slideJumping = true;
@@ -180,9 +181,13 @@ public class CharControl : MonoBehaviour
                 }
                 return;
                 case Character.Bass:
-                timeSinceJump = 0f;
-                VelocityY = jumpForce;
-                audioSource.PlayOneShot(jumpSFX);
+                if (doubleJumpAvaiable)
+                {
+                    if (!EquippedUpgrades[(int)upgrades.SuperSlide]){slideJumping=false;}
+                    timeSinceJump = 0f;
+                    VelocityY = jumpForce;
+                    audioSource.PlayOneShot(jumpSFX);
+                }
                 return;
                 case Character.Roll:
                 return;
