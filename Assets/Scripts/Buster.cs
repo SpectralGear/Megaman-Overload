@@ -380,19 +380,10 @@ public class Buster : MonoBehaviour
                 }
                 break;
             case Projectile.Brickfall:
-                if (FireTimer==0)
+                if (FireTimer==0&&projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.Brickfall].name))<5)
                 {
-                    if (facingRight)
-                    {
-                        GameObject brick = Instantiate(attackPrefabs[(int)Projectile.Brickfall],projectileSpawn.transform.position,Quaternion.identity);
-                        projectilesAndAttacks.Add(brick);
-                    }
-                    else
-                    {
-                        GameObject brick = Instantiate(attackPrefabs[(int)Projectile.Brickfall],projectileSpawn.transform.position,Quaternion.identity);
-                        brick.transform.localScale=new Vector3(brick.transform.localScale.x*-1,brick.transform.localScale.y,brick.transform.localScale.z);
-                        projectilesAndAttacks.Add(brick);
-                    }
+                    GameObject brick = Instantiate(attackPrefabs[(int)Projectile.Brickfall],cc.groundContact?projectileSpawn.transform.position:new Vector2(transform.position.x,transform.position.y-0.5f),Quaternion.identity);
+                    projectilesAndAttacks.Add(brick);
                 }
                 FireTimer=ShotTiming;
                 break;
