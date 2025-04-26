@@ -320,6 +320,11 @@ public class CharControl : MonoBehaviour
         }
         VelocityX = facingRight ? currentMotion : -currentMotion;
     }
+    public void Instantdeath()
+    {
+        healthPoints=0;
+        HealthChange(-1);
+    }
     public void HealthChange(float amountChanged)
     {
         if (amountChanged == 0 || (amountChanged < 0 && isHit)){if (healthBar!=null){healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f);} return;}
