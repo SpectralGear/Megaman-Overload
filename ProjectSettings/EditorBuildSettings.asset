@@ -4,6 +4,15 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Main Menu.unity
+    guid: 9495f03398c1f7045880464ac6238ab8
+  - enabled: 1
+    path: Assets/Scenes/Stage Select.unity
+    guid: 682028f80bf6a0d498fe0b6459395139
+  - enabled: 1
+    path: Assets/Scenes/Cyclone Man's Stage.unity
+    guid: 4b44c97a5312c044ab9e75ca5511f1fc
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: b878a83e48d5e5341b3706bbab73d710, type: 2}
