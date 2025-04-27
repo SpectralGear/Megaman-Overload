@@ -8,7 +8,6 @@ TagManager:
   - Enemy
   - Enemy Shield
   - Boss
-  - Player Projectile
   - Destructable
   - Friendly Projectile
   - One-Way Platform

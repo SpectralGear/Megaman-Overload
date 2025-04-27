@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 2731882950587966002}
   m_Layer: 0
   m_Name: Standing Collision
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -229,9 +229,10 @@ GameObject:
   - component: {fileID: 6178571056371816388}
   - component: {fileID: 4672747156442791880}
   - component: {fileID: -2005328385058277474}
+  - component: {fileID: 3382136015521302875}
   m_Layer: 0
   m_Name: Mett
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -289,10 +290,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 447868e7e8bdd3b47a0cc3e5a785e607, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HP: {fileID: 4672747156442791880}
   HidingCollision: {fileID: 7504453089799585543}
   StandingCollision: {fileID: 2792912421700862066}
-  bullet: {fileID: 2066408503673428713, guid: 0ffd67782fe149a4b9fe89258e98ef4e, type: 3}
+  bullet: {fileID: 2066408503673428713, guid: 2df055c461087c846b79c8e1c7ba7344, type: 3}
   bulletSpawn: {fileID: 2031532911348455881}
+  Explosion: {fileID: 655336022423663355, guid: 34eac4dbf3d9e06418e852f46d0b9200, type: 3}
+--- !u!50 &3382136015521302875
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6794299731446953912}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 7
 --- !u!1 &7504453089799585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -306,7 +336,7 @@ GameObject:
   - component: {fileID: 1008564211890873337}
   m_Layer: 0
   m_Name: Hiding Collision
-  m_TagString: Untagged
+  m_TagString: Enemy Shield
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

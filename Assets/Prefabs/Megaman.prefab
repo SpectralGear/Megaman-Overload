@@ -15524,6 +15524,7 @@ MonoBehaviour:
   cycloneStrike: {fileID: 4324179498011365953}
   FootJetL: {fileID: 1001525812924517447}
   FootJetR: {fileID: 5102361732112666974}
+  DeathEnergy: {fileID: 2066408503673428713, guid: c1be74fd322b87e4782919ae7b302f23, type: 3}
   DashComboInput: 0
   SlideComboInput: 0
   inWater: 0

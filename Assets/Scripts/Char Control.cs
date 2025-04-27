@@ -2,8 +2,6 @@ using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using System;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
@@ -11,7 +9,7 @@ using System;
 public class CharControl : MonoBehaviour
 {
     [SerializeField] public float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
-    [SerializeField] GameObject StandingCollision,SlidingCollision,DashingCollision,RollingCollision,Camera,cycloneStrike,FootJetL,FootJetR;
+    [SerializeField] GameObject StandingCollision,SlidingCollision,DashingCollision,RollingCollision,Camera,cycloneStrike,FootJetL,FootJetR,DeathEnergy;
     [SerializeField] public bool DashComboInput,SlideComboInput,inWater;
     public enum upgrades {Armor,ShockAbsorber,AutoRecover, EnergySaver,SuperRecover,PickupFinder, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
     [SerializeField] public List<upgrades> OwnedUpgrades = new List<upgrades>();
@@ -344,6 +342,30 @@ public class CharControl : MonoBehaviour
         healthPoints = Mathf.Clamp(healthPoints, -1, 28);
         dead = healthPoints < 0;
         if (healthBar!=null){healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f);}
-        if (dead){GetComponent<Buster>().enabled=false;enabled=false;rb.velocity=Vector2.zero;audioSource.PlayOneShot(dieSFX);}
+        if (dead){Dead();}
+    }
+    void Dead()
+    {
+        GetComponent<Buster>().enabled=false;
+        enabled=false;
+        rb.velocity=Vector2.zero;
+        audioSource.PlayOneShot(dieSFX);
+        Invoke("DeathAnim",0.1f);
+    }
+    void DeathAnim()
+    {
+        Renderer[] renderers = GetComponentsInChildren<Renderer>();
+        foreach (Renderer renderer in renderers)
+        {
+            renderer.enabled=false;
+        }
+        for (int i=0; i<8; i++)
+        {
+            for (int b=1;b<=3;b++)
+            {
+                GameObject energy = Instantiate(DeathEnergy, transform.position+new Vector3(0,0.75f,0), Quaternion.Euler(0,0,45*i));
+                energy.GetComponent<DirectionalBulletBehaviour>().speed*=b;
+            }
+        }
     }
 }

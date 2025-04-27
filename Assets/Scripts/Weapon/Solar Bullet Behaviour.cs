@@ -3,23 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System.Reflection;
+using Unity.VisualScripting;
 
 public class SolarBulletBehaviour : MonoBehaviour
 {
     [SerializeField] public float speed=12,damage;
-    [SerializeField] public bool Pierces, PiercesOnKill, ShieldBreaker;
-    [SerializeField] public bool BreakFromObstacle;
+    [SerializeField] public bool Pierces, PiercesOnKill, ShieldBreaker, BreakFromObstacle;
     public bool damageChanged=false;
     protected Rigidbody2D rb;
     [SerializeField] Buster.Projectile damageType;
     [SerializeField] AudioClip spawnSound;
     [SerializeField] List<ConditionLink> conditionalVFX = new List<ConditionLink>();
     AudioSource audioSource;
+    bool enemyOwned;
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         audioSource = GetComponent<AudioSource>();
-        audioSource.PlayOneShot(spawnSound);
+        if (audioSource&&spawnSound){audioSource.PlayOneShot(spawnSound);}
+        enemyOwned=gameObject.CompareTag("Enemy Projectile");
         UpdateVFX();
     }
     public void UpdateVFX()
@@ -51,13 +53,30 @@ public class SolarBulletBehaviour : MonoBehaviour
     {
         if (damage!=0)
         {
-            if ((collision.CompareTag("Boss") || collision.CompareTag("Enemy") || (collision.CompareTag("Enemy Shield") && ShieldBreaker))&&collision.GetComponent<EnemyHealth>())
+            if (enemyOwned)
             {
-                EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
-                enemy.TakeDamage(damage,(int)damageType);
-                if (!Pierces || (PiercesOnKill && !enemy.dead)){Destroy(gameObject);}
+                if (collision.CompareTag("Player"))
+                {
+                    CharControl player = collision.gameObject.GetComponent<CharControl>();
+                    if (!player){player = collision.gameObject.GetComponentInChildren<CharControl>();}
+                    if (!player){player = collision.gameObject.GetComponentInParent<CharControl>();}
+                    player.HealthChange(-damage);
+                    if (!Pierces || (PiercesOnKill && !player.dead)){Destroy(gameObject);}
+                }
+                else if (BreakFromObstacle&&collision.gameObject.layer==LayerMask.NameToLayer("Terrain")){Destroy(gameObject);}
             }
-            else if (collision.CompareTag("Enemy Shield")||(BreakFromObstacle&&collision.gameObject.layer==LayerMask.NameToLayer("Terrain"))){Destroy(gameObject);}
+            else
+            {
+                if (collision.CompareTag("Boss") || collision.CompareTag("Enemy") || (collision.CompareTag("Enemy Shield") && ShieldBreaker))
+                {
+                    EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
+                    if (!enemy){enemy = collision.gameObject.GetComponentInChildren<EnemyHealth>();}
+                    if (!enemy){enemy = collision.gameObject.GetComponentInParent<EnemyHealth>();}
+                    enemy.TakeDamage(damage,(int)damageType);
+                    if (!Pierces || (PiercesOnKill && !enemy.dead)){Destroy(gameObject);}
+                }
+                else if (collision.CompareTag("Enemy Shield")||(BreakFromObstacle&&collision.gameObject.layer==LayerMask.NameToLayer("Terrain"))){Destroy(gameObject);}
+            }
         }
     }
     protected virtual void Move()
