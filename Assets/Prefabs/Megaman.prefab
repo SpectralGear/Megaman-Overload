@@ -5055,6 +5055,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89923a65599e9df46b55bda5076dadd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TagsToIgnore: []
 --- !u!70 &4120661496390640741
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -5135,6 +5136,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89923a65599e9df46b55bda5076dadd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TagsToIgnore:
+  - One-Way Platform
 --- !u!61 &4592243782283412067
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -10351,6 +10354,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89923a65599e9df46b55bda5076dadd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TagsToIgnore: []
 --- !u!70 &4359297614622076682
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -20703,6 +20707,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89923a65599e9df46b55bda5076dadd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TagsToIgnore:
+  - One-Way Platform
 --- !u!61 &6520789295262051967
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -20793,6 +20799,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89923a65599e9df46b55bda5076dadd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TagsToIgnore: []
 --- !u!70 &2879931393627982524
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -20873,6 +20880,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89923a65599e9df46b55bda5076dadd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TagsToIgnore: []
 --- !u!70 &818602223727934443
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -21068,6 +21076,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89923a65599e9df46b55bda5076dadd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TagsToIgnore: []
 --- !u!70 &2275094279304477796
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -21148,6 +21157,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89923a65599e9df46b55bda5076dadd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TagsToIgnore: []
 --- !u!70 &4616368508112074234
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -21228,6 +21238,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89923a65599e9df46b55bda5076dadd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TagsToIgnore:
+  - One-Way Platform
 --- !u!70 &4071710616587748340
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -21390,6 +21402,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89923a65599e9df46b55bda5076dadd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TagsToIgnore: []
 --- !u!70 &5163655923921537179
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -21727,6 +21740,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89923a65599e9df46b55bda5076dadd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TagsToIgnore: []
 --- !u!70 &3763057858711405807
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -22639,6 +22653,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.x
       value: 10.748
       objectReference: {fileID: 0}
+    - target: {fileID: -4205008631217067062, guid: d63acd9d7aab28d4eb969812e9587d85, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -3754368131703275040, guid: d63acd9d7aab28d4eb969812e9587d85, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.00035649538
@@ -23539,6 +23557,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: d6703972b843265439af1f6af6280d1f, type: 2}
+    - target: {fileID: 1212463295085645485, guid: d63acd9d7aab28d4eb969812e9587d85, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 07656b5c90434be4fabdc52f934d8e80, type: 2}
     - target: {fileID: 1289743529015866392, guid: d63acd9d7aab28d4eb969812e9587d85, type: 3}
       propertyPath: m_Quality
       value: 1

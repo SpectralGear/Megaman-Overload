@@ -323,6 +323,7 @@ public class CharControl : MonoBehaviour
     public void Instantdeath()
     {
         healthPoints=0;
+        isHit=false;
         HealthChange(-1);
     }
     public void HealthChange(float amountChanged)

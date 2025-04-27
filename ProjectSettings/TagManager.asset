@@ -11,6 +11,7 @@ TagManager:
   - Player Projectile
   - Destructable
   - Friendly Projectile
+  - One-Way Platform
   layers:
   - Default
   - TransparentFX

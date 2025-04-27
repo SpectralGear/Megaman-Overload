@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SurfaceDetectionViaTrigger : MonoBehaviour
 {
+    [SerializeField] List<string> TagsToIgnore = new List<string>();
     private bool _InContact = false;
     public bool InContact => _InContact;
     private HashSet<GameObject> gameObjects = new HashSet<GameObject>();
@@ -28,7 +29,7 @@ public class SurfaceDetectionViaTrigger : MonoBehaviour
 
     private void AddGameObjectToSet(GameObject obj)
     {
-        if (gameObjects.Add(obj))  // Only add if it's not already in the set
+        if (gameObjects.Add(obj)&&!TagsToIgnore.Contains(obj.tag))  // Only add if it's not already in the set
         {
             _InContact = true;  // We know we're in contact because we just added a new object
         }
