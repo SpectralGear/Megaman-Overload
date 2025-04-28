@@ -39,7 +39,9 @@ public class Buster : MonoBehaviour
         HalfCharge=FullCharge/2;
         OverCharge=FullCharge*1.5f;
         cc = GetComponent<CharControl>();
-        UpdateInventory();
+        SaveData saveData = SaveManager.LoadGame();
+        OwnedWeapons = new List<Weapon>(saveData.ObtainedWeapons);
+        if (!OwnedWeapons.Contains(Weapon.MegaBuster)){OwnedWeapons.Insert(0,Weapon.MegaBuster);}
     }
     private void OnEnable()
     {
@@ -565,12 +567,5 @@ public class Buster : MonoBehaviour
         {
             anim.SetLayerWeight(layerIndex, weight);
         }
-    }
-    void UpdateInventory()
-    {
-        cc.HealthChange(0);
-        OwnedWeapons.Sort();
-        if (OwnedWeapons.Count<=0){EquippedWeapon=Weapon.MegaBuster;}
-        else if (!OwnedWeapons.Contains(EquippedWeapon)){EquippedWeapon=OwnedWeapons[0];}
     }
 }

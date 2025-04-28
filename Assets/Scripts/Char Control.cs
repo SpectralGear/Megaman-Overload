@@ -2,7 +2,7 @@ using UnityEngine.UI;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
-
+using UnityEngine.SceneManagement;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(Buster))]
@@ -43,6 +43,10 @@ public class CharControl : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+        SaveData saveData = SaveManager.LoadGame();
+        CurrentCharacter = saveData.currentCharacter;
+        OwnedUpgrades = new List<upgrades>(saveData.ObtainedUpgrades);
+        EquippedUpgrades = new List<bool>(saveData.EquippedUpgrades);
         SwappedFromCharacter=CurrentCharacter;
     }
     public void SetMovesetAnimation(AnimationClip newClip, HashSet<AnimationClip> validClips)
@@ -367,5 +371,11 @@ public class CharControl : MonoBehaviour
                 energy.GetComponent<DirectionalBulletBehaviour>().speed*=b;
             }
         }
+        Invoke("ReloadScene",3);
+    }
+    void ReloadScene()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(currentScene.name);
     }
 }
