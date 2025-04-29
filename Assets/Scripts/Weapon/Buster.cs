@@ -39,8 +39,8 @@ public class Buster : MonoBehaviour
         HalfCharge=FullCharge/2;
         OverCharge=FullCharge*1.5f;
         cc = GetComponent<CharControl>();
-        SaveData saveData = SaveManager.LoadGame();
-        OwnedWeapons = new List<Weapon>(saveData.ObtainedWeapons);
+        SaveData saveData = SaveManager.LoadGame(0);
+        if (saveData!=null){OwnedWeapons = new List<Weapon>(saveData.ObtainedWeapons);}
         if (!OwnedWeapons.Contains(Weapon.MegaBuster)){OwnedWeapons.Insert(0,Weapon.MegaBuster);}
     }
     private void OnEnable()

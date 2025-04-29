@@ -5192,6 +5192,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6382641609659071702}
+  - component: {fileID: 9213833111783737708}
   m_Layer: 0
   m_Name: Bullet Spawn Rotaton Anchor
   m_TagString: Untagged
@@ -5215,6 +5216,26 @@ Transform:
   - {fileID: 7987479565936786858}
   m_Father: {fileID: 9123795334845212389}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1818360608 &9213833111783737708
+PositionConstraint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2237967663603933018}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Weight: 1
+  m_TranslationAtRest: {x: 0.273, y: 1.063292, z: 0}
+  m_TranslationOffset: {x: 0.114548445, y: -0.009331822, z: 0.118688636}
+  m_AffectTranslationX: 1
+  m_AffectTranslationY: 1
+  m_AffectTranslationZ: 0
+  m_Active: 1
+  m_IsLocked: 0
+  m_Sources:
+  - sourceTransform: {fileID: 2255928532272468618}
+    weight: 1
 --- !u!1 &2322536361355794027
 GameObject:
   m_ObjectHideFlags: 0
@@ -24469,6 +24490,11 @@ PrefabInstance:
 --- !u!4 &432090164402886453 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7448188063992603447, guid: d63acd9d7aab28d4eb969812e9587d85, type: 3}
+  m_PrefabInstance: {fileID: 7107331277069087746}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2255928532272468618 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -149468504796617080, guid: d63acd9d7aab28d4eb969812e9587d85, type: 3}
   m_PrefabInstance: {fileID: 7107331277069087746}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &4358186054072764758 stripped

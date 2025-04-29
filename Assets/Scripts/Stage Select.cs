@@ -35,7 +35,6 @@ public class StageSelect : MonoBehaviour
     }
     void Start()
     {
-        SaveData saveData = SaveManager.LoadGame();
     }
     void OnMove(InputAction.CallbackContext context)
     {
@@ -64,9 +63,9 @@ public class StageSelect : MonoBehaviour
         int index = (int)(currentPos.x+(currentPos.y*CursorPositionsX.Length));
         if (index==9)
         {
-            SaveData saveData = SaveManager.LoadGame();
+            SaveData saveData = new SaveData();
             saveData.ObtainedWeapons = new Buster.Weapon[6] {Buster.Weapon.MegaBuster,Buster.Weapon.SafetyBall,Buster.Weapon.CycloneStrike,Buster.Weapon.Brickfall,Buster.Weapon.Firecracker,Buster.Weapon.WaterCannon};
-            SaveManager.SaveGame(saveData);
+            SaveManager.SaveGame(saveData,0);
         }
         else
         {

@@ -43,10 +43,13 @@ public class CharControl : MonoBehaviour
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        SaveData saveData = SaveManager.LoadGame();
-        CurrentCharacter = saveData.currentCharacter;
-        OwnedUpgrades = new List<upgrades>(saveData.ObtainedUpgrades);
-        EquippedUpgrades = new List<bool>(saveData.EquippedUpgrades);
+        SaveData saveData = SaveManager.LoadGame(0);
+        if (saveData!=null)
+        {
+            CurrentCharacter = saveData.currentCharacter;
+            OwnedUpgrades = new List<upgrades>(saveData.ObtainedUpgrades);
+            EquippedUpgrades = new List<bool>(saveData.EquippedUpgrades);
+        }
         SwappedFromCharacter=CurrentCharacter;
     }
     public void SetMovesetAnimation(AnimationClip newClip, HashSet<AnimationClip> validClips)
@@ -375,7 +378,7 @@ public class CharControl : MonoBehaviour
     }
     void ReloadScene()
     {
-        Scene currentScene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(currentScene.name);
+        //Scene currentScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(1);
     }
 }
