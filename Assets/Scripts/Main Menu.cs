@@ -1,17 +1,34 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+using UnityEngine.InputSystem;
 public class MainMenu : MonoBehaviour
 {
-    void Update()
+    private DefaultControls playerInputActions;
+    private void Awake()
     {
-        if (Input.GetKey(KeyCode.Space))
-        {
-            SceneManager.LoadScene(1);
-        }
-        if (Input.GetKey(KeyCode.Escape))
-        {
-            Application.Quit();
-        }
+        playerInputActions = new DefaultControls();
+        playerInputActions.Enable();
+    }
+    private void OnEnable()
+    {
+        playerInputActions.Menu.Confirm.started += Confirm;
+        playerInputActions.Menu.Cancel.started += Cancel;
+    }
+    private void OnDisable()
+    {
+        playerInputActions.Menu.Confirm.started -= Confirm;
+        playerInputActions.Menu.Cancel.started -= Cancel;
+    }
+    private void OnDestroy()
+    {
+        playerInputActions.Disable();
+    }
+    void Confirm(InputAction.CallbackContext context)
+    {
+       SceneManager.LoadScene(1);
+    }
+    void Cancel(InputAction.CallbackContext context)
+    {
+        Application.Quit();
     }
 }
