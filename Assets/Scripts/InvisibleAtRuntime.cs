@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -5,32 +6,42 @@ using UnityEngine;
 #endif
 public class InvisibleAtRuntime : MonoBehaviour
 {
-    private Renderer tilemapRenderer;
-
+    [SerializeField] bool UnrenderSelf, UnrenderParent, UnrenderChild;
+    private List<Renderer> renderers = new List<Renderer>();
     void Awake()
     {
-        tilemapRenderer = GetComponent<Renderer>();
+        if (UnrenderSelf){renderers.AddRange(GetComponents<Renderer>());}
+        if (UnrenderParent){renderers.AddRange(GetComponentsInParent<Renderer>(true));}
+        if (UnrenderChild){renderers.AddRange(GetComponentsInParent<Renderer>(true));}
     }
-
     void Update()
     {
 #if UNITY_EDITOR
         if (!Application.isPlaying)
         {
             // Editor: show the tilemap
-            if (tilemapRenderer != null)
-                tilemapRenderer.enabled = true;
+            if (renderers != null)
+                foreach (Renderer renderer in renderers)
+                {
+                    if (renderer != null){renderer.enabled=true;}
+                }
         }
         else
         {
             // Runtime: hide the tilemap
-            if (tilemapRenderer != null)
-                tilemapRenderer.enabled = false;
+            if (renderers != null)
+                foreach (Renderer renderer in renderers)
+                {
+                    if (renderer != null){renderer.enabled=false;}
+                }
         }
 #else
         // Build: always hide
-        if (tilemapRenderer != null)
-            tilemapRenderer.enabled = false;
+        if (renderers != null)
+            foreach (Renderer renderer in renderers)
+                {
+                    if (renderer != null){renderer.enabled=true;}
+                }
 #endif
     }
 }
