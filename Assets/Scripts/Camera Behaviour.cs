@@ -13,6 +13,7 @@ public class CameraBehaviour : MonoBehaviour
     }
     void FixedUpdate()
     {
-        rb.MovePosition(PlayerPos.position+DefaultOffset);
+        Vector3 cameraMovement = Vector3.Lerp(rb.position, PlayerPos.position+DefaultOffset, 0.5f);
+        rb.MovePosition(cameraMovement);
     }
 }

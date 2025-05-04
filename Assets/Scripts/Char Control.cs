@@ -133,11 +133,9 @@ public class CharControl : MonoBehaviour
         }
         if (facingRight){transform.localScale=new Vector3(1,1,1);}
         else {transform.localScale=new Vector3(-1,1,1);}
-        anim.SetFloat("Run Speed",currentMotion/2);
     }
     private void OnHorizontalCanceled(InputAction.CallbackContext context)
     {
-        if (!anim.GetBool("Hit")&&!isSliding){currentMotion=0;}
         anim.SetBool("Running",false);
         moveInputX=0;
     }
@@ -315,7 +313,11 @@ public class CharControl : MonoBehaviour
         {
             slideJumping = false;
         }
-        if (anim.GetBool("Hit"))
+        if (!anim.GetBool("Hit")&&!isSliding&&moveInputX==0)
+        {
+            currentMotion=0;
+        }
+        else if (anim.GetBool("Hit"))
         {
             currentMotion = -0.8f;
         }
@@ -324,6 +326,7 @@ public class CharControl : MonoBehaviour
             currentMotion = EquippedUpgrades[(int)upgrades.SuperSlide]?slideSpeed + (CurrentCharacter==Character.Bass?3:1):slideSpeed;
         }
         VelocityX = facingRight ? currentMotion : -currentMotion;
+        anim.SetFloat("Run Speed",currentMotion/2);
     }
     public void Instantdeath()
     {

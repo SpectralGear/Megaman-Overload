@@ -1,36 +1,70 @@
 using UnityEngine;
 public class CameraMover : MonoBehaviour
 {
-    [SerializeField] float followSpeed = 5f;
-    [SerializeField] Transform endpointA,endpointB;
-    Rigidbody2D CameraRigidbody2D;
-    bool CameraHeld=false;
-    void OnTriggerStay2D(Collider2D collision)
+    enum Direction {x,y}
+    [SerializeField] Direction direction;
+    [SerializeField] float transitionSpeed = 1;
+    [SerializeField] Transform camEndPoint, playerEndPoint;
+    GameObject mainCamera, player;
+    CameraBehaviour camBehavior;
+    Rigidbody2D camRB;
+    bool CameraHeld=false, playerAtTransition=false;
+    Vector3 startPos, endPos, playerStartPos, playerEndPos;
+    float timer = 0;
+    void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("MainCamera"))
         {
-            if (CameraRigidbody2D){CameraRigidbody2D=collision.GetComponent<Rigidbody2D>();}
+            if (!mainCamera)
+            {
+                mainCamera=collision.gameObject;
+                camBehavior = mainCamera.GetComponent<CameraBehaviour>();
+                camRB = mainCamera.GetComponent<Rigidbody2D>();
+            }
+            startPos = new Vector3(transform.position.x,transform.position.y,mainCamera.transform.position.z);
+            endPos = new Vector3(camEndPoint.position.x,camEndPoint.position.y,mainCamera.transform.position.z);
             CameraHeld=true;
+            camBehavior.enabled=false;
+            camRB.bodyType=RigidbodyType2D.Kinematic;
+        }
+        else if (collision.CompareTag("Player"))
+        {
+            if (!player)
+            {
+                player=collision.gameObject;
+            }
+            playerAtTransition=true;
+            playerStartPos = player.transform.position;
+            playerEndPos = new Vector3
+            (
+                direction==Direction.x?playerEndPoint.position.x:playerStartPos.x,
+                direction==Direction.y?playerEndPoint.position.y:playerStartPos.y,
+                playerStartPos.z
+            );
         }
     }
-    void OnTriggerExit2D(Collider2D collision)
+    void Update()
     {
-        if (collision.CompareTag("MainCamera")){CameraHeld=false;}
-    }
-    private void FixedUpdate()
-    {
-        if (!CameraHeld || !CameraRigidbody2D || !endpointA || !endpointB)
-            return;
-
-        Vector3 railStart = endpointA.position;
-        Vector3 railEnd = endpointB.position;
-        Vector3 railDirection = (railEnd - railStart).normalized;
-        float railLength = Vector3.Distance(railStart, railEnd);
-
-        Vector3 toTarget = CameraRigidbody2D.position - (Vector2)railStart;
-        float projectedLength = Mathf.Clamp(Vector3.Dot(toTarget, railDirection), 0, railLength);
-        Vector3 targetPosition = railStart + railDirection * projectedLength;
-
-        transform.position = Vector3.MoveTowards(transform.position, targetPosition, followSpeed * Time.fixedDeltaTime);
+        if (!CameraHeld || !mainCamera || !camEndPoint || !playerAtTransition || !playerEndPoint)
+        {
+            timer=0;
+        }
+        else
+        {
+            if (!GameManager.Instance.GamePaused){GameManager.Instance.PauseGame();}
+            if (timer>=1)
+            {
+                GameManager.Instance.UnpauseGame();
+                CameraHeld=false;
+                camBehavior.enabled=true;
+                camRB.bodyType=RigidbodyType2D.Dynamic;
+                playerAtTransition=false;
+                return;
+            }
+            mainCamera.transform.position = Vector3.Lerp(startPos, endPos, timer);
+            player.transform.position = Vector3.Lerp(playerStartPos, playerEndPos, timer);
+            timer+=Time.unscaledDeltaTime*transitionSpeed;
+            timer = Mathf.Min(timer, 1f);
+        }
     }
 }

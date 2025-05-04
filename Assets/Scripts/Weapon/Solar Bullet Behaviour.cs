@@ -73,7 +73,7 @@ public class SolarBulletBehaviour : MonoBehaviour
                     if (!enemy){enemy = collision.gameObject.GetComponentInChildren<EnemyHealth>();}
                     if (!enemy){enemy = collision.gameObject.GetComponentInParent<EnemyHealth>();}
                     enemy.TakeDamage(damage,(int)damageType);
-                    if (!Pierces || (PiercesOnKill && !enemy.dead)){Destroy(gameObject);}
+                    if (!Pierces || (PiercesOnKill && enemy.dead)){Destroy(gameObject);}
                 }
                 else if (collision.CompareTag("Enemy Shield")||(BreakFromObstacle&&collision.gameObject.layer==LayerMask.NameToLayer("Terrain"))){Destroy(gameObject);}
             }
