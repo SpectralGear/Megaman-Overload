@@ -11,7 +11,7 @@ public class CharControl : MonoBehaviour
     [SerializeField] public float runSpeed,slideSpeed,slideTime,jumpForce,gravity,gravityInWater,jumpArcStart,maxVerticalVelocity;
     [SerializeField] GameObject StandingCollision,SlidingCollision,DashingCollision,RollingCollision,Camera,cycloneStrike,FootJetL,FootJetR,DeathEnergy;
     [SerializeField] public bool DashComboInput,SlideComboInput,inWater;
-    public enum upgrades {Armor,ShockAbsorber,AutoRecover, EnergySaver,SuperRecover,PickupFinder, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
+    public enum upgrades {EnergySaver,SuperRecover,PickupFinder, Armor,ShockAbsorber,AutoRecover, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
     [SerializeField] public List<upgrades> OwnedUpgrades = new List<upgrades>();
     [SerializeField] public List<bool> EquippedUpgrades = new List<bool>();
     public enum Character {Megaman, Protoman, Bass, Roll}

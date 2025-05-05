@@ -13,7 +13,6 @@ public class Buster : MonoBehaviour
     [SerializeField] List<GameObject> BassBulletVariants = new List<GameObject>();
     [SerializeField] ParticleSystem ChargingEffect,FullChargeEffect,OverChargeEffect;
     Animator anim;
-    public enum upgrades {Armor,ShockAbsorber,AutoRecover, EnergySaver,SuperRecover,PickupFinder, ExtraCharge,QuickerCharge,BeamBuster, SuperSlide,Sprinter,WallKick}
     private DefaultControls playerInputActions;
     private bool facingRight=true,ChargingWeapon;
     float BusterCharge,HalfCharge,OverCharge,FireTimer,pointBuster=0,ChargeSpeed;
@@ -181,11 +180,11 @@ public class Buster : MonoBehaviour
         bool isChargeableNonBuster = ChargeableWeapons.Contains(EquippedWeapon) && EquippedWeapon != Weapon.MegaBuster;
         bool isMegaBuster = EquippedWeapon == Weapon.MegaBuster;
         bool isMegamanOrRoll = cc.CurrentCharacter == CharControl.Character.Megaman || cc.CurrentCharacter == CharControl.Character.Roll;
-        bool isProtomanWithValidUpgrade = cc.CurrentCharacter == CharControl.Character.Protoman && (cc.EquippedUpgrades[(int)upgrades.ExtraCharge] || !cc.EquippedUpgrades[(int)upgrades.BeamBuster]);
-        bool isBassWithExtraCharge = cc.CurrentCharacter == CharControl.Character.Bass && cc.EquippedUpgrades[(int)upgrades.ExtraCharge];
+        bool isProtomanWithValidUpgrade = cc.CurrentCharacter == CharControl.Character.Protoman && (cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge] || !cc.EquippedUpgrades[(int)CharControl.upgrades.BeamBuster]);
+        bool isBassWithExtraCharge = cc.CurrentCharacter == CharControl.Character.Bass && cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge];
         bool canChargeMegaBuster = isMegaBuster && (isMegamanOrRoll || isProtomanWithValidUpgrade || isBassWithExtraCharge);
         if (isChargeableNonBuster || canChargeMegaBuster){ChargingWeapon = true;chargingAudioSource.Play();}
-        else if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster){Invoke("rapidFire",FireTimer);}
+        else if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster){Invoke("rapidFire",FireTimer);}
         if (!anim.GetBool("Sliding"))
         {
             pointBuster=0.5f;
@@ -221,9 +220,9 @@ public class Buster : MonoBehaviour
         facingRight = cc.facingRight;
         if (ChargingWeapon)
         {
-            ChargeSpeed = cc.EquippedUpgrades[(int)upgrades.QuickerCharge] ? 2 : 1;
+            ChargeSpeed = cc.EquippedUpgrades[(int)CharControl.upgrades.QuickerCharge] ? 2 : 1;
             if (BusterCharge<OverCharge){BusterCharge+=Time.deltaTime*ChargeSpeed;BusterCharge=Mathf.Clamp(BusterCharge,0,cc.CurrentCharacter!=CharControl.Character.Bass?OverCharge:FullCharge);}
-            if (BusterCharge>=OverCharge&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge]&&cc.CurrentCharacter!=CharControl.Character.Bass){charMat.SetColor("_OtlColor",new Color32(255,52,55,255));FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);OverChargeEffect.Play();}
+            if (BusterCharge>=OverCharge&&cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]&&cc.CurrentCharacter!=CharControl.Character.Bass){charMat.SetColor("_OtlColor",new Color32(255,52,55,255));FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);OverChargeEffect.Play();}
             else if (BusterCharge>=FullCharge){charMat.SetColor("_OtlColor",new Color32(151,255,255,255));ChargingEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);FullChargeEffect.Play();}
             else if (BusterCharge>=HalfCharge){charMat.SetColor("_OtlColor",new Color32(247,255,146,255));ChargingEffect.Play();}
             if (chargingAudioSource.isPlaying&&chargingAudioSource.time>2.5f){chargingAudioSource.volume=Mathf.Clamp((float)((chargingAudioSource.clip.length-chargingAudioSource.time)/(chargingAudioSource.clip.length-2.5f)),0,0.5f);}
@@ -242,7 +241,7 @@ public class Buster : MonoBehaviour
             leftBuster.transform.LookAt(projectileSpawn.transform.position, Vector3.Cross(transform.right, projectileSpawn.transform.position - transform.position));
             leftBuster.transform.rotation *= Quaternion.Euler(90, 0, 0);
         }
-        if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster&&FireTimer>0&&cc.groundContact){cc.VelocityX=0;anim.SetBool("Running",false);}
+        if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster&&FireTimer>0&&cc.groundContact){cc.VelocityX=0;anim.SetBool("Running",false);}
     }
     void StopCharge()
     {
@@ -291,8 +290,8 @@ public class Buster : MonoBehaviour
                 else {Shoot(Projectile.CycloneStrike);}
                 break;
             default:
-                if (cc.CurrentCharacter==CharControl.Character.Protoman&&cc.EquippedUpgrades[(int)upgrades.BeamBuster]){BusterCharge=Mathf.Max(FullCharge,BusterCharge);}
-                if (BusterCharge>=OverCharge&&cc.EquippedUpgrades[(int)upgrades.ExtraCharge]){Shoot(Projectile.OverCharge);BusterCharge=0;}
+                if (cc.CurrentCharacter==CharControl.Character.Protoman&&cc.EquippedUpgrades[(int)CharControl.upgrades.BeamBuster]){BusterCharge=Mathf.Max(FullCharge,BusterCharge);}
+                if (BusterCharge>=OverCharge&&cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]){Shoot(Projectile.OverCharge);BusterCharge=0;}
                 else if (BusterCharge>=FullCharge){Shoot(Projectile.FullCharge);BusterCharge=0;}
                 else if (BusterCharge>=HalfCharge){Shoot(Projectile.HalfCharge);BusterCharge=0;}
                 else {Shoot(Projectile.NoCharge);BusterCharge=0;}
@@ -456,9 +455,9 @@ public class Buster : MonoBehaviour
                         bullet.transform.rotation = Quaternion.Euler(0,0,180);
                     }
                     var behaviour = bullet.GetComponent<DirectionalBulletBehaviour>();
-                    behaviour.BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
-                    behaviour.Pierces=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
-                    if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]) {behaviour.damageChange(1f);}
+                    behaviour.BreakFromObstacle=!cc.EquippedUpgrades[(int)CharControl.upgrades.BeamBuster];
+                    behaviour.Pierces=!cc.EquippedUpgrades[(int)CharControl.upgrades.BeamBuster];
+                    if (cc.EquippedUpgrades[(int)CharControl.upgrades.QuickerCharge]) {behaviour.damageChange(1f);}
                     projectilesAndAttacks.Add(bullet);
                     FireTimer=ShotTiming;
                 }
@@ -468,7 +467,7 @@ public class Buster : MonoBehaviour
                 }
                 else
                 {
-                    if ((FireTimer==0||!(cc.CurrentCharacter==CharControl.Character.Protoman&&cc.EquippedUpgrades[(int)upgrades.BeamBuster]))&&projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.FullCharge].name))<2)
+                    if ((FireTimer==0||!(cc.CurrentCharacter==CharControl.Character.Protoman&&cc.EquippedUpgrades[(int)CharControl.upgrades.BeamBuster]))&&projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.FullCharge].name))<2)
                     {
                         GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.FullCharge],projectileSpawn.transform.position,Quaternion.identity);
                         if (!facingRight){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
@@ -494,9 +493,9 @@ public class Buster : MonoBehaviour
                         bullet.transform.rotation = Quaternion.Euler(0,0,180);
                     }
                     var behaviour = bullet.GetComponent<DirectionalBulletBehaviour>();
-                    behaviour.BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
-                    behaviour.Pierces=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
-                    if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]) {behaviour.damageChange(0.5f);}
+                    behaviour.BreakFromObstacle=!cc.EquippedUpgrades[(int)CharControl.upgrades.BeamBuster];
+                    behaviour.Pierces=!cc.EquippedUpgrades[(int)CharControl.upgrades.BeamBuster];
+                    if (cc.EquippedUpgrades[(int)CharControl.upgrades.QuickerCharge]) {behaviour.damageChange(0.5f);}
                     projectilesAndAttacks.Add(bullet);
                     FireTimer=ShotTiming;
                 }
@@ -512,9 +511,9 @@ public class Buster : MonoBehaviour
                 {
                     if (cc.CurrentCharacter==CharControl.Character.Bass)
                     {
-                        if (projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(BassBulletVariants[cc.EquippedUpgrades[(int)upgrades.ExtraCharge]?1:0].name))<(cc.EquippedUpgrades[(int)upgrades.ExtraCharge]?2:5))
+                        if (projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(BassBulletVariants[cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]?1:0].name))<(cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]?2:5))
                         {   
-                            GameObject bullet = cc.EquippedUpgrades[(int)upgrades.ExtraCharge]?Instantiate(BassBulletVariants[1],projectileSpawn.transform.position,Quaternion.identity):Instantiate(BassBulletVariants[0],projectileSpawn.transform.position,Quaternion.identity);
+                            GameObject bullet = cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]?Instantiate(BassBulletVariants[1],projectileSpawn.transform.position,Quaternion.identity):Instantiate(BassBulletVariants[0],projectileSpawn.transform.position,Quaternion.identity);
                             if (cc.moveInputY>0)
                             {
                                 bullet.transform.rotation = Quaternion.Euler(0,0,cc.moveInputX!=0?(facingRight?45:135):90);
@@ -528,9 +527,9 @@ public class Buster : MonoBehaviour
                                 bullet.transform.rotation = Quaternion.Euler(0,0,180);
                             }
                             var behaviour = bullet.GetComponent<DirectionalBulletBehaviour>();
-                            behaviour.BreakFromObstacle=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
-                            behaviour.Pierces=!cc.EquippedUpgrades[(int)upgrades.BeamBuster];
-                            if (cc.EquippedUpgrades[(int)upgrades.QuickerCharge]) {behaviour.damageChange(0.5f);}
+                            behaviour.BreakFromObstacle=!cc.EquippedUpgrades[(int)CharControl.upgrades.BeamBuster];
+                            behaviour.Pierces=!cc.EquippedUpgrades[(int)CharControl.upgrades.BeamBuster];
+                            if (cc.EquippedUpgrades[(int)CharControl.upgrades.QuickerCharge]) {behaviour.damageChange(0.5f);}
                             projectilesAndAttacks.Add(bullet);
                             FireTimer=ShotTiming;
                         }

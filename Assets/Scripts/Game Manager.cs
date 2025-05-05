@@ -50,13 +50,13 @@ public class GameManager : MonoBehaviour
     {
         if (paused)
         {
-            Time.timeScale=timeScale;
-            AudioListener.pause=false;
             previouslyEnabledBehaviours.RemoveAll(b => b == null);
             foreach (Behaviour behaviour in previouslyEnabledBehaviours)
             {
                 behaviour.enabled=true;
             }
+            Time.timeScale=timeScale;
+            AudioListener.pause=false;
             previouslyEnabledBehaviours.Clear();
             paused=false;
         }
