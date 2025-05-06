@@ -17,7 +17,7 @@ public class CharControl : MonoBehaviour
     public enum Character {Megaman, Protoman, Bass, Roll}
     [SerializeField] public Character CurrentCharacter;
     private Character SwappedFromCharacter;
-    [SerializeField] Image healthBar;
+    public float HealthPoints => healthPoints;
     [SerializeField] List<SurfaceDetectionViaTrigger> 
     FrontDetection = new List<SurfaceDetectionViaTrigger>(),
     BackDetection = new List<SurfaceDetectionViaTrigger>(),
@@ -336,7 +336,7 @@ public class CharControl : MonoBehaviour
     }
     public void HealthChange(float amountChanged)
     {
-        if (amountChanged == 0 || (amountChanged < 0 && isHit)){if (healthBar!=null){healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f);} return;}
+        if (amountChanged == 0 || (amountChanged < 0 && isHit)){return;}
         isHit = amountChanged < 0;
         anim.SetBool("Hit", isHit && !EquippedUpgrades[(int)upgrades.ShockAbsorber] && invincibiltyTimer <= 0.5f && !(isSliding && ceilingContact));
         var safetyBall = GetComponentInChildren<SafetyBallScript>();
@@ -351,7 +351,6 @@ public class CharControl : MonoBehaviour
         healthPoints += (healthPoints >= 5 && -amountChanged > healthPoints) ? -healthPoints : amountChanged;
         healthPoints = Mathf.Clamp(healthPoints, -1, 28);
         dead = healthPoints < 0;
-        if (healthBar!=null){healthBar.fillAmount = Mathf.Max(0, healthPoints / 28f);}
         if (dead){Dead();}
     }
     void Dead()

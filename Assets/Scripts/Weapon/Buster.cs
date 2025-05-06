@@ -3,6 +3,7 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.InputSystem;
 using System.ComponentModel;
+using System;
 
 [RequireComponent(typeof(CharControl))]
 public class Buster : MonoBehaviour
@@ -17,9 +18,10 @@ public class Buster : MonoBehaviour
     private bool facingRight=true,ChargingWeapon;
     float BusterCharge,HalfCharge,OverCharge,FireTimer,pointBuster=0,ChargeSpeed;
     private List<GameObject> projectilesAndAttacks = new List<GameObject>();
-    public enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, SlagShot, SlagHammer, MegawattSurge, Brickfall, Firecracker, FirecrackerBarrage, WaterCannon, CycloneStrike, CycloneStrikeSlash, AnimalFriend}
-    public enum Weapon {MegaBuster,SickleChain,SafetyBall,SlagShot,MegawattSurge,Brickfall,Firecracker,WaterCannon,CycloneStrike,AnimalFriend};
-    private List<Weapon> ChargeableWeapons = new List<Weapon>(){Weapon.MegaBuster,Weapon.SickleChain,Weapon.SlagShot,Weapon.Firecracker};
+    public enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, ResinGlob, MegawattSurge, Brickfall, Firecracker, FirecrackerBarrage, WaterCannon, CycloneStrike, CycloneStrikeSlash, AnimalFriend}
+    public enum Weapon {MegaBuster,SickleChain,SafetyBall,MegawattSurge,CycloneStrike,ResinGlob,WaterCannon,Firecracker,Brickfall,AnimalFriend};
+    public float[] WeaponEnergy = new float[9] {28,28,28,28,28,28,28,28,28};
+    private List<Weapon> ChargeableWeapons = new List<Weapon>(){Weapon.MegaBuster,Weapon.SickleChain,Weapon.Firecracker};
     public List<Weapon> OwnedWeapons = new List<Weapon>();
     CharControl cc;
     [SerializeField] Weapon EquippedWeapon;
@@ -39,7 +41,7 @@ public class Buster : MonoBehaviour
         OverCharge=FullCharge*1.5f;
         cc = GetComponent<CharControl>();
         SaveData saveData = SaveManager.LoadGame(0);
-        if (saveData!=null){OwnedWeapons = new List<Weapon>(saveData.ObtainedWeapons);}
+        //if (saveData!=null){OwnedWeapons = new List<Weapon>(saveData.ObtainedWeapons);}
         if (!OwnedWeapons.Contains(Weapon.MegaBuster)){OwnedWeapons.Insert(0,Weapon.MegaBuster);}
     }
     private void OnEnable()
@@ -261,33 +263,38 @@ public class Buster : MonoBehaviour
                 Shoot(Projectile.AnimalFriend);
                 break;
             case Weapon.SickleChain:
-                if (BusterCharge>=HalfCharge){Shoot(Projectile.SickleChainLong);}
-                else {Shoot(Projectile.SickleChainShort);}
+                if (WeaponEnergy[(int)Weapon.SickleChain-1]>0)
+                {
+                    if (BusterCharge>=HalfCharge){Shoot(Projectile.SickleChainLong);}
+                    else {Shoot(Projectile.SickleChainShort);}
+                }
                 break;
             case Weapon.SafetyBall:
                 if (attackPrefabs[(int)Projectile.SafetyBall].activeInHierarchy){Shoot(Projectile.BallBounce);}
-                else {Shoot(Projectile.SafetyBall);}
+                else if (WeaponEnergy[(int)Weapon.SafetyBall-1]>0){Shoot(Projectile.SafetyBall);}
                 break;
-            case Weapon.SlagShot:
-                if (BusterCharge==HalfCharge){Shoot(Projectile.SlagHammer);}
-                else {Shoot(Projectile.SlagShot);}
+            case Weapon.ResinGlob:
+                if (WeaponEnergy[(int)Weapon.ResinGlob-1]>0){Shoot(Projectile.ResinGlob);}
                 break;
             case Weapon.MegawattSurge:
-                Shoot(Projectile.MegawattSurge);
+                if (WeaponEnergy[(int)Weapon.MegawattSurge-1]>0){Shoot(Projectile.MegawattSurge);}
                 break;
             case Weapon.Brickfall:
-                Shoot(Projectile.Brickfall);
+                if (WeaponEnergy[(int)Weapon.Brickfall-1]>0){Shoot(Projectile.Brickfall);}
                 break;
             case Weapon.Firecracker:
-                if (BusterCharge>=FullCharge){Shoot(Projectile.FirecrackerBarrage);}
-                else {Shoot(Projectile.Firecracker);}
+                if (WeaponEnergy[(int)Weapon.Firecracker-1]>0)
+                {
+                    if (BusterCharge>=FullCharge){Shoot(Projectile.FirecrackerBarrage);}
+                    else {Shoot(Projectile.Firecracker);}
+                }
                 break;
             case Weapon.WaterCannon:
-                Shoot(Projectile.WaterCannon);
+                if (WeaponEnergy[(int)Weapon.WaterCannon-1]>0){Shoot(Projectile.WaterCannon);}
                 break;
             case Weapon.CycloneStrike:
                 if (attackPrefabs[(int)Projectile.CycloneStrike].activeInHierarchy){Shoot(Projectile.CycloneStrikeSlash);}
-                else {Shoot(Projectile.CycloneStrike);}
+                else if (WeaponEnergy[(int)Weapon.CycloneStrike-1]>0){Shoot(Projectile.CycloneStrike);}
                 break;
             default:
                 if (cc.CurrentCharacter==CharControl.Character.Protoman&&cc.EquippedUpgrades[(int)CharControl.upgrades.BeamBuster]){BusterCharge=Mathf.Max(FullCharge,BusterCharge);}
@@ -305,6 +312,7 @@ public class Buster : MonoBehaviour
         {
             case Projectile.SickleChainShort:
                 attackPrefabs[(int)Projectile.SickleChainShort].SetActive(true);
+                WeaponEnergy[(int)Weapon.SickleChain-1]-=2;
                 break;
             case Projectile.SickleChainLong:
                 attackPrefabs[(int)Projectile.SickleChainShort].SetActive(false);
@@ -322,45 +330,35 @@ public class Buster : MonoBehaviour
                         projectilesAndAttacks.Add(bullet);
                     }
                     FireTimer=ShotTiming;
+                    WeaponEnergy[(int)Weapon.SickleChain-1]-=3;
                 }
                 break;
             case Projectile.SafetyBall:
                 attackPrefabs[(int)Projectile.BallBounce].gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex",Ball);
                 attackPrefabs[(int)Projectile.SafetyBall].GetComponent<SafetyBallScript>().Attack=false;
                 attackPrefabs[(int)Projectile.SafetyBall].SetActive(true);
+                WeaponEnergy[(int)Weapon.SafetyBall-1]-=6;
                 break;
             case Projectile.BallBounce:
                 attackPrefabs[(int)Projectile.BallBounce].gameObject.GetComponent<Renderer>().material.SetTexture("_MainTex",BallAttack);
                 attackPrefabs[(int)Projectile.SafetyBall].GetComponent<SafetyBallScript>().Attack=true;
                 break;
-            case Projectile.SlagShot:
+            case Projectile.ResinGlob:
                 if (FireTimer==0)
                 {
                     if (facingRight)
                     {
-                        GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.SlagShot],projectileSpawn.transform.position,Quaternion.identity);
+                        GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.ResinGlob],projectileSpawn.transform.position,Quaternion.identity);
                         projectilesAndAttacks.Add(bullet);
                     }
                     else
                     {
-                        GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.SlagShot],projectileSpawn.transform.position,Quaternion.identity);
+                        GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.ResinGlob],projectileSpawn.transform.position,Quaternion.identity);
                         bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);
                         projectilesAndAttacks.Add(bullet);
                     }
                     FireTimer=ShotTiming;
-                }
-                break;
-            case Projectile.SlagHammer:
-                if (facingRight)
-                {
-                    GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.SlagHammer],projectileSpawn.transform.position,Quaternion.identity);
-                    projectilesAndAttacks.Add(bullet);
-                }
-                else
-                {
-                    GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.SlagHammer],projectileSpawn.transform.position,Quaternion.identity);
-                    bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);
-                    projectilesAndAttacks.Add(bullet);
+                    WeaponEnergy[(int)Weapon.ResinGlob-1]-=4;
                 }
                 break;
             case Projectile.MegawattSurge:
@@ -378,6 +376,7 @@ public class Buster : MonoBehaviour
                         projectilesAndAttacks.Add(bullet);
                     }
                     FireTimer=ShotTiming;
+                    WeaponEnergy[(int)Weapon.MegawattSurge-1]-=3;
                 }
                 break;
             case Projectile.Brickfall:
@@ -385,6 +384,7 @@ public class Buster : MonoBehaviour
                 {
                     GameObject brick = Instantiate(attackPrefabs[(int)Projectile.Brickfall],cc.groundContact?projectileSpawn.transform.position:new Vector2(transform.position.x,transform.position.y-0.5f),Quaternion.identity);
                     projectilesAndAttacks.Add(brick);
+                    WeaponEnergy[(int)Weapon.Brickfall-1]-=2;
                 }
                 FireTimer=ShotTiming;
                 break;
@@ -394,6 +394,7 @@ public class Buster : MonoBehaviour
                     GameObject bomb = Instantiate(attackPrefabs[(int)Projectile.Firecracker],projectileSpawn.transform.position,Quaternion.Euler(0,0,facingRight?0:180));
                     projectilesAndAttacks.Add(bomb);
                     FireTimer=ShotTiming;
+                    WeaponEnergy[(int)Weapon.Firecracker-1]-=3;
                 }
                 break;
             case Projectile.FirecrackerBarrage:
@@ -407,6 +408,7 @@ public class Buster : MonoBehaviour
                         projectilesAndAttacks.Add(bomb);
                     }
                     FireTimer=ShotTiming;
+                    WeaponEnergy[(int)Weapon.Firecracker-1]-=5;
                 }
                 break;
             case Projectile.WaterCannon:
@@ -415,10 +417,12 @@ public class Buster : MonoBehaviour
                     GameObject WaterBurst = Instantiate(attackPrefabs[(int)Projectile.WaterCannon],projectileSpawn.transform.position,Quaternion.Euler(0,0,facingRight?0:180));
                     projectilesAndAttacks.Add(WaterBurst);
                     FireTimer=0.5f;
+                    WeaponEnergy[(int)Weapon.WaterCannon-1]-=4;
                 }
                 break;
             case Projectile.CycloneStrike:
                 attackPrefabs[(int)Projectile.CycloneStrike].SetActive(true);
+                WeaponEnergy[(int)Weapon.CycloneStrike-1]-=7;
                 break;
             case Projectile.CycloneStrikeSlash:
                 attackPrefabs[(int)Projectile.CycloneStrike].GetComponent<CycloneStrikeBehaviour>().SlashAttack();

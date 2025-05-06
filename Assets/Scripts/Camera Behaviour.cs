@@ -2,11 +2,14 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.Linq;
 public class CameraBehaviour : MonoBehaviour
 {
     [SerializeField] GameObject Player;
     [SerializeField] Vector3 DefaultOffset;
-    [SerializeField] GameObject WeaponMenu, healthUI, WeaponUI;
+    [SerializeField] GameObject WeaponMenu, healthUI, weaponUI;
+    [SerializeField] Image[] WeaponAmmoUI = new Image[10];
+    [SerializeField] Image HealthUI, WeaponUI;
     CharControl charControl;
     Buster buster;
     Rigidbody2D rb;
@@ -40,7 +43,7 @@ public class CameraBehaviour : MonoBehaviour
         }
         WeaponMenu.SetActive(menuActive);
         healthUI.SetActive(!menuActive);
-        WeaponUI.SetActive(!menuActive);
+        weaponUI.SetActive(!menuActive);
     }
     void Start()
     {
@@ -49,7 +52,33 @@ public class CameraBehaviour : MonoBehaviour
         buster=Player.GetComponent<Buster>();
         WeaponMenu.SetActive(menuActive);
         healthUI.SetActive(!menuActive);
-        WeaponUI.SetActive(!menuActive);
+        weaponUI.SetActive(!menuActive);
+    }
+    void Update()
+    {
+        if (menuActive&&!WeaponAmmoUI.Contains(null))
+        {
+            WeaponAmmoUI[0].fillAmount=Mathf.Clamp(charControl.HealthPoints/28f,0,1);
+            for (int i = 1; i < WeaponAmmoUI.Length; i++)
+            {
+                WeaponAmmoUI[i].fillAmount=Mathf.Clamp(buster.WeaponEnergy[i-1]/28f,0,1);
+            }
+        }
+        else
+        {
+            if (HealthUI&&charControl){HealthUI.fillAmount=Mathf.Clamp(charControl.HealthPoints/28f,0,1);}
+            if (WeaponUI&&buster)
+            {
+                if ((int)buster._equippedWeapon<1)
+                {
+                    WeaponUI.fillAmount=1;
+                }
+                else
+                {
+                    WeaponUI.fillAmount=Mathf.Clamp(buster.WeaponEnergy[(int)buster._equippedWeapon-1]/28f,0,1);
+                }
+            }
+        }
     }
     void FixedUpdate()
     {

@@ -15552,7 +15552,6 @@ MonoBehaviour:
   OwnedUpgrades: 
   EquippedUpgrades: 000000000000000000000000
   CurrentCharacter: 0
-  healthBar: {fileID: 0}
   FrontDetection:
   - {fileID: 2967646446244070909}
   - {fileID: 1713614047315966372}
@@ -15619,11 +15618,11 @@ MonoBehaviour:
   - {fileID: 9056236432797844965}
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 7859475279580097147, guid: 3c5fc20f3ab77524a9da6c3a83a19df2, type: 3}
   - {fileID: 2411385456981093164, guid: 79194f6ddefbd3c46a2ae16a85b524d4, type: 3}
   - {fileID: 2411385456981093164, guid: 79194f6ddefbd3c46a2ae16a85b524d4, type: 3}
   - {fileID: 2186951018506372118, guid: f277e3a3bee5e314eb8b8bde60f51a9d, type: 3}
+  - {fileID: 7773458449307617359}
   - {fileID: 7773458449307617359}
   - {fileID: 0}
   BassBulletVariants:
@@ -15634,7 +15633,17 @@ MonoBehaviour:
   ChargingEffect: {fileID: 6961425297492066115}
   FullChargeEffect: {fileID: 5482947812929680798}
   OverChargeEffect: {fileID: 3908674869723241337}
-  OwnedWeapons: 000000000200000008000000050000000600000007000000
+  WeaponEnergy:
+  - 28
+  - 28
+  - 28
+  - 28
+  - 28
+  - 28
+  - 28
+  - 28
+  - 28
+  OwnedWeapons: 000000000200000004000000060000000700000008000000
   EquippedWeapon: 0
   Ball: {fileID: 2800000, guid: 3e8f396ab9bd7c94cb83dd9ebb23992e, type: 3}
   BallAttack: {fileID: 2800000, guid: 33fabc6eb722ac84ba09b638428bab9a, type: 3}
