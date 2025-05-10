@@ -16,26 +16,31 @@ public class ExplosionBehavior : MonoBehaviour
     {
         GameObject Boom = Instantiate(ExplosionEffect,transform.position,Quaternion.identity);
         Boom.transform.localScale = transform.localScale;
-        Boom.GetComponent<AudioSource>().volume=Mathf.Clamp(volume,0,1);
+        Boom.GetAny<AudioSource>().volume=Mathf.Clamp(volume,0,1);
         Destroy(gameObject,0.2f);
+        DetectHitsAndApplyDamage();
     }
-    private HashSet<Collider2D> alreadyHit = new HashSet<Collider2D>();
+    private List<Collider2D> alreadyHit = new List<Collider2D>();
     void Update()
     {
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, GetComponent<CircleCollider2D>().radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y));
+        DetectHitsAndApplyDamage();
+    }
+    void DetectHitsAndApplyDamage()
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, gameObject.GetAny<CircleCollider2D>().radius * Mathf.Max(transform.lossyScale.x, transform.lossyScale.y));
         foreach (Collider2D collision in hits)
         {
             if (!alreadyHit.Contains(collision))
             {
                 if ((collision.CompareTag("Boss")||collision.CompareTag("Enemy"))&&(playerOwned||friendlyFire))
                 {
-                    var health = collision.GetComponent<EnemyHealth>();
+                    var health = collision.GetAny<EnemyHealth>();
                     if (health != null) {health.TakeDamage(damage, (int)damageType);}
                     alreadyHit.Add(collision);
                 }
                 else if (collision.CompareTag("Player")&&(!playerOwned||friendlyFire))
                 {
-                    var health = collision.GetComponent<CharControl>();
+                    var health = collision.GetAny<CharControl>();
                     if (health != null) {health.HealthChange(-damage);}
                     alreadyHit.Add(collision);
                 }

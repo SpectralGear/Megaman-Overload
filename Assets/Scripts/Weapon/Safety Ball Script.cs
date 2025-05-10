@@ -18,7 +18,7 @@ public class SafetyBallScript : MonoBehaviour
     int direction;
     void Start()
     {
-        cc = GetComponentInParent<CharControl>();
+        cc = gameObject.GetAny<CharControl>();
         defaultPosY = transform.localPosition.y;
     }
     void OnEnable()
@@ -50,7 +50,11 @@ public class SafetyBallScript : MonoBehaviour
     }
     void OnTriggerEnter2D(Collider2D collision)
     {
-        if (Attack&&(collision.CompareTag("Enemy")||collision.CompareTag("Boss"))&&collision.GetComponent<EnemyHealth>()){collision.GetComponent<EnemyHealth>().TakeDamage(DamageDealt,(int)Buster.Projectile.BallBounce);Attack=false;}
+        if (Attack&&(collision.CompareTag("Enemy")||collision.CompareTag("Boss")))
+        {
+            collision.GetAny<EnemyHealth>().TakeDamage(DamageDealt,(int)Buster.Projectile.BallBounce);
+            Attack=false;
+        }
     }
     void Update()
     {

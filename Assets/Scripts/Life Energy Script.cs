@@ -7,8 +7,13 @@ public class LifeEnergyScript : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            if (collision.GetComponent<CharControl>()!=null&&lifeEnergyGiven!=0){collision.GetComponent<CharControl>().HealthChange(lifeEnergyGiven);}
-            if (collision.GetComponent<Buster>()!=null&&weaponEnergyGiven!=0){collision.GetComponent<CharControl>().HealthChange(weaponEnergyGiven);}
+            var cc = collision.GetAny<CharControl>();
+            var buster = collision.GetAny<Buster>();
+            if (cc&&lifeEnergyGiven!=0){cc.HealthChange(lifeEnergyGiven);}
+            if (buster&&weaponEnergyGiven!=0)
+            {
+                buster.WeaponEnergy[0]+=weaponEnergyGiven;
+            }
             Destroy(gameObject);
         }
     }

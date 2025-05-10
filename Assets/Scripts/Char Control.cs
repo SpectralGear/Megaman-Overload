@@ -32,6 +32,7 @@ public class CharControl : MonoBehaviour
     private float slideTimer,healthPoints=28,timeSinceJump,invincibiltyTimer,currentMotion;
     public float VelocityY,VelocityX,moveInputX=0,moveInputY=0;
     private DefaultControls playerInputActions;
+    Buster buster;
     [SerializeField] AudioSource audioSource;
     [SerializeField] AudioClip jumpSFX, slideSFX, landSFX, hurtSFX, dieSFX, healSFX;
     private void Awake()
@@ -41,8 +42,9 @@ public class CharControl : MonoBehaviour
     }
     void Start()
     {
-        anim = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody2D>();
+        anim = gameObject.GetAny<Animator>();
+        rb = gameObject.GetAny<Rigidbody2D>();
+        buster = gameObject.GetAny<Buster>();
         SaveData saveData = SaveManager.LoadGame(0);
         if (saveData!=null)
         {
@@ -54,23 +56,16 @@ public class CharControl : MonoBehaviour
     }
     public void SetMovesetAnimation(AnimationClip newClip, HashSet<AnimationClip> validClips)
     {
-        // First-time setup of the override controller
         if (overrideController == null)
         {
             overrideController = new AnimatorOverrideController(anim.runtimeAnimatorController);
             anim.runtimeAnimatorController = overrideController;
         }
-
-        // Get currently active clips and transitions
         AnimatorClipInfo[] currentClips = anim.GetCurrentAnimatorClipInfo(0);
         AnimatorClipInfo[] nextClips = anim.GetNextAnimatorClipInfo(0);
-
-        // Collect all clips currently in use (playing or transitioning)
         HashSet<AnimationClip> clipsInUse = new HashSet<AnimationClip>();
         foreach (var clip in currentClips) clipsInUse.Add(clip.clip);
         foreach (var clip in nextClips) clipsInUse.Add(clip.clip);
-
-        // Only override if the current override target is in the valid list AND not playing or transitioning
         foreach (var originalClip in validClips)
         {
             if (!clipsInUse.Contains(originalClip))
@@ -81,7 +76,7 @@ public class CharControl : MonoBehaviour
     }
     private void OnEnable()
     {
-        playerInputActions.Controls.MoveHorizontal.started += OnMoveStarted;  // Subscribe to the Move action
+        playerInputActions.Controls.MoveHorizontal.started += OnMoveStarted;
         playerInputActions.Controls.MoveHorizontal.performed += OnHorizontalPerformed;
         playerInputActions.Controls.MoveVertical.performed += OnVerticalPerformed;
         playerInputActions.Controls.MoveHorizontal.canceled += OnHorizontalCanceled;
@@ -273,7 +268,7 @@ public class CharControl : MonoBehaviour
             VelocityY=-20;
         }
         else if (anim.GetBool("Jumping")==false&&airborne&&VelocityY<0){VelocityY=0;}
-        else if (floating&&GetComponent<Buster>()._equippedWeapon!=Buster.Weapon.AnimalFriend){VelocityY=-1;floating=!groundContact;}
+        else if (floating&&buster._equippedWeapon!=Buster.Weapon.AnimalAdaptor){VelocityY=-1;floating=!groundContact;}
         FootJetL.SetActive(floating);
         FootJetR.SetActive(floating);
         VelocityY = Mathf.Clamp(VelocityY, -maxVerticalVelocity, maxVerticalVelocity);
@@ -355,7 +350,7 @@ public class CharControl : MonoBehaviour
     }
     void Dead()
     {
-        GetComponent<Buster>().enabled=false;
+        buster.enabled=false;
         enabled=false;
         rb.velocity=Vector2.zero;
         audioSource.PlayOneShot(dieSFX);

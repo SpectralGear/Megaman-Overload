@@ -13,8 +13,8 @@ public class BrickFall : MonoBehaviour
     float currentFallSpeed=0;
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        Collider2D collider = gameObject.GetComponent<Collider2D>();
+        rb = gameObject.GetAny<Rigidbody2D>();
+        Collider2D collider = gameObject.GetAny<Collider2D>();
         List<Collider2D> collisions = new List<Collider2D>();
         ContactFilter2D filter = new ContactFilter2D();
         filter.useTriggers = true;
@@ -27,7 +27,7 @@ public class BrickFall : MonoBehaviour
                 {
                     if (collision.gameObject.CompareTag("Boss")||collision.gameObject.CompareTag("Enemy"))
                     {
-                        EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
+                        EnemyHealth enemy = collision.GetAny<EnemyHealth>();
                         enemy.TakeDamage(damage, (int)damageType);
                         if (!enemy.dead){Destroy(gameObject);}
                     }
@@ -67,7 +67,7 @@ public class BrickFall : MonoBehaviour
         {
             if (collision.gameObject.CompareTag("Boss")||collision.gameObject.CompareTag("Enemy"))
             {
-                EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
+                EnemyHealth enemy = collision.gameObject.GetAny<EnemyHealth>();
                 enemy.TakeDamage(damage, (int)damageType);
                 if (!enemy.dead){Destroy(gameObject);}
             }

@@ -8,8 +8,10 @@ public class CameraBehaviour : MonoBehaviour
     [SerializeField] GameObject Player;
     [SerializeField] Vector3 DefaultOffset;
     [SerializeField] GameObject WeaponMenu, healthUI, weaponUI;
+    [SerializeField] Color[] WeaponAmmoColors = new Color[10];
     [SerializeField] Image[] WeaponAmmoUI = new Image[10];
     [SerializeField] Image HealthUI, WeaponUI;
+    [SerializeField] Material WeaponPickupMat;
     CharControl charControl;
     Buster buster;
     Rigidbody2D rb;
@@ -58,26 +60,27 @@ public class CameraBehaviour : MonoBehaviour
     {
         if (menuActive&&!WeaponAmmoUI.Contains(null))
         {
-            WeaponAmmoUI[0].fillAmount=Mathf.Clamp(charControl.HealthPoints/28f,0,1);
             for (int i = 1; i < WeaponAmmoUI.Length; i++)
             {
-                WeaponAmmoUI[i].fillAmount=Mathf.Clamp(buster.WeaponEnergy[i-1]/28f,0,1);
+                WeaponAmmoUI[i].fillAmount=Mathf.Clamp(buster.WeaponEnergy[i]/28f,0,1);
             }
+            WeaponAmmoUI[0].fillAmount=Mathf.Clamp(charControl.HealthPoints/28f,0,1);
         }
         else
         {
             if (HealthUI&&charControl){HealthUI.fillAmount=Mathf.Clamp(charControl.HealthPoints/28f,0,1);}
             if (WeaponUI&&buster)
             {
-                if ((int)buster._equippedWeapon<1)
-                {
-                    WeaponUI.fillAmount=1;
-                }
-                else
-                {
-                    WeaponUI.fillAmount=Mathf.Clamp(buster.WeaponEnergy[(int)buster._equippedWeapon-1]/28f,0,1);
-                }
+                WeaponUI.fillAmount=Mathf.Clamp(buster.WeaponEnergy[(int)buster._equippedWeapon]/28f,0,1);
+                WeaponUI.color=WeaponAmmoColors[(int)buster._equippedWeapon];
             }
+            if (buster._equippedWeapon==Buster.Weapon.MegaBuster){weaponUI.SetActive(false);}
+            else 
+            {
+                weaponUI.SetActive(true);
+                
+            }
+            WeaponPickupMat.color=WeaponAmmoColors[(int)buster._equippedWeapon];
         }
     }
     void FixedUpdate()

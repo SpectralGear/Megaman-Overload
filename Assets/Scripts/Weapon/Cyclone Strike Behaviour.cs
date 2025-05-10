@@ -11,42 +11,46 @@ public class CycloneStrikeBehaviour : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float slashAnimOffset;
     [SerializeField] Buster.Projectile cycloneDMGType,slashDMGType;
     float horizontalVelocity=6;
-    bool travellingRight;
+    bool travellingRight, slashing=false;
     AnimatorStateInfo stateInfo;
     void OnEnable()
     {
         travellingRight=cc.facingRight;
-        tornado.SetActive(true);
+        tornado.SetActive(!slashing);
         anim.Play("Cyclone Strike",2,0);
         anim.SetLayerWeight(2,1);
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+        void OnTriggerEnter2D(Collider2D collision)
     {
-        EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
+        EnemyHealth enemy = collision.GetAny<EnemyHealth>();
         if ((collision.CompareTag("Boss") || collision.CompareTag("Enemy"))&&enemy)
         {
-            enemy.TakeDamage(slash.activeSelf?slashDamage:cycloneDamage,(int)(slash.activeSelf?slashDMGType:cycloneDMGType));
+            if (slashing) {enemy.TakeDamage(slashDamage,(int)slashDMGType);}
+            else {enemy.TakeDamage(cycloneDamage,(int)cycloneDMGType);}
         }
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
-        if ((collision.CompareTag("Boss") || collision.CompareTag("Enemy"))&&enemy&&tornado.activeSelf)
+        EnemyHealth enemy = collision.GetAny<EnemyHealth>();
+        if ((collision.CompareTag("Boss") || collision.CompareTag("Enemy"))&&enemy)
         {
-            enemy.TakeDamage(cycloneDamage,(int)cycloneDMGType);
+            if (slashing) {enemy.TakeDamage(slashDamage,(int)slashDMGType);}
+            else {enemy.TakeDamage(cycloneDamage,(int)cycloneDMGType);}
         }
     }
     void Update()
     {
         stateInfo = anim.GetCurrentAnimatorStateInfo(2);
         if (anim.GetLayerWeight(2)<=0||travellingRight!=cc.facingRight){gameObject.SetActive(false);}
-        else if (stateInfo.normalizedTime>=1){anim.SetLayerWeight(2,Mathf.Clamp(anim.GetLayerWeight(2)-(Time.deltaTime*2),0,1));slash.SetActive(false);slashTrail.SetActive(false);}
+        else if (stateInfo.normalizedTime>=1){anim.SetLayerWeight(2,Mathf.Clamp(anim.GetLayerWeight(2)-(Time.deltaTime*2),0,1));slashing=false;}
         else if (stateInfo.normalizedTime>=0.9f){slashTrail.SetActive(true);}
         else if (stateInfo.normalizedTime>=slashAnimOffset)
         {
-            tornado.SetActive(false);
-            slash.SetActive(true);
+            slashing=true;
         }
+        tornado.SetActive(!slashing);
+        slash.SetActive(slashing);
+        slashTrail.SetActive(slashing);
     }
     public void SlashAttack()
     {
@@ -65,5 +69,6 @@ public class CycloneStrikeBehaviour : MonoBehaviour
         anim.SetLayerWeight(2,0);
         tornado.SetActive(false);
         slash.SetActive(false);
+        slashTrail.SetActive(false);
     }
 }

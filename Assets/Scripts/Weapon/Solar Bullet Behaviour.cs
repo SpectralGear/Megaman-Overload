@@ -1,9 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using System.Reflection;
-using Unity.VisualScripting;
 
 public class SolarBulletBehaviour : MonoBehaviour
 {
@@ -18,8 +15,8 @@ public class SolarBulletBehaviour : MonoBehaviour
     bool enemyOwned;
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        audioSource = GetComponent<AudioSource>();
+        rb = gameObject.GetAny<Rigidbody2D>();
+        audioSource = gameObject.GetAny<AudioSource>();
         if (audioSource&&spawnSound){audioSource.PlayOneShot(spawnSound);}
         enemyOwned=gameObject.CompareTag("Enemy Projectile");
         UpdateVFX();
@@ -57,9 +54,7 @@ public class SolarBulletBehaviour : MonoBehaviour
             {
                 if (collision.CompareTag("Player"))
                 {
-                    CharControl player = collision.gameObject.GetComponent<CharControl>();
-                    if (!player){player = collision.gameObject.GetComponentInChildren<CharControl>();}
-                    if (!player){player = collision.gameObject.GetComponentInParent<CharControl>();}
+                    CharControl player = collision.gameObject.GetAny<CharControl>();
                     player.HealthChange(-damage);
                     if (!Pierces || (PiercesOnKill && !player.dead)){Destroy(gameObject);}
                 }
@@ -69,9 +64,7 @@ public class SolarBulletBehaviour : MonoBehaviour
             {
                 if (collision.CompareTag("Boss") || collision.CompareTag("Enemy") || (collision.CompareTag("Enemy Shield") && ShieldBreaker))
                 {
-                    EnemyHealth enemy = collision.gameObject.GetComponent<EnemyHealth>();
-                    if (!enemy){enemy = collision.gameObject.GetComponentInChildren<EnemyHealth>();}
-                    if (!enemy){enemy = collision.gameObject.GetComponentInParent<EnemyHealth>();}
+                    EnemyHealth enemy = collision.gameObject.GetAny<EnemyHealth>();
                     enemy.TakeDamage(damage,(int)damageType);
                     if (!Pierces || (PiercesOnKill && enemy.dead)){Destroy(gameObject);}
                 }

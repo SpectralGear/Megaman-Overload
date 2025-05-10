@@ -24,8 +24,8 @@ public class WaterCannon : MonoBehaviour
         InWaterEffect.SetActive(inWater);
         InAirEffect.SetActive(!inWater);
         Collider2D collider;
-        if (inWater){collider = InWaterEffect.GetComponent<Collider2D>();}
-        else {collider = InAirEffect.GetComponent<Collider2D>();}
+        if (inWater){collider = InWaterEffect.GetAny<Collider2D>();}
+        else {collider = InAirEffect.GetAny<Collider2D>();}
         List<Collider2D> collisions = new List<Collider2D>();
         ContactFilter2D filter = new ContactFilter2D();
         filter.useTriggers = true;
@@ -36,7 +36,7 @@ public class WaterCannon : MonoBehaviour
             {
                 if ((collision.CompareTag("Boss")||collision.CompareTag("Enemy")||collision.CompareTag("Enemy Shield"))&&!objects.Contains(collision.gameObject))
                 {
-                    collision.GetComponent<EnemyHealth>().TakeDamage(damage, (int)damageType);
+                    collision.GetAny<EnemyHealth>().TakeDamage(damage, (int)damageType);
                     objects.Add(collision.gameObject);
                 }
                 else if (collision.CompareTag("Destructable"))
@@ -51,7 +51,7 @@ public class WaterCannon : MonoBehaviour
     {
         if ((collision.CompareTag("Boss")||collision.CompareTag("Enemy")||collision.CompareTag("Enemy Shield"))&&!objects.Contains(collision.gameObject))
         {
-            collision.GetComponent<EnemyHealth>().TakeDamage(damage, (int)damageType);
+            collision.GetAny<EnemyHealth>().TakeDamage(damage, (int)damageType);
             objects.Add(collision.gameObject);
         }
         else if (collision.CompareTag("Destructable"))
@@ -63,7 +63,7 @@ public class WaterCannon : MonoBehaviour
     {
         if ((collision.CompareTag("Boss")||collision.CompareTag("Enemy")||collision.CompareTag("Enemy Shield"))&&!objects.Contains(collision.gameObject))
         {
-            collision.GetComponent<EnemyHealth>().TakeDamage(damage, (int)damageType);
+            collision.GetAny<EnemyHealth>().TakeDamage(damage, (int)damageType);
             objects.Add(collision.gameObject);
         }
         else if (collision.CompareTag("Destructable"))
@@ -73,16 +73,6 @@ public class WaterCannon : MonoBehaviour
     }
     void SelfDestruct()
     {
-        //bool SelfDestruct = true;
-        //ParticleSystem[] particleSystems = GetComponentsInChildren<ParticleSystem>();
-        //foreach (ParticleSystem particleSystem in particleSystems)
-        //{
-        //    if (particleSystem.particleCount>0)
-        //    {
-        //        SelfDestruct = false;
-        //    }
-        //}
-        //if (SelfDestruct)
         {
             Destroy(gameObject);
         }

@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 5942393789074754568}
   - component: {fileID: 4778075699257567807}
   m_Layer: 5
-  m_Name: Ammo Wheel
+  m_Name: MB Ammo Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -387,7 +387,7 @@ GameObject:
   - component: {fileID: 5313048391072336050}
   - component: {fileID: 7603366296759873528}
   m_Layer: 5
-  m_Name: Ammo Wheel
+  m_Name: FC Ammo Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -614,7 +614,7 @@ GameObject:
   - component: {fileID: 5349069806598390103}
   - component: {fileID: 18315405654977644}
   m_Layer: 5
-  m_Name: Ammo Wheel
+  m_Name: AA Ammo Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1383,7 +1383,7 @@ GameObject:
   - component: {fileID: 1712751207218731225}
   - component: {fileID: 3143420769966858656}
   m_Layer: 5
-  m_Name: Ammo Wheel
+  m_Name: WC Ammo Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1458,7 +1458,7 @@ GameObject:
   - component: {fileID: 9045089485817968465}
   - component: {fileID: 6534366679946255268}
   m_Layer: 5
-  m_Name: Ammo Wheel
+  m_Name: BF Ammo Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1760,7 +1760,7 @@ GameObject:
   - component: {fileID: 6147018517329876879}
   - component: {fileID: 8288293795369390038}
   m_Layer: 5
-  m_Name: Ammo Wheel
+  m_Name: SC Ammo Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2809,7 +2809,7 @@ GameObject:
   - component: {fileID: 7370645101054909938}
   - component: {fileID: 6171212796425828929}
   m_Layer: 5
-  m_Name: Ammo Wheel
+  m_Name: MW Ammo Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4801,7 +4801,7 @@ GameObject:
   - component: {fileID: 6610099243962030035}
   - component: {fileID: 2540725569890538853}
   m_Layer: 5
-  m_Name: Ammo Wheel
+  m_Name: RS Ammo Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5339,7 +5339,7 @@ GameObject:
   - component: {fileID: 7264167299052867873}
   - component: {fileID: 6709245710463914268}
   m_Layer: 5
-  m_Name: Ammo Wheel
+  m_Name: SB Ammo Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5418,6 +5418,7 @@ GameObject:
   - component: {fileID: 2178783961610015193}
   - component: {fileID: 4649143481221165193}
   - component: {fileID: 69207591066362481}
+  - component: {fileID: 8764345023554057422}
   m_Layer: 7
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -5580,6 +5581,17 @@ MonoBehaviour:
   WeaponMenu: {fileID: 3128753120453586032}
   healthUI: {fileID: 4938236482199921750}
   weaponUI: {fileID: 3169648473699140831}
+  WeaponAmmoColors:
+  - {r: 0, g: 0.5372549, b: 0.98823535, a: 1}
+  - {r: 0.64705884, g: 0.45882356, b: 0.3529412, a: 1}
+  - {r: 0.9960785, g: 0, b: 0.69803923, a: 1}
+  - {r: 0.2901961, g: 0.9960785, b: 0.37647063, a: 1}
+  - {r: 0.5176471, g: 0.43137258, b: 0.454902, a: 1}
+  - {r: 0.9960785, g: 0.9960785, b: 0.9960785, a: 1}
+  - {r: 0, g: 0.9960785, b: 0.9960785, a: 1}
+  - {r: 0.9960785, g: 0.6666667, b: 0, a: 1}
+  - {r: 0.62352943, g: 0.21960786, b: 0, a: 1}
+  - {r: 0.9960785, g: 0, b: 0, a: 1}
   WeaponAmmoUI:
   - {fileID: 4778075699257567807}
   - {fileID: 8288293795369390038}
@@ -5593,6 +5605,7 @@ MonoBehaviour:
   - {fileID: 18315405654977644}
   HealthUI: {fileID: 824408181660549566}
   WeaponUI: {fileID: 8225271374662549389}
+  WeaponPickupMat: {fileID: 2100000, guid: bedce6ebe90a41543ae606d69052a004, type: 2}
 --- !u!82 &4649143481221165193
 AudioSource:
   m_ObjectHideFlags: 0
@@ -5702,6 +5715,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gizmoColor: {r: 0, g: 0, b: 1, a: 1}
+  zOffset: 0.5
+--- !u!114 &8764345023554057422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7050625422008753103}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f5ab091ea2ae5d4b81e27f1a9b3a2dc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gizmoColor: {r: 0, g: 0, b: 1, a: 1}
+  zOffset: -0.5
 --- !u!1 &7231137137633313645
 GameObject:
   m_ObjectHideFlags: 0
@@ -5866,7 +5894,7 @@ GameObject:
   - component: {fileID: 90984373029057902}
   - component: {fileID: 8101868879909338119}
   m_Layer: 5
-  m_Name: Ammo Wheel
+  m_Name: CS Ammo Wheel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

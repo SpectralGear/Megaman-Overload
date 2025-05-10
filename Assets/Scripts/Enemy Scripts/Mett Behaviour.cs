@@ -32,7 +32,7 @@ public class MettBehaviour : MonoBehaviour
                 }
             }
             else if (Vector2.Distance(transform.position, collision.gameObject.transform.position)<1)
-            {collision.gameObject.GetComponent<CharControl>().HealthChange(-2);}
+            {collision.gameObject.GetAny<CharControl>().HealthChange(-2);}
             if (!attacking){attacking=true;Attack();}
         }
     }
@@ -64,7 +64,7 @@ public class MettBehaviour : MonoBehaviour
         {
             if (Vector2.Distance(player.transform.position, transform.position)<1)
             {
-                player.GetComponent<CharControl>().HealthChange(-2);
+                player.GetAny<CharControl>().HealthChange(-2);
             }
         }
     }

@@ -15,7 +15,7 @@ public class Firecracker : MonoBehaviour
     bool Armed=false;
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        rb = gameObject.GetAny<Rigidbody2D>();
         scale = transform.localScale;
         fullDamage = damage;
     }
@@ -43,17 +43,18 @@ public class Firecracker : MonoBehaviour
     }
     void GoBoom()
     {
+        float volume = GetComponent<AudioSource>().volume;
         if (timer>=armTime)
         {
             GameObject Boom = Instantiate(Explosion,transform.position,Quaternion.identity);
-            ExplosionBehavior BoomBehaviour = Boom.GetComponent<ExplosionBehavior>();
-            Boom.transform.localScale*=2;
-            BoomBehaviour.volume=GetComponent<AudioSource>().volume;
+            ExplosionBehavior BoomBehaviour = Boom.GetAny<ExplosionBehavior>();
+            Boom.transform.localScale*=2.5f;
+            BoomBehaviour.volume=volume;
             BoomBehaviour.damage=damage;
             BoomBehaviour.friendlyFire=false;
             BoomBehaviour.playerOwned=true;
             BoomBehaviour.damageType=damageType;
-            BoomBehaviour.destroyEnvironment=timer<=armTime;
+            BoomBehaviour.destroyEnvironment=true;
         }
     }
     void FizzleOut()
