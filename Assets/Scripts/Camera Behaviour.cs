@@ -10,12 +10,14 @@ public class CameraBehaviour : MonoBehaviour
     [SerializeField] GameObject WeaponMenu, healthUI, weaponUI;
     [SerializeField] Color[] WeaponAmmoColors = new Color[10];
     [SerializeField] Image[] WeaponAmmoUI = new Image[10];
-    [SerializeField] Image HealthUI, WeaponUI;
+    [SerializeField] Sprite[] WeaponIcons = new Sprite[10];
+    [SerializeField] Image HealthUI, WeaponUI, WeaponIcon;
     [SerializeField] Material WeaponPickupMat;
     CharControl charControl;
     Buster buster;
     Rigidbody2D rb;
     bool menuActive=false;
+    int bolts;
     private DefaultControls playerInputActions;
     private void Awake()
     {
@@ -55,16 +57,19 @@ public class CameraBehaviour : MonoBehaviour
         WeaponMenu.SetActive(menuActive);
         healthUI.SetActive(!menuActive);
         weaponUI.SetActive(!menuActive);
+        SaveData saveData = SaveManager.LoadGame(0);
+        bolts = Mathf.Clamp(saveData.bolts,0,999);
     }
     void Update()
     {
-        if (menuActive&&!WeaponAmmoUI.Contains(null))
+        if (menuActive && WeaponAmmoUI.Length == 10 && WeaponAmmoUI.All(img => img != null))
         {
-            for (int i = 1; i < WeaponAmmoUI.Length; i++)
+            for (int i = 1; i < 10; i++)
             {
-                WeaponAmmoUI[i].fillAmount=Mathf.Clamp(buster.WeaponEnergy[i]/28f,0,1);
+                if (i < buster.WeaponEnergy.Length)
+                    WeaponAmmoUI[i].fillAmount = Mathf.Clamp(buster.WeaponEnergy[i] / 28f, 0f, 1f);
             }
-            WeaponAmmoUI[0].fillAmount=Mathf.Clamp(charControl.HealthPoints/28f,0,1);
+            WeaponAmmoUI[0].fillAmount = Mathf.Clamp(charControl.HealthPoints / 28f, 0f, 1f);
         }
         else
         {
@@ -81,6 +86,7 @@ public class CameraBehaviour : MonoBehaviour
                 
             }
             WeaponPickupMat.color=WeaponAmmoColors[(int)buster._equippedWeapon];
+            WeaponIcon.sprite=WeaponIcons[(int)buster._equippedWeapon];
         }
     }
     void FixedUpdate()

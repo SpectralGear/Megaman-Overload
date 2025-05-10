@@ -875,6 +875,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89923a65599e9df46b55bda5076dadd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TagsToIgnore: []
 --- !u!70 &2964226546398562244
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -1299,10 +1300,10 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 100
   m_LinearDrag: 0
   m_AngularDrag: 0
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -1313,7 +1314,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 4
+  m_Constraints: 5
 --- !u!114 &4601407521737916938
 MonoBehaviour:
   m_ObjectHideFlags: 0

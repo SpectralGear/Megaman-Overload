@@ -405,8 +405,20 @@ public class Buster : MonoBehaviour
                 }
                 break;
             case Projectile.Brickfall:
-                if (FireTimer==0&&projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.Brickfall].name))<5)
+                if (FireTimer==0)
                 {
+                    int maxBrickfalls = 5;
+                    var brickfallObjects = projectilesAndAttacks
+                        .Where(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.Brickfall].name))
+                        .ToList();
+                    if (brickfallObjects.Count >= maxBrickfalls)
+                    {
+                        int toRemove = brickfallObjects.Count - maxBrickfalls + 1;
+                        for (int i = 0; i < toRemove; i++)
+                        {
+                            Destroy(brickfallObjects[i]);
+                        }
+                    }
                     GameObject brick = Instantiate(attackPrefabs[(int)Projectile.Brickfall],cc.groundContact?projectileSpawn.transform.position:new Vector2(transform.position.x,transform.position.y-0.5f),Quaternion.identity);
                     projectilesAndAttacks.Add(brick);
                     WeaponEnergy[(int)Weapon.Brickfall]-=2;
