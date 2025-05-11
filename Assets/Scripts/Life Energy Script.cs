@@ -10,10 +10,7 @@ public class LifeEnergyScript : MonoBehaviour
             var cc = collision.GetAny<CharControl>();
             var buster = collision.GetAny<Buster>();
             if (cc&&lifeEnergyGiven!=0){cc.HealthChange(lifeEnergyGiven);}
-            if (buster&&weaponEnergyGiven!=0)
-            {
-                buster.WeaponEnergy[0]+=weaponEnergyGiven;
-            }
+            if (buster&&weaponEnergyGiven!=0){buster.EnergyChange(weaponEnergyGiven, buster._equippedWeapon);}
             Destroy(gameObject);
         }
     }

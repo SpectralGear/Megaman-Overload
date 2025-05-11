@@ -278,6 +278,22 @@ MonoBehaviour:
   Resistance: 
   Immunity: 
   Heal: 
+  drops:
+  - {fileID: 6899757436913265387, guid: 498ab98e57c47d940837e2d7c48798d0, type: 3}
+  - {fileID: 6899757436913265387, guid: f6de26055da4b3945941a848950bce53, type: 3}
+  - {fileID: 6899757436913265387, guid: 5e79a3b6a03b5f64ebfaf5c0999c516c, type: 3}
+  - {fileID: 6899757436913265387, guid: cf0000e5392e6664c805ecfd6f5abb75, type: 3}
+  - {fileID: 6899757436913265387, guid: dc199dd7c8a0ed946af113aeccfa5c6c, type: 3}
+  - {fileID: 6899757436913265387, guid: 9221b48906acac947b7fb9ee6e0dfa85, type: 3}
+  - {fileID: 0}
+  dropChances:
+  - 5
+  - 5
+  - 10
+  - 10
+  - 15
+  - 15
+  - 50
 --- !u!114 &-2005328385058277474
 MonoBehaviour:
   m_ObjectHideFlags: 0

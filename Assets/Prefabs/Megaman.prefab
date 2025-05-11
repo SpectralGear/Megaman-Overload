@@ -15612,8 +15612,8 @@ MonoBehaviour:
   - {fileID: 2066408503673428713, guid: 093c888c12430994f8e55066140791a3, type: 3}
   - {fileID: 2066408503673428713, guid: bfeb75a58ceea9a46b1cdb20cab0acec, type: 3}
   - {fileID: 2066408503673428713, guid: a11dc3f8916fd1c4fb8ce28bab6d48a9, type: 3}
-  - {fileID: 4364095201605144153}
-  - {fileID: 4522146232256104102, guid: 204ee7ffa9e386344880624fb2a89cc6, type: 3}
+  - {fileID: 0}
+  - {fileID: 0}
   - {fileID: 2322536361355794027}
   - {fileID: 9056236432797844965}
   - {fileID: 0}
@@ -15624,7 +15624,7 @@ MonoBehaviour:
   - {fileID: 2186951018506372118, guid: f277e3a3bee5e314eb8b8bde60f51a9d, type: 3}
   - {fileID: 7773458449307617359}
   - {fileID: 7773458449307617359}
-  - {fileID: 0}
+  - {fileID: 519686046572309094, guid: 42b3cc6782268ab42a5401a706e014ed, type: 3}
   BassBulletVariants:
   - {fileID: 2066408503673428713, guid: 9bfaaeeb6058d0b4790ac8e4d24818b8, type: 3}
   - {fileID: 2066408503673428713, guid: 0ffd67782fe149a4b9fe89258e98ef4e, type: 3}
@@ -15633,7 +15633,9 @@ MonoBehaviour:
   ChargingEffect: {fileID: 6961425297492066115}
   FullChargeEffect: {fileID: 5482947812929680798}
   OverChargeEffect: {fileID: 3908674869723241337}
+  armLaunched: 0
   WeaponEnergy:
+  - Infinity
   - 28
   - 28
   - 28
@@ -15643,12 +15645,24 @@ MonoBehaviour:
   - 28
   - 28
   - 28
-  OwnedWeapons: 000000000200000004000000060000000700000008000000
+  OwnedWeapons: 00000000020000000400000006000000070000000800000009000000
   EquippedWeapon: 0
   Ball: {fileID: 2800000, guid: 3e8f396ab9bd7c94cb83dd9ebb23992e, type: 3}
   BallAttack: {fileID: 2800000, guid: 33fabc6eb722ac84ba09b638428bab9a, type: 3}
   charMat: {fileID: 2100000, guid: d6703972b843265439af1f6af6280d1f, type: 2}
   chargingAudioSource: {fileID: 7020034405534764469}
+  WeaponEnergyGainAudio: {fileID: 8300000, guid: 67522b949624c874c80bd227d895135a, type: 3}
+  WeaponColors:
+  - {fileID: 2800000, guid: 018de3f0001b22743a9c7a6752dceb1c, type: 3}
+  - {fileID: 2800000, guid: 588d9b42012919d439a9b5eeb856f205, type: 3}
+  - {fileID: 2800000, guid: 5d4d6bc0920184d4494629aa9d787007, type: 3}
+  - {fileID: 2800000, guid: 4c93a145572fd084799a243553ee70ca, type: 3}
+  - {fileID: 2800000, guid: b8a91bd33ad67b346a3ca1a697858e6c, type: 3}
+  - {fileID: 2800000, guid: 64d8bcb900ebf4947852e6e65d34cd8d, type: 3}
+  - {fileID: 2800000, guid: 3a6e1862228e18b419b154b6d246e200, type: 3}
+  - {fileID: 2800000, guid: 308c034c99997be4ba5e1843f4ef1b86, type: 3}
+  - {fileID: 2800000, guid: bf927b6483673d844a72150772281fae, type: 3}
+  - {fileID: 2800000, guid: 779476a156d594b4ab9ccda7905fff68, type: 3}
 --- !u!95 &8755804243570578987
 Animator:
   serializedVersion: 5

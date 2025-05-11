@@ -5,7 +5,7 @@ using System.Reflection;
 public class SolarBulletBehaviour : MonoBehaviour
 {
     [SerializeField] public float speed=12,damage;
-    [SerializeField] public bool Pierces, PiercesOnKill, ShieldBreaker, BreakFromObstacle;
+    [SerializeField] public bool Pierces, PiercesOnKill, ShieldBreaker, BreakFromObstacle, disappearOffScreen=true;
     public bool damageChanged=false;
     protected Rigidbody2D rb;
     [SerializeField] Buster.Projectile damageType;
@@ -13,6 +13,7 @@ public class SolarBulletBehaviour : MonoBehaviour
     [SerializeField] List<ConditionLink> conditionalVFX = new List<ConditionLink>();
     AudioSource audioSource;
     bool enemyOwned;
+    protected bool hitTarget=false;
     private void Start()
     {
         rb = gameObject.GetAny<Rigidbody2D>();
@@ -56,6 +57,7 @@ public class SolarBulletBehaviour : MonoBehaviour
                 {
                     CharControl player = collision.gameObject.GetAny<CharControl>();
                     player.HealthChange(-damage);
+                    hitTarget=true;
                     if (!Pierces || (PiercesOnKill && !player.dead)){Destroy(gameObject);}
                 }
                 else if (BreakFromObstacle&&collision.gameObject.layer==LayerMask.NameToLayer("Terrain")){Destroy(gameObject);}
@@ -66,6 +68,7 @@ public class SolarBulletBehaviour : MonoBehaviour
                 {
                     EnemyHealth enemy = collision.gameObject.GetAny<EnemyHealth>();
                     enemy.TakeDamage(damage,(int)damageType);
+                    hitTarget=true;
                     if (!Pierces || (PiercesOnKill && enemy.dead)){Destroy(gameObject);}
                 }
                 else if (collision.CompareTag("Enemy Shield")||(BreakFromObstacle&&collision.gameObject.layer==LayerMask.NameToLayer("Terrain"))){Destroy(gameObject);}
@@ -77,5 +80,5 @@ public class SolarBulletBehaviour : MonoBehaviour
         Vector2 moveDirection = (transform.localScale.x > 0) ? Vector2.right : Vector2.left;
         rb.velocity = moveDirection.normalized * speed;
     }
-    void OnBecameInvisible() {Destroy(gameObject);}
+    void OnBecameInvisible() {if (disappearOffScreen){Destroy(gameObject);}}
 }

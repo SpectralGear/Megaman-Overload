@@ -8,6 +8,7 @@ public class DirectionalBulletBehaviour : SolarBulletBehaviour
     {
         float angleInRadians = transform.eulerAngles.z * Mathf.Deg2Rad;
         Vector2 moveDirection = new Vector2(Mathf.Cos(angleInRadians), Mathf.Sin(angleInRadians));
-        rb.velocity = moveDirection.normalized * speed;
+        if (rb){rb.velocity = moveDirection.normalized * speed;}
+        else {rb = gameObject.GetAny<Rigidbody2D>();}
     }
 }

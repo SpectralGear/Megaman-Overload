@@ -16,18 +16,21 @@ public class Buster : MonoBehaviour
     Animator anim;
     private DefaultControls playerInputActions;
     private bool facingRight=true,ChargingWeapon;
+    public bool armLaunched=false;
     float BusterCharge,HalfCharge,OverCharge,FireTimer,pointBuster=0,ChargeSpeed;
     private List<GameObject> projectilesAndAttacks = new List<GameObject>();
     public enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, ResinGlob, MegawattSurge, Brickfall, Firecracker, FirecrackerBarrage, WaterCannon, CycloneStrike, CycloneStrikeSlash, AnimalAdaptor}
     public enum Weapon {MegaBuster,SickleChain,SafetyBall,MegawattSurge,CycloneStrike,ResinGlob,WaterCannon,Firecracker,Brickfall,AnimalAdaptor};
     public float[] WeaponEnergy = new float[10] {float.PositiveInfinity,28,28,28,28,28,28,28,28,28};
-    private List<Weapon> ChargeableWeapons = new List<Weapon>(){Weapon.MegaBuster,Weapon.SickleChain,Weapon.Firecracker};
+    private List<Weapon> ChargeableWeapons = new List<Weapon>(){Weapon.MegaBuster,Weapon.SickleChain,Weapon.Firecracker, Weapon.AnimalAdaptor};
     public List<Weapon> OwnedWeapons = new List<Weapon>();
     CharControl cc;
-    [SerializeField] Weapon EquippedWeapon;
+    [SerializeField] Weapon EquippedWeapon = Weapon.MegaBuster;
     [SerializeField] Texture2D Ball, BallAttack;
     [SerializeField] Material charMat;
     [SerializeField] AudioSource chargingAudioSource;
+    [SerializeField] AudioClip WeaponEnergyGainAudio;
+    [SerializeField] Texture[] WeaponColors = new Texture[10];
     public Weapon _equippedWeapon => EquippedWeapon;
     private void Awake()
     {
@@ -43,6 +46,7 @@ public class Buster : MonoBehaviour
         SaveData saveData = SaveManager.LoadGame(0);
         //if (saveData!=null){OwnedWeapons = new List<Weapon>(saveData.ObtainedWeapons);}
         if (!OwnedWeapons.Contains(Weapon.MegaBuster)){OwnedWeapons.Insert(0,Weapon.MegaBuster);}
+        charMat.SetTexture("_MainTex", WeaponColors[(int)EquippedWeapon]);
     }
     private void OnEnable()
     {
@@ -154,6 +158,7 @@ public class Buster : MonoBehaviour
         else if (index <= 9 && index >= 0 && OwnedWeapons.Contains((Weapon)index))
         {
             EquippedWeapon = (Weapon)index;
+            charMat.SetTexture("_MainTex", WeaponColors[(int)EquippedWeapon]);
             Debug.Log($"Swapped to Weapon {EquippedWeapon}");
             return;
         }
@@ -175,6 +180,7 @@ public class Buster : MonoBehaviour
             currentIndex = (currentIndex + 1) % cycleableWeapons.Count;
             EquippedWeapon = cycleableWeapons[currentIndex];
         }
+        charMat.SetTexture("_MainTex", WeaponColors[(int)EquippedWeapon]);
         Debug.Log($"Swapped to Weapon {EquippedWeapon}");
     }
     private void OnShootStarted(InputAction.CallbackContext context)
@@ -260,7 +266,11 @@ public class Buster : MonoBehaviour
         switch (EquippedWeapon)
         {
             case Weapon.AnimalAdaptor:
-                Shoot(Projectile.AnimalAdaptor);
+                if (!armLaunched)
+                {
+                    if (BusterCharge>=FullCharge){Shoot(Projectile.AnimalAdaptor);BusterCharge=0;}
+                    else {Shoot(Projectile.NoCharge);BusterCharge=0;}
+                }
                 break;
             case Weapon.SickleChain:
                 if (WeaponEnergy[(int)Weapon.SickleChain]>0)
@@ -307,7 +317,8 @@ public class Buster : MonoBehaviour
     }
     public void EnergyChange(float amountChanged, Weapon weapon = Weapon.MegaBuster, bool EnergyBalancer = true)
     {
-        if (amountChanged>0&&WeaponEnergy[(int)weapon]>=28&&EnergyBalancer)
+        if (amountChanged>0&&WeaponEnergy.Any(value => value < 28f)){chargingAudioSource.PlayOneShot(WeaponEnergyGainAudio);}
+        if (amountChanged>0&&(WeaponEnergy[(int)weapon]>=28||weapon==Weapon.MegaBuster||weapon==Weapon.AnimalAdaptor)&&EnergyBalancer)
         {
             float[] values = WeaponEnergy;
             int[] sortedIndexes = values
@@ -317,10 +328,9 @@ public class Buster : MonoBehaviour
                 .ToArray();
             foreach (int index in sortedIndexes)
             {
-                if (OwnedWeapons.Contains((Weapon)index))
+                if (OwnedWeapons.Contains((Weapon)index)&&weapon!=Weapon.MegaBuster&&weapon!=Weapon.AnimalAdaptor)
                 {
-                    if ((Weapon)index==Weapon.MegaBuster||(Weapon)index==Weapon.AnimalAdaptor){continue;}
-                    WeaponEnergy[(int)weapon]=Mathf.Clamp(WeaponEnergy[(int)weapon]+amountChanged,0,28);
+                    WeaponEnergy[index]=Mathf.Clamp(WeaponEnergy[index]+amountChanged,0,28);
                     break;
                 }
             }
@@ -337,7 +347,7 @@ public class Buster : MonoBehaviour
         {
             case Projectile.SickleChainShort:
                 attackPrefabs[(int)Projectile.SickleChainShort].SetActive(true);
-                WeaponEnergy[(int)Weapon.SickleChain]-=2;
+                EnergyChange(-2, Weapon.SickleChain);
                 break;
             case Projectile.SickleChainLong:
                 attackPrefabs[(int)Projectile.SickleChainShort].SetActive(false);
@@ -355,14 +365,14 @@ public class Buster : MonoBehaviour
                         projectilesAndAttacks.Add(bullet);
                     }
                     FireTimer=ShotTiming;
-                    WeaponEnergy[(int)Weapon.SickleChain]-=3;
+                    EnergyChange(-3, Weapon.SickleChain);
                 }
                 break;
             case Projectile.SafetyBall:
                 attackPrefabs[(int)Projectile.BallBounce].gameObject.GetAny<Renderer>().material.SetTexture("_MainTex",Ball);
                 attackPrefabs[(int)Projectile.SafetyBall].GetAny<SafetyBallScript>().Attack=false;
                 attackPrefabs[(int)Projectile.SafetyBall].SetActive(true);
-                WeaponEnergy[(int)Weapon.SafetyBall]-=6;
+                EnergyChange(-6, Weapon.SafetyBall);
                 break;
             case Projectile.BallBounce:
                 attackPrefabs[(int)Projectile.BallBounce].gameObject.GetAny<Renderer>().material.SetTexture("_MainTex",BallAttack);
@@ -383,7 +393,7 @@ public class Buster : MonoBehaviour
                         projectilesAndAttacks.Add(bullet);
                     }
                     FireTimer=ShotTiming;
-                    WeaponEnergy[(int)Weapon.ResinGlob]-=4;
+                    EnergyChange(-4, Weapon.ResinGlob);
                 }
                 break;
             case Projectile.MegawattSurge:
@@ -401,7 +411,7 @@ public class Buster : MonoBehaviour
                         projectilesAndAttacks.Add(bullet);
                     }
                     FireTimer=ShotTiming;
-                    WeaponEnergy[(int)Weapon.MegawattSurge]-=3;
+                    EnergyChange(-3, Weapon.MegawattSurge);
                 }
                 break;
             case Projectile.Brickfall:
@@ -421,7 +431,7 @@ public class Buster : MonoBehaviour
                     }
                     GameObject brick = Instantiate(attackPrefabs[(int)Projectile.Brickfall],cc.groundContact?projectileSpawn.transform.position:new Vector2(transform.position.x,transform.position.y-0.5f),Quaternion.identity);
                     projectilesAndAttacks.Add(brick);
-                    WeaponEnergy[(int)Weapon.Brickfall]-=2;
+                    EnergyChange(-3, Weapon.Brickfall);
                 }
                 FireTimer=ShotTiming;
                 break;
@@ -431,7 +441,7 @@ public class Buster : MonoBehaviour
                     GameObject bomb = Instantiate(attackPrefabs[(int)Projectile.Firecracker],projectileSpawn.transform.position,Quaternion.Euler(0,0,facingRight?0:180));
                     projectilesAndAttacks.Add(bomb);
                     FireTimer=ShotTiming;
-                    WeaponEnergy[(int)Weapon.Firecracker]-=3;
+                    EnergyChange(-3, Weapon.Firecracker);
                 }
                 break;
             case Projectile.FirecrackerBarrage:
@@ -445,7 +455,7 @@ public class Buster : MonoBehaviour
                         projectilesAndAttacks.Add(bomb);
                     }
                     FireTimer=ShotTiming;
-                    WeaponEnergy[(int)Weapon.Firecracker]-=5;
+                    EnergyChange(-6, Weapon.Firecracker);
                 }
                 break;
             case Projectile.WaterCannon:
@@ -454,12 +464,12 @@ public class Buster : MonoBehaviour
                     GameObject WaterBurst = Instantiate(attackPrefabs[(int)Projectile.WaterCannon],projectileSpawn.transform.position,Quaternion.Euler(0,0,facingRight?0:180));
                     projectilesAndAttacks.Add(WaterBurst);
                     FireTimer=0.5f;
-                    WeaponEnergy[(int)Weapon.WaterCannon]-=4;
+                    EnergyChange(-4, Weapon.WaterCannon);
                 }
                 break;
             case Projectile.CycloneStrike:
                 attackPrefabs[(int)Projectile.CycloneStrike].SetActive(true);
-                WeaponEnergy[(int)Weapon.CycloneStrike]-=7;
+                EnergyChange(-7, Weapon.CycloneStrike);
                 break;
             case Projectile.CycloneStrikeSlash:
                 attackPrefabs[(int)Projectile.CycloneStrike].GetAny<CycloneStrikeBehaviour>().SlashAttack();
@@ -592,6 +602,15 @@ public class Buster : MonoBehaviour
                 }
                 break;
             case Projectile.AnimalAdaptor:
+                if (!armLaunched)
+                {
+                    GameObject rocketFist = Instantiate(attackPrefabs[(int)Projectile.AnimalAdaptor],projectileSpawn.transform.position,facingRight?Quaternion.identity:Quaternion.Euler(0,0,180));
+                    if (!facingRight){rocketFist.transform.localScale=new Vector3(rocketFist.transform.localScale.x,rocketFist.transform.localScale.y*-1,rocketFist.transform.localScale.z);}
+                    rocketFist.GetAny<HomingBullet>().returnPoint=transform;
+                    projectilesAndAttacks.Add(rocketFist);
+                    FireTimer=ShotTiming;
+                    armLaunched=true;
+                }
                 break;
             default:
                 break;
