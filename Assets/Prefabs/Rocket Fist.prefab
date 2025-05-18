@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 4463569897940517773}
   - component: {fileID: 6496482550079631896}
   - component: {fileID: 2770963358800655369}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rocket Fist
-  m_TagString: Untagged
+  m_TagString: Friendly Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -58,8 +58,8 @@ MonoBehaviour:
   damageType: 16
   spawnSound: {fileID: 0}
   conditionalVFX: []
-  turnSpeed: 300
-  returnAfterHit: 1
+  turnSpeed: 400
+  returnTimeLimit: 4
   detectionDistance: 10
   detectionAngle: 90
   returnPoint: {fileID: 0}
@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 941654109347794922}
   m_Layer: 6
   m_Name: Capsule
-  m_TagString: Untagged
+  m_TagString: Player Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -118,8 +118,8 @@ Transform:
   m_GameObject: {fileID: 1359337161476575949}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: 0.25, y: 0, z: 0}
-  m_LocalScale: {x: 0.25, y: 0.25, z: 0.25}
+  m_LocalPosition: {x: 0.3, y: 0, z: 0}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 4463569897940517773}
@@ -152,7 +152,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: bd04eaab1602d63439a822d931c79898, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -186,10 +186,10 @@ CapsuleCollider2D:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 65
+    m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 190
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -222,7 +222,7 @@ GameObject:
   - component: {fileID: 3399833828533100642}
   m_Layer: 6
   m_Name: Jet Fire
-  m_TagString: Player
+  m_TagString: Player Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -8,21 +8,21 @@ using System;
 [RequireComponent(typeof(CharControl))]
 public class Buster : MonoBehaviour
 {
-    [SerializeField] float FullCharge,ShotTiming;
-    [SerializeField] GameObject projectileSpawn, projectileSpawnRotate,leftBuster;
+    [SerializeField] float FullCharge, ShotTiming;
+    [SerializeField] GameObject projectileSpawn, projectileSpawnRotate, leftBuster;
     [SerializeField] List<GameObject> attackPrefabs = new List<GameObject>();
     [SerializeField] List<GameObject> BassBulletVariants = new List<GameObject>();
-    [SerializeField] ParticleSystem ChargingEffect,FullChargeEffect,OverChargeEffect;
+    [SerializeField] ParticleSystem ChargingEffect, FullChargeEffect, OverChargeEffect;
     Animator anim;
     private DefaultControls playerInputActions;
-    private bool facingRight=true,ChargingWeapon;
-    public bool armLaunched=false;
-    float BusterCharge,HalfCharge,OverCharge,FireTimer,pointBuster=0,ChargeSpeed;
+    private bool facingRight = true, ChargingWeapon;
+    public bool armLaunched = false;
+    float BusterCharge, HalfCharge, OverCharge, FireTimer, pointBuster = 0, ChargeSpeed;
     private List<GameObject> projectilesAndAttacks = new List<GameObject>();
     public enum Projectile {NoCharge, HalfCharge, FullCharge, OverCharge, SickleChainShort, SickleChainLong, SafetyBall, BallBounce, ResinGlob, MegawattSurge, Brickfall, Firecracker, FirecrackerBarrage, WaterCannon, CycloneStrike, CycloneStrikeSlash, AnimalAdaptor}
-    public enum Weapon {MegaBuster,SickleChain,SafetyBall,MegawattSurge,CycloneStrike,ResinGlob,WaterCannon,Firecracker,Brickfall,AnimalAdaptor};
-    public float[] WeaponEnergy = new float[10] {float.PositiveInfinity,28,28,28,28,28,28,28,28,28};
-    private List<Weapon> ChargeableWeapons = new List<Weapon>(){Weapon.MegaBuster,Weapon.SickleChain,Weapon.Firecracker, Weapon.AnimalAdaptor};
+    public enum Weapon {MegaBuster, SickleChain, SafetyBall, MegawattSurge, CycloneStrike, ResinGlob, WaterCannon, Firecracker, Brickfall, AnimalAdaptor};
+    public float[] WeaponEnergy = new float[10] {float.PositiveInfinity, 28, 28, 28, 28, 28, 28, 28, 28, 28};
+    private List<Weapon> ChargeableWeapons = new List<Weapon>() {Weapon.MegaBuster, Weapon.SickleChain, Weapon.Firecracker, Weapon.AnimalAdaptor};
     public List<Weapon> OwnedWeapons = new List<Weapon>();
     CharControl cc;
     [SerializeField] Weapon EquippedWeapon = Weapon.MegaBuster;
@@ -40,12 +40,12 @@ public class Buster : MonoBehaviour
     void Start()
     {
         anim = gameObject.GetAny<Animator>();
-        HalfCharge=FullCharge/2;
-        OverCharge=FullCharge*1.5f;
+        HalfCharge = FullCharge / 2;
+        OverCharge = FullCharge * 1.5f;
         cc = gameObject.GetAny<CharControl>();
         SaveData saveData = SaveManager.LoadGame(0);
         //if (saveData!=null){OwnedWeapons = new List<Weapon>(saveData.ObtainedWeapons);}
-        if (!OwnedWeapons.Contains(Weapon.MegaBuster)){OwnedWeapons.Insert(0,Weapon.MegaBuster);}
+        if (!OwnedWeapons.Contains(Weapon.MegaBuster)) {OwnedWeapons.Insert(0, Weapon.MegaBuster);}
         charMat.SetTexture("_MainTex", WeaponColors[(int)EquippedWeapon]);
     }
     private void OnEnable()
@@ -84,16 +84,16 @@ public class Buster : MonoBehaviour
                 else if (controlPath.Contains("Keyboard"))
                 {
                     float PreOrNext = playerInputActions.WeaponQuickSwap.PreviousNext.ReadValue<float>();
-                    if (PreOrNext!=0){weaponIndex=PreOrNext>0 ? (int)EquippedWeapon+1 : (int)EquippedWeapon-1;}
-                    else if (int.Parse(controlPath.Last().ToString())==0){weaponIndex = 9;}
-                    else {weaponIndex = int.Parse(controlPath.Last().ToString())-1;}
+                    if (PreOrNext != 0) {weaponIndex = PreOrNext > 0 ? (int)EquippedWeapon + 1 : (int)EquippedWeapon - 1;}
+                    else if (int.Parse(controlPath.Last().ToString()) == 0) {weaponIndex = 9;}
+                    else {weaponIndex = int.Parse(controlPath.Last().ToString()) - 1;}
                     EquipWeapon(weaponIndex);
                 }
             }
             else
             {
                 float PreOrNext = playerInputActions.WeaponQuickSwap.PreviousNext.ReadValue<float>();
-                if (PreOrNext!=0){weaponIndex=PreOrNext>0 ? 10 : -1;}
+                if (PreOrNext != 0) {weaponIndex = PreOrNext > 0 ? 10 : -1;}
                 else {weaponIndex = (int)EquippedWeapon;}
                 EquipWeapon(weaponIndex);
             }
@@ -106,9 +106,9 @@ public class Buster : MonoBehaviour
             }
             else
             {
-                Vector2 rightStick = playerInputActions.WeaponQuickSwap.WeaponWheel.ReadValue<Vector2>()!=null ? playerInputActions.WeaponQuickSwap.WeaponWheel.ReadValue<Vector2>() : Vector2.zero;
+                Vector2 rightStick = playerInputActions.WeaponQuickSwap.WeaponWheel.ReadValue<Vector2>() != null ? playerInputActions.WeaponQuickSwap.WeaponWheel.ReadValue<Vector2>() : Vector2.zero;
                 float PreOrNext = playerInputActions.WeaponQuickSwap.PreviousNext.ReadValue<float>();
-                if (PreOrNext!=0){weaponIndex=PreOrNext>0 ? 10 : -1;}
+                if (PreOrNext != 0) {weaponIndex = PreOrNext > 0 ? 10 : -1;}
                 else {weaponIndex = GetWeaponFromStickDirection(rightStick);}
                 EquipWeapon(weaponIndex);
             }
@@ -168,13 +168,13 @@ public class Buster : MonoBehaviour
             Debug.LogWarning("No valid weapons to cycle through.");
             return;
         }
-        else if (index < 0) 
+        else if (index < 0)
         {
             int currentIndex = cycleableWeapons.IndexOf(EquippedWeapon);
             currentIndex = (currentIndex - 1 + cycleableWeapons.Count) % cycleableWeapons.Count;
             EquippedWeapon = cycleableWeapons[currentIndex];
         }
-        else if (index > 9) 
+        else if (index > 9)
         {
             int currentIndex = cycleableWeapons.IndexOf(EquippedWeapon);
             currentIndex = (currentIndex + 1) % cycleableWeapons.Count;
@@ -191,66 +191,66 @@ public class Buster : MonoBehaviour
         bool isProtomanWithValidUpgrade = cc.CurrentCharacter == CharControl.Character.Protoman && (cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge] || !cc.EquippedUpgrades[(int)CharControl.upgrades.BeamBuster]);
         bool isBassWithExtraCharge = cc.CurrentCharacter == CharControl.Character.Bass && cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge];
         bool canChargeMegaBuster = isMegaBuster && (isMegamanOrRoll || isProtomanWithValidUpgrade || isBassWithExtraCharge);
-        if (isChargeableNonBuster || canChargeMegaBuster){ChargingWeapon = true;chargingAudioSource.Play();}
-        else if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster){Invoke("rapidFire",FireTimer);}
+        if (isChargeableNonBuster || canChargeMegaBuster) {ChargingWeapon = true; chargingAudioSource.Play();}
+        else if (cc.CurrentCharacter == CharControl.Character.Bass && !cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge] && EquippedWeapon == Weapon.MegaBuster) {Invoke("rapidFire", FireTimer);}
         if (!anim.GetBool("Sliding"))
         {
-            pointBuster=0.5f;
+            pointBuster = 0.5f;
             ShootEquippedWeapon();
         }
     }
     private void OnShootCanceled(InputAction.CallbackContext context)
     {
-        if (BusterCharge>=HalfCharge&&ChargeableWeapons.Contains(EquippedWeapon)&&!anim.GetBool("Sliding")){pointBuster=0.5f;ShootEquippedWeapon();}
+        if (BusterCharge >= HalfCharge && ChargeableWeapons.Contains(EquippedWeapon) && !anim.GetBool("Sliding")) {pointBuster = 0.5f; ShootEquippedWeapon();}
         StopCharge();
         CancelInvoke("rapidFire");
     }
     void rapidFire()
     {
         ShootEquippedWeapon();
-        pointBuster=0.5f;
-        Invoke("rapidFire",FireTimer);
+        pointBuster = 0.5f;
+        Invoke("rapidFire", FireTimer);
     }
     void Update()
     {
-        if (cc.CurrentCharacter==CharControl.Character.Bass&&EquippedWeapon==Weapon.MegaBuster&&pointBuster>0)
-        {
-            if (cc.moveInputY>0)
-            {
-                projectileSpawnRotate.transform.localRotation = Quaternion.Euler(0,0,cc.moveInputX!=0?45:90);
-            }
-            else if (cc.moveInputY<0)
-            {
-                projectileSpawnRotate.transform.localRotation = Quaternion.Euler(0,0,-45);
-            }
-            else {projectileSpawnRotate.transform.localRotation = Quaternion.Euler(0,0,0);}
-        }
+        if (pointBuster > 0) { PointBuster(); }
         facingRight = cc.facingRight;
         if (ChargingWeapon)
         {
             ChargeSpeed = cc.EquippedUpgrades[(int)CharControl.upgrades.QuickerCharge] ? 2 : 1;
-            if (BusterCharge<OverCharge){BusterCharge+=Time.deltaTime*ChargeSpeed;BusterCharge=Mathf.Clamp(BusterCharge,0,cc.CurrentCharacter!=CharControl.Character.Bass?OverCharge:FullCharge);}
-            if (BusterCharge>=OverCharge&&cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]&&cc.CurrentCharacter!=CharControl.Character.Bass){charMat.SetColor("_OtlColor",new Color32(255,52,55,255));FullChargeEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);OverChargeEffect.Play();}
-            else if (BusterCharge>=FullCharge){charMat.SetColor("_OtlColor",new Color32(151,255,255,255));ChargingEffect.Stop(true,ParticleSystemStopBehavior.StopEmittingAndClear);FullChargeEffect.Play();}
-            else if (BusterCharge>=HalfCharge){charMat.SetColor("_OtlColor",new Color32(247,255,146,255));ChargingEffect.Play();}
-            if (chargingAudioSource.isPlaying&&chargingAudioSource.time>2.5f){chargingAudioSource.volume=Mathf.Clamp((float)((chargingAudioSource.clip.length-chargingAudioSource.time)/(chargingAudioSource.clip.length-2.5f)),0,0.5f);}
-            else {chargingAudioSource.volume=0.5f;}
+            if (BusterCharge < OverCharge) { BusterCharge += Time.deltaTime * ChargeSpeed; BusterCharge = Mathf.Clamp(BusterCharge, 0, cc.CurrentCharacter != CharControl.Character.Bass ? OverCharge : FullCharge); }
+            if (BusterCharge >= OverCharge && cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge] && cc.CurrentCharacter != CharControl.Character.Bass) { charMat.SetColor("_OtlColor", new Color32(255, 52, 55, 255)); FullChargeEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); OverChargeEffect.Play(); }
+            else if (BusterCharge >= FullCharge) { charMat.SetColor("_OtlColor", new Color32(151, 255, 255, 255)); ChargingEffect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear); FullChargeEffect.Play(); }
+            else if (BusterCharge >= HalfCharge) { charMat.SetColor("_OtlColor", new Color32(247, 255, 146, 255)); ChargingEffect.Play(); }
+            if (chargingAudioSource.isPlaying && chargingAudioSource.time > 2.5f) { chargingAudioSource.volume = Mathf.Clamp((float)((chargingAudioSource.clip.length - chargingAudioSource.time) / (chargingAudioSource.clip.length - 2.5f)), 0, 0.5f); }
+            else { chargingAudioSource.volume = 0.5f; }
         }
-        else{StopCharge();}
-        if (FireTimer>0){FireTimer-=Time.deltaTime; FireTimer=Mathf.Clamp(FireTimer,0,FireTimer);}
-        if (pointBuster>0){pointBuster-=Time.deltaTime;pointBuster=Mathf.Clamp(pointBuster,0,pointBuster);}
-        SetLayerWeight("Shoot",pointBuster>0.2f ? 1 : pointBuster/0.2f);
-        if (!anim.GetBool("Jumping")&&attackPrefabs[(int)Projectile.SafetyBall].activeInHierarchy){Shoot(Projectile.SafetyBall);}
+        else { StopCharge(); }
+        if (FireTimer > 0) { FireTimer -= Time.deltaTime; FireTimer = Mathf.Clamp(FireTimer, 0, FireTimer); }
+        if (pointBuster > 0) { pointBuster -= Time.deltaTime; pointBuster = Mathf.Clamp(pointBuster, 0, pointBuster); }
+        SetLayerWeight("Shoot", pointBuster > 0.2f ? 1 : pointBuster / 0.2f);
+        if (!anim.GetBool("Jumping") && attackPrefabs[(int)Projectile.SafetyBall].activeInHierarchy){Shoot(Projectile.SafetyBall);}
+    }
+    void PointBuster()
+    {
+        if (cc.CurrentCharacter == CharControl.Character.Bass && EquippedWeapon == Weapon.MegaBuster)
+        {
+            if (cc.moveInputY > 0) {projectileSpawnRotate.transform.localRotation = Quaternion.Euler(0, 0, cc.moveInputX != 0 ? 45 : 90);}
+            else if (cc.moveInputY < 0) {projectileSpawnRotate.transform.localRotation = Quaternion.Euler(0, 0, -45);}
+            else {projectileSpawnRotate.transform.localRotation = Quaternion.Euler(0, 0, 0);}
+        }
+        else {}
     }
     private void LateUpdate()
     {
-        if (pointBuster>0.2f)
+        if (pointBuster > 0.2f)
         {
             leftBuster.transform.LookAt(projectileSpawn.transform.position, Vector3.Cross(transform.right, projectileSpawn.transform.position - transform.position));
             leftBuster.transform.rotation *= Quaternion.Euler(90, 0, 0);
         }
-        if (cc.CurrentCharacter==CharControl.Character.Bass&&!cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]&&EquippedWeapon==Weapon.MegaBuster&&FireTimer>0&&cc.groundContact){cc.VelocityX=0;anim.SetBool("Running",false);}
+        if (cc.CurrentCharacter == CharControl.Character.Bass && !cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge] && EquippedWeapon == Weapon.MegaBuster && FireTimer > 0 && cc.groundContact) {cc.VelocityX = 0; anim.SetBool("Running", false);}
     }
+    
     void StopCharge()
     {
         chargingAudioSource.Stop();
@@ -280,8 +280,8 @@ public class Buster : MonoBehaviour
                 }
                 break;
             case Weapon.SafetyBall:
-                if (attackPrefabs[(int)Projectile.SafetyBall].activeInHierarchy){Shoot(Projectile.BallBounce);}
-                else if (WeaponEnergy[(int)Weapon.SafetyBall]>0){Shoot(Projectile.SafetyBall);}
+                if (WeaponEnergy[(int)Weapon.SafetyBall] > 0 && !attackPrefabs[(int)Projectile.SafetyBall].activeInHierarchy) { Shoot(Projectile.SafetyBall); EnergyChange(-6, Weapon.SafetyBall);}
+                else if (!cc.groundContact) { Shoot(Projectile.BallBounce); }
                 break;
             case Weapon.ResinGlob:
                 if (WeaponEnergy[(int)Weapon.ResinGlob]>0){Shoot(Projectile.ResinGlob);}
@@ -322,7 +322,7 @@ public class Buster : MonoBehaviour
         {
             float[] values = WeaponEnergy;
             int[] sortedIndexes = values
-                .Select((value, index) => new { value, index })  // Pair value with its index
+                .Select((value, index) => new {value, index})  // Pair value with its index
                 .OrderBy(pair => pair.value)                    // Sort by value
                 .Select(pair => pair.index)                     // Get the indexes
                 .ToArray();
@@ -372,7 +372,6 @@ public class Buster : MonoBehaviour
                 attackPrefabs[(int)Projectile.BallBounce].gameObject.GetAny<Renderer>().material.SetTexture("_MainTex",Ball);
                 attackPrefabs[(int)Projectile.SafetyBall].GetAny<SafetyBallScript>().Attack=false;
                 attackPrefabs[(int)Projectile.SafetyBall].SetActive(true);
-                EnergyChange(-6, Weapon.SafetyBall);
                 break;
             case Projectile.BallBounce:
                 attackPrefabs[(int)Projectile.BallBounce].gameObject.GetAny<Renderer>().material.SetTexture("_MainTex",BallAttack);
@@ -563,7 +562,7 @@ public class Buster : MonoBehaviour
                     if (cc.CurrentCharacter==CharControl.Character.Bass)
                     {
                         if (projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(BassBulletVariants[cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]?1:0].name))<(cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]?2:5))
-                        {   
+                        {  
                             GameObject bullet = cc.EquippedUpgrades[(int)CharControl.upgrades.ExtraCharge]?Instantiate(BassBulletVariants[1],projectileSpawn.transform.position,Quaternion.identity):Instantiate(BassBulletVariants[0],projectileSpawn.transform.position,Quaternion.identity);
                             if (cc.moveInputY>0)
                             {
@@ -592,7 +591,7 @@ public class Buster : MonoBehaviour
                     else
                     {
                         if (projectilesAndAttacks.Count(obj => obj != null && obj.name.StartsWith(attackPrefabs[(int)Projectile.NoCharge].name))<3)
-                        {   
+                        {  
                             GameObject bullet = Instantiate(attackPrefabs[(int)Projectile.NoCharge],projectileSpawn.transform.position,Quaternion.identity);
                             if (!facingRight){bullet.transform.localScale=new Vector3(bullet.transform.localScale.x*-1,bullet.transform.localScale.y,bullet.transform.localScale.z);}
                             projectilesAndAttacks.Add(bullet);

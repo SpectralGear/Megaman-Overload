@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class HomingBullet : DirectionalBulletBehaviour
 {
-    [SerializeField] float turnSpeed = 1;
-    [SerializeField] bool returnAfterHit = false;
+    [SerializeField] float turnSpeed, returnTimeLimit = 0;
     public float detectionDistance = 10f;
     public float detectionAngle = 90f; // Half-cone in degrees
     private Camera mainCam;
@@ -13,22 +10,24 @@ public class HomingBullet : DirectionalBulletBehaviour
     private GameObject currentTarget;
     private EnemyHealth currentTargetHealth;
     public Transform returnPoint;
-    void Start()
+    private void Start()
     {
         mainCam = Camera.main;
         AcquireNewTarget();
     }
-    void Update()
+    protected void Update()
     {
         // If there's no target or it died, reacquire
         if (currentTarget == null || currentTargetHealth == null || currentTargetHealth.dead)
         {
             AcquireNewTarget();
         }
-        timer+=Time.deltaTime;
-        if (timer>2.8f){hitTarget=true;}
+        if (timer < returnTimeLimit)
+        {
+            timer += Time.deltaTime;
+        }
     }
-    void AcquireNewTarget()
+    protected void AcquireNewTarget()
     {
         currentTarget = null;
         currentTargetHealth = null;
@@ -73,14 +72,15 @@ public class HomingBullet : DirectionalBulletBehaviour
             Debug.Log("Target acquired: " + currentTarget.name);
         }
     }
-    bool IsOnScreen(Vector3 worldPos)
+    protected bool IsOnScreen(Vector3 worldPos)
     {
         Vector3 view = mainCam.WorldToViewportPoint(worldPos);
         return view.z > 0 && view.x > 0 && view.x < 1 && view.y > 0 && view.y < 1;
     }
     protected override void Move()
     {
-        Vector3 targetPosition = currentTarget&&!(hitTarget&&returnAfterHit)?currentTarget.transform.position:(returnPoint?returnPoint.position:Vector2.zero);
+        bool returnNow = hitTarget || (timer >= returnTimeLimit && returnTimeLimit > 0);
+        Vector3 targetPosition = currentTarget && !returnNow ? currentTarget.transform.position : (returnPoint ? returnPoint.position : Vector2.zero);
         Vector2 direction = targetPosition - transform.position;
         float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         float currentAngle = transform.eulerAngles.z;
@@ -88,12 +88,18 @@ public class HomingBullet : DirectionalBulletBehaviour
         transform.rotation = Quaternion.Euler(0f, 0f, newAngle);
         base.Move();
     }
-    void OnTriggerEnter2D(Collider2D collision)
+    protected override void TriggerEntered(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
             Buster buster = collision.GetAny<Buster>();
-            if (buster&&hitTarget){buster.armLaunched=false;Destroy(gameObject);}
+            if (buster && (hitTarget || (timer >= returnTimeLimit && returnTimeLimit > 0) || !currentTarget)) { buster.armLaunched = false; Destroy(gameObject); }
         }
+        base.TriggerEntered(collision);
+    }
+    void OnDestroy()
+    {
+        Buster buster = returnPoint.GetAny<Buster>();
+        if (buster){buster.armLaunched = false;}
     }
 }

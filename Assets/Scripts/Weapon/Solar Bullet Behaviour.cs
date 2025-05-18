@@ -8,19 +8,24 @@ public class SolarBulletBehaviour : MonoBehaviour
     [SerializeField] public bool Pierces, PiercesOnKill, ShieldBreaker, BreakFromObstacle, disappearOffScreen=true;
     public bool damageChanged=false;
     protected Rigidbody2D rb;
-    [SerializeField] Buster.Projectile damageType;
-    [SerializeField] AudioClip spawnSound;
-    [SerializeField] List<ConditionLink> conditionalVFX = new List<ConditionLink>();
-    AudioSource audioSource;
-    bool enemyOwned;
+    [SerializeField] protected Buster.Projectile damageType;
+    [SerializeField] protected AudioClip spawnSound;
+    [SerializeField] protected List<ConditionLink> conditionalVFX = new List<ConditionLink>();
+    protected AudioSource audioSource;
+    protected bool enemyOwned;
     protected bool hitTarget=false;
     private void Start()
     {
         rb = gameObject.GetAny<Rigidbody2D>();
         audioSource = gameObject.GetAny<AudioSource>();
-        if (audioSource&&spawnSound){audioSource.PlayOneShot(spawnSound);}
-        enemyOwned=gameObject.CompareTag("Enemy Projectile");
+        if (audioSource && spawnSound) { audioSource.PlayOneShot(spawnSound); }
+        enemyOwned = gameObject.CompareTag("Enemy Projectile");
         UpdateVFX();
+        List<Collider2D> collisions = gameObject.GetAll<Collider2D>();
+        foreach (Collider2D collision in collisions)
+        {
+            TriggerEntered(collision);
+        }
     }
     public void UpdateVFX()
     {
@@ -47,7 +52,11 @@ public class SolarBulletBehaviour : MonoBehaviour
     {
         Move();
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected void OnTriggerEnter2D(Collider2D collision)
+    {
+        TriggerEntered(collision);
+    }
+    protected virtual void TriggerEntered(Collider2D collision)
     {
         if (damage!=0)
         {
@@ -58,7 +67,7 @@ public class SolarBulletBehaviour : MonoBehaviour
                     CharControl player = collision.gameObject.GetAny<CharControl>();
                     player.HealthChange(-damage);
                     hitTarget=true;
-                    if (!Pierces || (PiercesOnKill && !player.dead)){Destroy(gameObject);}
+                    if (!(Pierces || (PiercesOnKill && player.dead))){Destroy(gameObject);}
                 }
                 else if (BreakFromObstacle&&collision.gameObject.layer==LayerMask.NameToLayer("Terrain")){Destroy(gameObject);}
             }
@@ -69,9 +78,9 @@ public class SolarBulletBehaviour : MonoBehaviour
                     EnemyHealth enemy = collision.gameObject.GetAny<EnemyHealth>();
                     enemy.TakeDamage(damage,(int)damageType);
                     hitTarget=true;
-                    if (!Pierces || (PiercesOnKill && enemy.dead)){Destroy(gameObject);}
+                    if (!(Pierces || (PiercesOnKill && enemy.dead))){Destroy(gameObject);}
                 }
-                else if (collision.CompareTag("Enemy Shield")||(BreakFromObstacle&&collision.gameObject.layer==LayerMask.NameToLayer("Terrain"))){Destroy(gameObject);}
+                else if ((!Pierces&&collision.CompareTag("Enemy Shield"))||(BreakFromObstacle&&collision.gameObject.layer==LayerMask.NameToLayer("Terrain"))){Destroy(gameObject);}
             }
         }
     }
@@ -80,5 +89,5 @@ public class SolarBulletBehaviour : MonoBehaviour
         Vector2 moveDirection = (transform.localScale.x > 0) ? Vector2.right : Vector2.left;
         rb.velocity = moveDirection.normalized * speed;
     }
-    void OnBecameInvisible() {if (disappearOffScreen){Destroy(gameObject);}}
+    protected void OnBecameInvisible() {if (disappearOffScreen){Destroy(gameObject);}}
 }

@@ -47,7 +47,6 @@ public class EnemyHealth : MonoBehaviour
         }
         float finalDamage = baseDamage * damageMultiplier;
         health -= finalDamage;
-        health = Mathf.Clamp(health,0,health);
         if (health <= 0){dead=true;}
         if (healthBar!=null){healthBar.fillAmount = Mathf.Max(0, health / maxHealth);}
     }
